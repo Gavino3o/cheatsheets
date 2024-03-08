@@ -300,7 +300,7 @@
 
   \textbf{min number of nodes at level i} \\$= 2 \times (d+1)^{i-1} \text{ for } i \geq 1$
 
-  \textbf{max number of nodes at level i} \\$= 2(d+1)^i$
+  \textbf{max number of nodes at level i} \\$= (2d+1)^i$
 
   \subsection{Bulk Loading a B$^+$-tree}
 
@@ -367,7 +367,7 @@
   \begin{itemize}
     \item add a new bucket whenever existing bucket overflows 
       \begin{itemize}
-        \item no overflow pages unless \# collisions > page capacity 
+        \item no overflow pages unless \# collisions $>$ page capacity 
       \end{itemize}
     \item directory of pointers to buckets - $2^d$ entries ($b_db_{d-1}\dots b_1$)
       \begin{itemize}
@@ -379,7 +379,7 @@
         \item a split bucket \& its image have the \textit{same local depth}
       \end{itemize}
     \item number of directory entries pointing to a bucket = $2^{d-\ell}$
-    \item Look at last $l$ bits when adjusting pointers
+    \item Look at last $\ell$ bits when adjusting pointers
       \includegraphics[width=0.95\linewidth]{cs3223-extendible-hashing.png} 
     \item splitting bucket: $\ell$\texttt{++} (repeat until no more overflow)
       \begin{itemize}
@@ -589,7 +589,7 @@
   \begin{itemize}
     \item if $B>\sqrt{|\pi^*_L(R)|}$, same I/O cost as hash-based approach
       \begin{itemize}
-        \item $N_0 = \lfloor \frac{|R|}{B} \rfloor \approx \sqrt{|\pi^*_L(R)|}$ initial sorted runs 
+        \item $N_0 = \lceil \frac{|R|}{B} \rceil \approx \sqrt{|\pi^*_L(R)|}$ initial sorted runs 
         \item $\log_{B-1}(N_0) \approx 1$ merge passes
       \end{itemize}
   \end{itemize}
@@ -623,7 +623,7 @@
       \end{itemize}
     \item partition overflow: recursively apply partitioning
       \begin{itemize}
-        \item to avoid, $B>$ size of hash table for $R_i$ = $\frac{|\pi^*_L(R)|}{B_1} \times f$
+        \item to avoid, $B>$ size of hash table for $R_i$ = $\frac{|\pi^*_L(R)|}{B - 1} \times f$
           \begin{itemize}
             \item  approximately $B> \sqrt{f\times |\pi^*_L(R)|}$
           \end{itemize}
