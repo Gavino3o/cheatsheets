@@ -1,0 +1,280 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% writeLaTeX Example: A quick guide to LaTeX
+%
+% Source: Dave Richeson (divisbyzero.com), Dickinson College
+% 
+% A one-size-fits-all LaTeX cheat sheet. Kept to two pages, so it 
+% can be printed (double-sided) on one piece of paper
+% 
+% Feel free to distribute this example, but please keep the referral
+% to divisbyzero.com
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% How to use writeLaTeX: 
+%
+% You edit the source code here on the left, and the preview on the
+% right shows you the result within a few seconds.
+%
+% Bookmark this page and share the URL with your co-authors. They can
+% edit at the same time!
+%
+% You can upload figures, bibliographies, custom classes and
+% styles using the files menu.
+%
+% If you're new to LaTeX, the wikibook is a great place to start:
+% http://en.wikibooks.org/wiki/LaTeX
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[10pt,landscape]{article}
+\usepackage{amssymb,amsmath,amsthm,amsfonts}
+\usepackage{multicol,multirow}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{fancyvrb}
+\usepackage[landscape]{geometry}
+\usepackage[colorlinks=true,citecolor=blue,linkcolor=blue]{hyperref}
+
+
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+    { \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
+  {\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+    {\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+    {\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+  }
+\pagestyle{empty}
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x 
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -2ex}%
+                                {0.2ex plus -1ex}%
+                                {\normalfont\small\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.5ex}%
+                                {0.2ex plus -1ex}%
+                                {\normalfont\footnotesize\bfseries}}
+\makeatother
+\setcounter{secnumdepth}{0}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+\graphicspath{ {./images/} }
+% -----------------------------------------------------------------------
+
+\title{ACC1701X Midterm Cheatsheet AY23/24 Sem 2}
+
+\begin{document}
+
+\raggedright
+\footnotesize
+
+\begin{center}
+     \Large{\textbf{ACC1701X Midterm Cheatsheet AY23/24 Sem 2}} \\
+\end{center}
+\begin{multicols}{3}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+\begin{scriptsize}
+
+\subsection{Financial Accounting}
+\textbf{Financial Accounting:} provides financial information primarily for external users to make decisions.\\
+\textbf{Management Accounting:} provides financial information primarily for external users to make decisions.
+\begin{itemize} \itemsep -2pt
+    \item Provides information to management and staff for planning, implementation and control purposes to improve business performance.
+    \item Provides reports which include budgets, cost analysis and 
+    divisional performance reports.
+    \item Primarily for internal users, i.e., management and staff.
+\end{itemize}
+\textbf{International Financial Reporting Standards (IFRS)} set by IASB (International Accounting Standard Board) is primarily used for this course.
+
+\subsubsection*{Financial Accounting Concepts and Assumptions}
+\begin{itemize} \itemsep -2pt
+    \item \textbf{Separate Entity Concept:} activities of a business entity are separated from those of the individual owners.
+    \item \textbf{Time-period assumption:} Long life of a company can be reported in a shorter time period (annually [fiscal year], quarterly, monthly)
+    \item \textbf{Arm's-length transaction assumption:} business dealings between entities are conducted in a rational basis and all parties are acting for their own interests.
+    \item \textbf{Cost principle:} financial statement items are measured at their historical costs/original costs at the transaction date.
+    The historical cost is assumed to represent the fair market value of the item at the date of transaction.
+    \item \textbf{Fair value principle:} the assets and liabilities should be 
+    measured at fair value to improve relevance of accounting information.
+    \item \textbf{Monetary measurement concept:} Items in financial statements must have value measurable in dollar value.
+    \item \textbf{Going concern assumption:} When preparing the financial 
+    statements, the business entity is assumed to be able to sustain itself for the foreseeable future (not under liquidation)
+\end{itemize}
+
+\subsubsection*{Limitations of Balance Sheet}
+\begin{itemize} \itemsep -2pt
+    \item Assets are recorded at their purchase cost, not their current market value.
+    \item Not all economic assets are included in the balance sheet. 
+    (e.g., internally generated brand, good reputation and human talents)
+    \item The accounting book value of a company (measured by the amount of equity) is usually less 
+    than the company’s market value (measured by market price per share $\times$ number of shares).
+\end{itemize}
+
+\subsubsection*{Financial Statements}
+\begin{itemize} \itemsep -2pt
+    \item Statement of Comprehensive Income (SCI)
+    \item Balance Sheet (Statement of Financial Position)\\
+    \item Statement of Changes of equity
+    \item Statement of Cash Flows
+    \item Notes to Financial Statements
+\end{itemize}
+
+\subsubsection*{Balance Sheet Items}
+\textbf{Assets:} Cash, Accounts Receivable, Inventory, Buildings, Property, Plant and Equipment [Liquidity]\\
+\textbf{Liabilities:} Accounts Payable, Income Taxes Payable, Mortgage Payable, Unearned Revenue [Due date]\\
+\textbf{Equity:} Capital Stock, Retained Earnings [Dividends distributed reduce retained earnings]\\
+\begin{itemize} \itemsep -2pt
+    \item $Assets = Liabilities + Equity$
+    \item $Assets = \textit{Current Asset} + \textit{Non-Current Assets}$
+    \item $Liabilities = \textit{Current Liabilities} + \textit{Non-Current Liabilities}$
+    \item $\textit{Retained Earnings(begin)} + \textit{Net Income} - Dividends = \textit{Retained Earnings(end)}$
+    \item $\textit{Equity(begin)} + \textit{Increase in Capital Stock} + \textit{Net Income} - Dividends + \textit{Other Comprehensive Income} = Equity(end)$
+\end{itemize}
+
+\subsubsection*{SCI Items}
+\begin{itemize} \itemsep -2pt
+    \item \textit{Expenses = Operating expense $+$ Non-Operating Expense}
+    \item $Revenue - Expenses = \textit{Net Income}$\\
+    \item $\textit{Net Income} + \textit{Other Comprehensive Income} = \textit{Comprehensive Income}$\\
+    \item $\textit{Revenue} - \textit{COGS} = \textit{Gross Profit}$
+\end{itemize}
+
+\subsubsection*{Notes to Financial Statements}
+\begin{itemize} \itemsep -2pt
+    \item Summary of Significant Accounting Policies
+    \item Additional Information about the Summary Totals 
+    \item Disclosure of Information Not Recognized in the financial statements
+    \item Supplementary Information required under the accounting standards
+\end{itemize}
+
+\subsection*{Mechanics of Accounting Cycle}
+1. Analyse transactions\\
+2. Record effects of transaction\\
+3. Summarise effects of transactions (journal entries \& trial balance)\\
+4. Prepare reports (adjusting entries, financial statements, closing the books)\\
+
+\textbf{Flow of Accounting Records:}\\
+Journal Entries, T Accounts, Trial Balance, Income Statement, Statement of Changes in Equity, Balance Sheet\\
+
+\textbf{Criteria for transaction recognition:}\\
+1. Involve exchange of resources\\
+2. Conducted at Arm's Length between two independent entities\\
+3. Can be reliably measured\\
+
+Business Docs such as sales invoices, official receipts, purchases orders, suppliers' invoices capture
+business transaction. They provide independent objective evidence of transaction, establish dollar amount, and
+facilitate analysis of business events.\\
+
+\subsubsection*{Journal Entry}
+A recording of a business transactions; usually includes 
+a debit entry and a credit entry to the relevant 
+accounts with amount, a date and sometimes an 
+explanation of the transaction.\\
+
+\underline{\textbf{Asset Accounts:}}\\
+Typically has debit balances.\\DR Asset (Increase) CR Asset (Decrease)\\
+\underline{\textbf{Liability or Equity Accounts:}}\\
+Typically has credit balances.\\DR Liability/Equity (Decrease) CR Liability/Equity (Increase)\\
+\underline{\textbf{Revenue and Expenses Accounts:}}\\
+Expenses typically has debit balances. \\Revenue typically has credit balances\\
+DR Expense (Increase) CR Expense (Decrease)\\
+DR Revenue (Decrease) CR Revenue (Increase)\\
+\underline{\textbf{Capital Stock, Retained Earnings, Dividends}}\\
+DR Capital Stock (Decrease) CR Capital Stock (Increase)\\
+DR Retained Earnings (Decrease) CR Retained Earnings (Increase)\\
+DR Dividends (Increase) CR Dividends (Decrease)\\
+\underline{\textbf{Personal journal entries notes:}}\\
+- Try to think in terms of cash flow\\
+- DR Cash -- CR Revenue\\
+- DR Expense -- CR Cash\\
+- DR Cash -- CR Capital Stock\\
+- DR Cash -- CR Revenue; DR COGS -- CR Inventory\\
+- DR Notes Payable, Interest Expense -- CR Cash (paying back notes)\\
+- DR Dividends -- CR Cash\\
+\subsubsection{T-Accounts}
+- Basically combine all journal entry transactions by accounts used and calculate ending balances (can be debit or credit).\\
+\subsubsection*{Trial Balance}
+- Prepare trial balance using the ending balances from \underline{all} T-accounts.\\
+- Total debit balance should be \underline{equivalent} to total credit balance.
+
+\subsection*{Accrual Accounting}
+System of accounting in which 
+revenues are recognized when certain criteria are satisfied 
+(i.e., revenues are earned); and expenses are recorded as 
+they are incurred to generate the revenue (matching 
+principle). This is regardless of \underline{when} cash is paid or 
+received.\\
+- Revenues can be recognized \textbf{even cash is not received}.\\
+- Expenses can be recorded \textbf{even cash is not paid}.\\
+- The matching principle requires that all costs and expenses 
+incurred in generating revenues must be recognized in the 
+same reporting period as the related revenues.\\
+- \textbf{Follows the time-period assumption}
+which is that the life of a business is divided into distinct 
+and relatively short time periods(e.g., 12-month) so that 
+accounting information can be timely. 
+
+\subsubsection*{Adjusting entries}
+Prepared at the end of each accounting period to adjust accounts to their proper amount on an accrual basis.\\
+Do not involve cash. Involves a BL account or SCI account.
+\begin{itemize} \itemsep -2pt
+    \item Accrued/Unrecorded receivable
+    \item Accrued/Unrecorded liabilities
+    \item Prepaid expenses and supplies 
+    \item Unearned revenue
+\end{itemize}
+
+\subsubsection*{Unrecorded receivable (asset)}
+\textbf{In Arrears}. Revenues earned during a period that have not been 
+recorded by the end of that period. Represent amount of cash or resources to be 
+collected by the entity in the future. \\
+\textbf{DR Accounts Receivable -- CR Revenue}
+
+\subsubsection*{Unrecorded liabilities (liability)}
+Expenses incurred and not paid during a period and are not
+recorded at the end of that period. Represents entity's obligation to pay for 
+the expense in the future.\\
+\textbf{DR Expense -- CR Payable}\\
+Example: DR Interest Expense -- CR Interest Payable (Adj Entry)\\
+Dr Interest Payable, Loan Payable -- CR Cash 
+
+\subsubsection*{Prepaid Expense (asset)}
+Payments made in advance for expense items, e.g., prepaid 
+insurance or rent.\\
+Journal Entry (day of payment):\\
+\textbf{DR Prepaid Expense -- CR Cash}\\
+Adjusting Entry (expense \underline{incurred up to date})\\
+\textbf{DR Expense -- CR Prepaid Expense}\\
+- Calculate fraction of prepaid expense used up at current date\\
+- Supplies Example: DR Supplies -- CR Cash; DR Supplies Expense -- CR Supplies;
+
+\subsubsection*{Unearned Revenue (liability)}
+Cash amounts received from customers before its 
+corresponding revenue can be recognized.\\
+Journal Entry (Customer advance payment):\\
+\textbf{DR Cash -- CR Unearned Revenue}\\
+Adjusting Entry (revenue \underline{earned up to date}):\\
+\textbf{DR Unearned Revenue -- CR Revenue}
+- Calculate fraction of revenue earned using time\\
+
+\subsubsection*{Closing the books}
+Adjust trial balance $\rightarrow$ Prepare SCI $\rightarrow$ Ending Retained Earnings $\rightarrow$ Closing books\\
+Making all the Revenue, Expense, Retained Earnings and Dividends account balance to zero.\\
+Debit and Credit balances are swapped for these entries.
+\begin{itemize} \itemsep -2pt
+    \item \textbf{DR Revenue -- CR Expense, Retained Earnings (Net income)}
+    \item \textbf{DR Retained Earnings -- CR Dividends}
+\end{itemize}
+
+
+\end{scriptsize}
+
+\end{multicols}
+
+\end{document}
