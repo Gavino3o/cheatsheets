@@ -402,7 +402,7 @@
   \end{itemize}
 
   \section{06. QUERY EVALUATION}
-
+  
   \begin{itemize}
     \item \textbf{aggregation}: maintain running information while table scan
       \begin{itemize}
@@ -428,31 +428,39 @@
     \item \textit{blocking operator:} can't produce output until all input tuples received (grace hash \& sort-merge join, external mergesort)
   \end{itemize}
 
-  \textbf{hybrid: pipelined evaluation with partial materialisation}
-  \vspace*{-0.3cm}
+
+  \textbf{hybrid: pipelined evaluation + partial materialisation}
+
+
   \begin{itemize}
     \item materialise if repeatedly scanned (e.g. nested loop join)
   \end{itemize}
-  \vspace*{-0.6cm}
-  \subsection{query plans}
-  \vspace*{-0.3cm}
-  query: $\geq 1$ logical plans: implemented by $\geq 1$ physical plans
+
+
+  \textbf{query plans}\\
+   query: $\geq 1$ logical plans: implemented by $\geq 1$ physical plans
 
   \textbf{query plan trees}
 
-  \begin{minipage}[c]{0.6\linewidth}\color{black}
-    \begin{itemize}
-      \item \definition{linear} $\geq$ 1 operand per join operation is a base relation
-        (else \ildefinition{bushy})
-      \item \definition{left-deep} every right join operand is a base relation
-    \end{itemize}
-  \end{minipage}
-  \begin{minipage}[c]{0.36\linewidth}
-    \includegraphics[width=\linewidth]{cs3223-query-plan-trees.png} 
-  \end{minipage}
+  \begin{itemize}
+    \item \textbf{linear} $\geq$ 1 operand per join operation is a base relation
+      (else \textbf{bushy})
+    \item \textbf{left-deep} every right join operand is a base relation
+  \end{itemize}
 
-  \vspace*{-0.6cm}
-  \subsection{query optimisation}
+  % \begin{minipage}[c]{0.6\linewidth}\color{black}
+  %   \begin{itemize}
+  %     \item \definition{linear} $\geq$ 1 operand per join operation is a base relation
+  %       (else \ildefinition{bushy})
+  %     \item \definition{left-deep} every right join operand is a base relation
+  %   \end{itemize}
+  % \end{minipage}
+  % \begin{minipage}[c]{0.36\linewidth}
+  %   \includegraphics[width=\linewidth]{cs3223-query-plan-trees.png} 
+  % \end{minipage}
+
+  \textbf{query optimisation}
+
   \begin{itemize}
     \item binary operators ($\bowtie, \times$) are \textbf{commutative \& associative}
       \begin{itemize}
@@ -461,21 +469,20 @@
     \item DP query plan enumeration: use all optimal sub-plans to build overall plan (single-relation $\Rightarrow$ two-relation $\Rightarrow \dots$)
   \end{itemize}
 
-  \begin{minipage}[c]{0.45\linewidth}
-    \includegraphics[width=\linewidth]{cs3223-query-plans.png} 
-  \end{minipage}
-  \begin{minipage}[c]{0.5\linewidth}
-    \includegraphics[width=\linewidth]{cs3223-query-optimisation-example.png} 
-  \end{minipage}
+  % \begin{minipage}[c]{0.45\linewidth}
+  %   \includegraphics[width=\linewidth]{cs3223-query-plans.png} 
+  % \end{minipage}
+  % \begin{minipage}[c]{0.5\linewidth}
+  %   \includegraphics[width=\linewidth]{cs3223-query-optimisation-example.png} 
+  % \end{minipage}
 
-  \textbf{System R Optimiser}
-  \vspace*{-0.2cm}
+  \subsection{System R Optimiser}
+
   \begin{itemize}
     \item enumerate only left-deep query plans; avoid cross-product query plans; consider early selections and projections
     \item DP + \textbf{sort order} $o_i$ of query plan output: $optPlan(S_i, o_i)$
   \end{itemize}
 
-  \vspace*{-0.6cm}
   \subsection{cost estimation}
 
   \begin{itemize}
@@ -778,55 +785,65 @@
 
   \begin{itemize}
     \item steal; no-force; assumes strict 2PL for concurrency control
-  \end{itemize}
-
-  \subsubsection{data structures}
-
-  \begin{itemize}
-    \item \textbf{log file} - sequential file of records in stable storage
     \item \textbf{transaction table (TT)} - 1 entry for each active txn
       \begin{itemize}
         \item (txn ID, last LSN, C/U status)
       \end{itemize}
-    \item \textbf{dirty page table (DPT)} - 1 entry per dirty page in buffer pool
-      \begin{itemize}
-        \item (pageID, recLSN) = earliest log record that dirtied page
-      \end{itemize}
+    \item \textbf{dirty page table (DPT)} - (pageID, recLSN) = earliest LR that dirtied page
     \item \textbf{log records}: (type, txn ID, prevLSN, undoNextLSN)
-      \begin{itemize}
-        \item \textit{update} (\attention \textcolor{red}{redoable}): pageID, before-image, after-image
-        \item \textit{compensation (CLR):} (\attention \textcolor{red}{redoable}) pageID, undoNextLSN (ULR's prevLSN), action to undo
-          \begin{itemize}
-            \item when update described by ULR is undone
-          \end{itemize}
-        \item \textit{commit}: force-write all records $\leq r$ to stable storage
-          \begin{itemize}
-            \item flush all log records for transaction to disk
-          \end{itemize}
-        \item \textit{abort:} create when txn is to be aborted
-        \item \textit{end:} create when all processing for $T$ is completed
-        \item \textit{checkpoint:} speed up recovery (scan from checkpoint)
-      \end{itemize}
+    \item \definition[protocol]{write-ahead logging (WAL)} do not flush uncommitted update to DB until log record containing before-image is flushed to log \textbf{(abort)}
+    \item \definition[protocol]{force-at-commit} do not commit txn until the after-images of all its updated records are in stable storage \textbf{(commit)}
+    \item (\attention \textcolor{red}{redoable}) = update LR and compensation LR
+    \item All types of log records must have type, txnID, prevLSN
   \end{itemize}
 
-  \subsubsection{implementing abort}
+  % \subsubsection{data structures}
 
-  \begin{itemize}
-    \item \definition[protocol]{write-ahead logging (WAL)} do not flush an uncommitted update to the DB until the log record containing its before-image has been flushed to log
-      \begin{itemize}
-        \item each DB page contains \ildefinition{pageLSN} (LSN of latest update)
-        \item before flushing page P, ensure all log records $\leq$ P.pageLSN have been flushed to disk
-      \end{itemize}
-  \end{itemize}
+  % \begin{itemize}
+  %   \item \textbf{log file} - sequential file of records in stable storage
+  %   \item \textbf{transaction table (TT)} - 1 entry for each active txn
+  %     \begin{itemize}
+  %       \item (txn ID, last LSN, C/U status)
+  %     \end{itemize}
+  %   \item \textbf{dirty page table (DPT)} - 1 entry per dirty page in buffer pool
+  %     \begin{itemize}
+  %       \item (pageID, recLSN) = earliest log record that dirtied page
+  %     \end{itemize}
+  %   \item \textbf{log records}: (type, txn ID, prevLSN, undoNextLSN)
+  %     \begin{itemize}
+  %       \item \textit{update} (\attention \textcolor{red}{redoable}): pageID, before-image, after-image
+  %       \item \textit{compensation (CLR):} (\attention \textcolor{red}{redoable}) pageID, undoNextLSN (ULR's prevLSN), action to undo
+  %         \begin{itemize}
+  %           \item when update described by ULR is undone
+  %         \end{itemize}
+  %       \item \textit{commit}: force-write all records $\leq r$ to stable storage
+  %         \begin{itemize}
+  %           \item flush all log records for transaction to disk
+  %         \end{itemize}
+  %       \item \textit{abort:} create when txn is to be aborted
+  %       \item \textit{end:} create when all processing for $T$ is completed
+  %       \item \textit{checkpoint:} speed up recovery (scan from checkpoint)
+  %     \end{itemize}
+  % \end{itemize}
 
-  \subsubsection{implementing commit}
+  % \subsubsection{implementing abort}
 
-  \begin{itemize}
-    \item \definition[protocol]{force-at-commit} do not commit txn until the after-images of all its updated records are in stable storage
-      \begin{itemize}
-        \item \textit{commit LR}; txn is considered committed if its commit log record has been written to stable storage
-      \end{itemize}
-  \end{itemize}
+  % \begin{itemize}
+  %   \item \definition[protocol]{write-ahead logging (WAL)} do not flush an uncommitted update to the DB until the log record containing its before-image has been flushed to log
+  %     \begin{itemize}
+  %       \item each DB page contains \ildefinition{pageLSN} (LSN of latest update)
+  %       \item before flushing page P, ensure all log records $\leq$ P.pageLSN have been flushed to disk
+  %     \end{itemize}
+  % \end{itemize}
+
+  % \subsubsection{implementing commit}
+
+  % \begin{itemize}
+  %   \item \definition[protocol]{force-at-commit} do not commit txn until the after-images of all its updated records are in stable storage
+  %     \begin{itemize}
+  %       \item \textit{commit LR}; txn is considered committed if its commit log record has been written to stable storage
+  %     \end{itemize}
+  % \end{itemize}
 
   \subsubsection{implementing restart}
 
@@ -884,6 +901,7 @@
               \begin{itemize}
                 \item create \textit{CLR} $r_2$ with $r_2$.undoNextLSN=r.prevLSN
                 \item update TT: T.lastLSN=$r_2$.LSN
+                \item create DPT entry for P with recLSN=$r_2$.LSN if P not in DPT
                 \item undo logged action and update P.pageLSN=$r_2$.LSN
                 \item \texttt{update-L-and-TT}(r.prevLSN)
               \end{itemize}
@@ -893,18 +911,18 @@
       \end{enumerate}
   \end{enumerate}
 
-  \subsubsection{normal transaction processing}
+  % \subsubsection{normal transaction processing}
 
-  \begin{itemize}
-    \item \textbf{TT}: create new or update existing entry for $T$ (lastLSN)
-      \begin{itemize}
-        \item when $T$ commits, update status=C
-        \item when end log record is generated, remove $T$'s entry
-      \end{itemize}
-    \item P is updated: update P.pageLSN = r.LSN
-    \item P is updated \& not in DPT: create entry (recLSN=r.LSN)
-    \item when P is flushed to disk: remove P's \textbf{DPT} entry
-  \end{itemize}
+  % \begin{itemize}
+  %   \item \textbf{TT}: create new or update existing entry for $T$ (lastLSN)
+  %     \begin{itemize}
+  %       \item when $T$ commits, update status=C
+  %       \item when end log record is generated, remove $T$'s entry
+  %     \end{itemize}
+  %   \item P is updated: update P.pageLSN = r.LSN
+  %   \item P is updated \& not in DPT: create entry (recLSN=r.LSN)
+  %   \item when P is flushed to disk: remove P's \textbf{DPT} entry
+  % \end{itemize}
 
 
 
