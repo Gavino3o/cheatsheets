@@ -18,7 +18,7 @@
   /Title (CS3223.pdf)
   /Creator (TeX)
   /Producer (pdfTeX 1.40.0)
-  /Author (Jovyn Tan)
+  /Author (Jovyn Tan and Gavin Chiam)
   /Subject (CS3223)
 /Keywords (CS3223, nus,cheatsheet,pdf)}
 
@@ -127,8 +127,7 @@
     \fbox{%
       \parbox{0.8\linewidth}{\centering \textcolor{black}{
           {\Large\textbf{CS3223}}
-        \\ \normalsize{AY22/23 SEM 2}}
-        \\ {\footnotesize \textcolor{gray}{github/jovyntls}}
+        \\ \normalsize{AY23/24 SEM 2}}
       }%
     }
   \end{center}
@@ -256,7 +255,7 @@
     \item \textbf{format-1}: $\quad$ cost to retrieve data records $ \geq \lceil\frac{||\sigma_{p'}(R)||}{b_d}\rceil $
     \item \textbf{format-2}: $\quad$ cost to retrieve data entries $ \geq \lceil\frac{||\sigma_{p'}(R)||}{b_i}\rceil $ 
       \\* cost to retrieve data records = $ \begin{cases} 0 \quad \text{if $$I$$ is a covering index,}\\
-        ||\sigma_{p'}(R)||  \quad \text{otherwise}
+        ||\sigma_{p_c}(R)||  \quad \text{otherwise}
       \end{cases} $
   \end{itemize}
 
@@ -314,7 +313,7 @@
       \end{itemize}
     \item partition overflow: recursively apply partitioning
       \begin{itemize}
-        \item to avoid, $B>$ size of hash table for $R_i$ = $\frac{|\pi^*_L(R)|}{B_1} \times f$
+        \item to avoid, $B>$ size of hash table for $R_i$ = $\frac{|\pi^*_L(R)|}{B-1} \times f$
           \begin{itemize}
             \item  approximately $B> \sqrt{f\times |\pi^*_L(R)|}$
           \end{itemize}
@@ -336,7 +335,7 @@
         \item for each $(B-2)$ pages of $R$: for each $P_S$ of $S$: check r,s
       \end{itemize}
     \item \textbf{index nested loop join}: for joining $R.A_i = S.B_j$
-      $|R| + ||R|| \times \left( \log_F(\lceil \frac{||S||}{b_d} \rceil ) + \lceil \frac{||S||}{b_d ||\pi_{B_j}(S)||} \rceil \right)$
+      $|R| + ||R|| \times \left( \log_F(\lceil \frac{||S||}{b_d} \rceil ) + \lceil \frac{||S||}{b_d ||\pi_{B_j}(S)||} \rceil + c \right)$
   \end{itemize}
 
   \textbf{sort-merge join}
@@ -374,7 +373,7 @@
 
   \begin{itemize}
     \item \textbf{partition overflow} if $R_i$ cannot fit in memory: recurse
-    \item I/O cost: $3(|R|+|S|) \quad$ (no partition overflow)
+    \item I/O cost: $\# \text{Partition Phases} \times 2(|R|+|S|) + |R|+|S| \quad$
     \item $B > \frac{f \times |R|}{B-1} + 2$ (input \& output buffer) $\approx B > \sqrt{f\times |R|}$
       \begin{itemize}
         \item during probing, $B >$ size of each partition $+ 2$
@@ -430,13 +429,13 @@
   \end{itemize}
 
   \textbf{hybrid: pipelined evaluation with partial materialisation}
-
+  \vspace*{-0.3cm}
   \begin{itemize}
     \item materialise if repeatedly scanned (e.g. nested loop join)
   \end{itemize}
-
+  \vspace*{-0.6cm}
   \subsection{query plans}
-
+  \vspace*{-0.3cm}
   query: $\geq 1$ logical plans: implemented by $\geq 1$ physical plans
 
   \textbf{query plan trees}
@@ -452,6 +451,7 @@
     \includegraphics[width=\linewidth]{cs3223-query-plan-trees.png} 
   \end{minipage}
 
+  \vspace*{-0.6cm}
   \subsection{query optimisation}
   \begin{itemize}
     \item binary operators ($\bowtie, \times$) are \textbf{commutative \& associative}
@@ -469,12 +469,13 @@
   \end{minipage}
 
   \textbf{System R Optimiser}
-
+  \vspace*{-0.2cm}
   \begin{itemize}
     \item enumerate only left-deep query plans; avoid cross-product query plans; consider early selections and projections
     \item DP + \textbf{sort order} $o_i$ of query plan output: $optPlan(S_i, o_i)$
   \end{itemize}
 
+  \vspace*{-0.6cm}
   \subsection{cost estimation}
 
   \begin{itemize}
@@ -482,7 +483,7 @@
       \begin{enumerate}
         \item \textbf{uniformity} - of distribn of attr values
         \item \textbf{independence} - for distribn of values in different attrs
-        \item \textbf{inclusion} - for $R \bowtie_{R.A=S.B}S$, if $||\pi_A(S)|| \leq ||\pi_B(S)||$, then $\pi_A(R) \subseteq \pi_B(S)$ 
+        \item \textbf{inclusion} - for $R \bowtie_{R.A=S.B}S$, if $||\pi_A(R)|| \leq ||\pi_B(S)||$, then $\pi_A(R) \subseteq \pi_B(S)$ 
           \\* $\Rightarrow$ every $R$ tuple joins with some $S$ tuple
       \end{enumerate}
     \item \textbf{size estimation} for query $q = \sigma_p(e)$,  $\quad p = t_1 \land \dots \land t_n$
@@ -492,7 +493,8 @@
             \item aka \textit{reduction factor}, $rf(t_i) = \frac{||\sigma_t(e)||}{||e||}$
           \end{itemize}
         \item $||q|| \approx ||e|| \times \prod^n_{i=1}rf(t_i)$
-        \item join selectivity: $rf(R.A=S.B) \approx \frac{1}{\max\{||\pi_A(R)||, ||\pi_B(S)||\}}$
+        \item join selectivity estimation: $rf(R.A=S.B) \approx \frac{1}{\max\{||\pi_A(R)||, ||\pi_B(S)||\}}$
+        \item given $\pi_A(R) \leq \pi_B(S)$:\\$||Q|| = ||R|| \times\frac{||S||}{\pi_B(S)}$
       \end{itemize}
     \item \textbf{histogram estimation}
       \begin{itemize}
@@ -636,7 +638,7 @@
   \subsection{Locking Granularity}
 
   \begin{itemize}
-    \item (coarsest/most granular) database > relation > page > tuple
+    \item (coarsest/most granular) database $>$ relation $>$ page $>$ tuple
     \item \definition[lock]{multi-granular} can request different granularity
       \begin{itemize}
         \item if $T$ holds lock mode $M$ on data granule $D$, then $T$ implicitly holds $M$ on data granules finer than $D$
@@ -705,7 +707,7 @@
       \end{itemize}
     \item \textbf{garbage collection}: if not read by any (active/future) txn
       \begin{itemize}
-        \item delete $O_i$ if there exists a newer $O_j$ (commit($T_i$) < commit($T_j$)) such that for every active txn $T_k$ that started after commit($T_i$),  we have commit($T_j$) < start($T_k$)
+        \item delete $O_i$ if there exists a newer $O_j$ (commit($T_i$) $<$ commit($T_j$)) such that for every active txn $T_k$ that started after commit($T_i$),  we have commit($T_j$) $<$ start($T_k$)
       \end{itemize}
     \item \textbf{performance}: $\checkmark$ similar to READ\_COMMITTED but without \textit{lost update} or \textit{unrepeatable read} anomalies
       \begin{itemize}
@@ -790,7 +792,7 @@
       \begin{itemize}
         \item (pageID, recLSN) = earliest log record that dirtied page
       \end{itemize}
-    \item \textbf{log records}: (type, txn ID, prevLSN, other info)
+    \item \textbf{log records}: (type, txn ID, prevLSN, undoNextLSN)
       \begin{itemize}
         \item \textit{update} (\attention \textcolor{red}{redoable}): pageID, before-image, after-image
         \item \textit{compensation (CLR):} (\attention \textcolor{red}{redoable}) pageID, undoNextLSN (ULR's prevLSN), action to undo
@@ -851,7 +853,7 @@
         \item scan in forward direction for all \textit{redoable LR}
           \begin{enumerate}
             \item if \textit{not redoable} or \textcolor{blue}{NOT optimisation cond}: continue
-            \item if P.pageLSN < $r$.LSN: ($r$ has not been installed)
+            \item if P.pageLSN $<$ $r$.LSN: ($r$ has not been installed)
               \begin{itemize}
                 \item reapply logged action in $r$ to P
                 \item update P.pageLSN = r.LSN
@@ -864,7 +866,7 @@
         \item create \textit{end LR} for all status=C in TT; remove entry
       \end{enumerate}
       \begin{itemize}
-        \item \textcolor{blue}{optimisation} cond: (P $\not\in$ DPT) \textit{or} (DPT P.recLSN > r.LSN)
+        \item \textcolor{blue}{optimisation} cond: (P $\not\in$ DPT) \textit{or} (DPT P.recLSN $>$ r.LSN)
           \begin{itemize}
             \item update of $r$ has already been applied to P
           \end{itemize}
