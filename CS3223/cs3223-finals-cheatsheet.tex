@@ -2,7 +2,7 @@
 \usepackage[scaled=0.92]{helvet}
 \usepackage{calc}
 \usepackage{multicol}
-\usepackage[a4paper,margin=3mm,landscape]{geometry}
+\usepackage[a4paper,margin=4mm,landscape]{geometry}
 \usepackage{amsmath,amsthm,amsfonts,amssymb}
 \usepackage{color,graphicx,overpic}
 \usepackage{hyperref}
@@ -126,17 +126,18 @@
   \begin{center}
     \fbox{%
       \parbox{0.8\linewidth}{\centering \textcolor{black}{
-          {\Large\textbf{CS3223}}
-        \\ \normalsize{AY23/24 SEM 2}}
+          {\Large\textbf{CS3223 AY23/24 SEM 2}}}
       }%
     }
   \end{center}
 
-  \includegraphics[width=0.97\linewidth]{cs3223-notation.png} 
+  \vspace{-0.4cm}
+  \includegraphics[height=24mm,width=0.9\linewidth]{cs3223-notation.png} 
+  \vspace{-0.2cm}
 
-  \textbf{Data entry formats}: \textbf{1.} actual data record; 
-  \textbf{2.} \textbf{(k, RID)} - fixed length \texttt{(k, \textbf{$\bullet$})}; 
-  \textbf{3.} \textbf{(k, RID-list)} - e.g. \texttt{(k, \{RID11, RID12\})}
+  % \textbf{Data entry formats}: \textbf{1.} actual data record; 
+  % \textbf{2.} \textbf{(k, RID)} - fixed length \texttt{(k, \textbf{$\bullet$})}; 
+  % \textbf{3.} \textbf{(k, RID-list)} - e.g. \texttt{(k, \{RID11, RID12\})}
 
   \section{04.1 SORTING}
 
@@ -429,12 +430,9 @@
   \end{itemize}
 
 
-  \textbf{hybrid: pipelined evaluation + partial materialisation}
+  \textbf{hybrid: pipelined evaluation + partial materialisation}\\
+  materialise if repeatedly scanned (e.g. nested loop join)
 
-
-  \begin{itemize}
-    \item materialise if repeatedly scanned (e.g. nested loop join)
-  \end{itemize}
 
 
   \textbf{query plans}\\
@@ -476,7 +474,7 @@
   %   \includegraphics[width=\linewidth]{cs3223-query-optimisation-example.png} 
   % \end{minipage}
 
-  \subsection{System R Optimiser}
+  \textbf{System R Optimiser}
 
   \begin{itemize}
     \item enumerate only left-deep query plans; avoid cross-product query plans; consider early selections and projections
@@ -531,7 +529,7 @@
   \end{itemize}
 
   \begin{itemize}
-    \item \definition{conflict serialisable} conflict equivalent to a serial sched
+    \item \definition{conflict serialisable} conflict equivalent to a serial sch
       \begin{enumerate}
         \item acyclic conflict serialisability graph (node: committed txn, edge: precedes and conflicts with any action)
         \item conflict serialisable $\Rightarrow$ view serialisable
@@ -594,7 +592,7 @@
 
   \subsection{Lock Management}
 
-  \subsubsection{deadlocks}
+  \textbf{deadlocks}
 
   \begin{itemize}
     \item \textbf{deadlock detection:} waits-for graph (WFG)
@@ -791,8 +789,8 @@
       \end{itemize}
     \item \textbf{dirty page table (DPT)} - (pageID, recLSN) = earliest LR that dirtied page
     \item \textbf{log records}: (type, txn ID, prevLSN, undoNextLSN)
-    \item \definition[protocol]{write-ahead logging (WAL)} do not flush uncommitted update to DB until log record containing before-image is flushed to log \textbf{(abort)}
-    \item \definition[protocol]{force-at-commit} do not commit txn until the after-images of all its updated records are in stable storage \textbf{(commit)}
+    \item \textbf{write-ahead logging (WAL)}: do not flush uncommitted update to DB until log record containing before-image is flushed to log \textbf{(abort)}
+    \item \textbf{force-at-commit}: do not commit txn until the after-images of all its updated records are in stable storage \textbf{(commit)}
     \item (\attention \textcolor{red}{redoable}) = update LR and compensation LR
     \item All types of log records must have type, txnID, prevLSN
   \end{itemize}
