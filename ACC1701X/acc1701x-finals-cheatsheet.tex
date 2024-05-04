@@ -1,0 +1,422 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% writeLaTeX Example: A quick guide to LaTeX
+%
+% Source: Dave Richeson (divisbyzero.com), Dickinson College
+% 
+% A one-size-fits-all LaTeX cheat sheet. Kept to two pages, so it 
+% can be printed (double-sided) on one piece of paper
+% 
+% Feel free to distribute this example, but please keep the referral
+% to divisbyzero.com
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% How to use writeLaTeX: 
+%
+% You edit the source code here on the left, and the preview on the
+% right shows you the result within a few seconds.
+%
+% Bookmark this page and share the URL with your co-authors. They can
+% edit at the same time!
+%
+% You can upload figures, bibliographies, custom classes and
+% styles using the files menu.
+%
+% If you're new to LaTeX, the wikibook is a great place to start:
+% http://en.wikibooks.org/wiki/LaTeX
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[10pt,landscape]{article}
+\usepackage{amssymb,amsmath,amsthm,amsfonts}
+\usepackage{multicol,multirow}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{fancyvrb}
+\usepackage[a4paper, margin=4mm, landscape]{geometry}
+\usepackage[colorlinks=true,citecolor=blue,linkcolor=blue]{hyperref}
+
+
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+    { \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
+  {\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+    {\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+    {\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+  }
+\pagestyle{empty}
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x 
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -2ex}%
+                                {0.2ex plus -1ex}%
+                                {\normalfont\small\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.5ex}%
+                                {0.2ex plus -1ex}%
+                                {\normalfont\footnotesize\bfseries}}
+\makeatother
+\setcounter{secnumdepth}{0}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+\graphicspath{ {./images/} }
+% -----------------------------------------------------------------------
+
+\title{ACC1701X Finals Cheatsheet AY2023/2024 Semester 2}
+
+\begin{document}
+
+\raggedright
+\footnotesize
+
+% \begin{center}
+%      \Large{\textbf{ACC1701X Finals Cheatsheet AY2023/2024 Sem 2}} \\
+% \end{center}
+
+\begin{multicols}{3}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+\begin{scriptsize}
+
+\begin{center}
+  \fbox{%
+    \parbox{0.8\linewidth}{\centering \textcolor{black}{
+        {\Large\textbf{ACC1701X}}
+      \\ \text{AY23/24 SEM 2}}
+    }%
+  }
+\end{center}
+
+\subsubsection{\underline{Balance Sheet Items and Formulas}}
+- Separate Entity Concept, Time-Period Assumption, Arm's Length Transaction Assumption, Cost Principle, Fair Value Principle, Monetary Measurement concept, Going Concern Assumption\\
+\begin{itemize} \itemsep -2pt
+  \item $Assets = Liabilities + Equity$
+  \item $Assets = \textit{Current Asset} + \textit{Non-Current Assets}$
+  \item $Liabilities = \textit{Current Liabilities} + \textit{Non-Current Liabilities}$
+  \item $\textit{Retained Earnings(begin)} + \textit{Net Income} - Dividends = \textit{Retained Earnings(end)}$
+  \item $\textit{Equity(begin)} + \textit{Increase in Capital Stock} + \textit{Net Income} - Dividends + \textit{Other Comprehensive Income} = Equity(end)$
+\end{itemize}
+\subsubsection{\underline{SCI Items and Formulas}}
+\begin{itemize} \itemsep -2pt
+    \item \textit{Expenses = Operating expense $+$ Non-Operating Expense}
+    \item $Revenue - Expenses = \textit{Net Income}$\\
+    \item $\textit{Net Income} + \textit{Other Comprehensive Income} = \textit{Comprehensive Income}$\\
+    \item $\textit{Revenue} - \textit{COGS} = \textit{Gross Profit}$
+\end{itemize}
+
+\subsubsection{\underline{Sales Discount}}
+\textbf{DR Accounts Receivable -- CR Sales Revenue} (Revenue made, credit payment)\\
+\textbf{DR Cash, Sales Discount -- Accounts Receivable}
+
+\subsubsection{\underline{Sales Returns and Allowances}}
+\textbf{DR Accounts Receivable -- CR Sales Revenue}\\
+\textbf{DR COGS -- Inventory}\\
+If return required:\\
+\textbf{DR Sales Returns and Allowances -- CR Accounts Receivable}\\
+\textbf{DR Inventory -- CR COGS}\\
+
+\textit{\textbf{Net Sales} $=$ Sales Revenue $-$ Sales Discount $-$ Sales Returns and Allowances }
+
+\subsubsection{\underline{Treatment of Bad Debt}}
+ECL is an \underline{estimated} expense in the SCI. Loss Allowance is a contra-asset account to Accounts Receivable in the balance sheet.\\
+\textbf{DR Expected Credit Loss -- CR Loss Allowance}\\
+If specific customer identified specifically as uncollectible, \underline{write off}:\\
+\textbf{DR Loss Allowance -- CR Accounts Receivable}\\
+If written off subsequently pays the outstanding balance, \underline{reinstate}:\\
+\textbf{DR Accounts Receivable -- CR Loss Allowance}\\
+\textbf{DR Cash -- CR Accounts Receivable}\\
+- Loss Allowance (End) = Loss Allowance (Begin) + ECL - Unadjusted Balance\\
+- If there is an existing \textbf{credit} balance in loss allowance. Top up less by $ECL - \textit{Unadjusted Balance}$\\
+- If there is an existing \textbf{debit} balance in loss allowance. Top up more by $ECL + \textit{Unadjusted Balance}$\\
+
+\textit{Accounts Receivable(net) = Accounts Receivable(begin) $-$ Loss Allowance (end)}\\
+
+\subsubsection{\underline{Notes Receivable}}
+\textbf{DR Notes Receivable -- CR Accounts Receivable} (issuing note)\\
+\textbf{DR Cash -- CR Notes Receivable, Interest Revenue} (accepting payment)\\
+If note is \underline{dishonoured} (convert into AR):\\
+\textbf{DR Accounts Receivable -- CR Notes Receivable, Interest Revenue}\\
+
+\subsubsection{\underline{Purchase Discounts/Returns \& Bank Reconcilation}}
+\textbf{DR Inventory -- CR Accounts Payable}\\
+\textbf{DR Accounts Payable -- CR Cash, Inventory}(discount amount)\\
+- Returns:\\
+\textbf{DR Accounts Payable -- CR Inventory}\\
+\includegraphics*[height= 2.3cm,width=0.4\linewidth]{bank_reconcilation.png}
+\includegraphics*[height= 2.3cm,width=0.5\linewidth]{internal_controls.png}\\
+
+\subsubsection{\underline{Perpetual vs Periodic Inventory System}}
+- Periodic: No COGS recorded until end of period. Temporary accounts are used to record the \textbf{purchases, 
+freight-in, purchases returns and purchases discounts}.\\
+- \textbf{DR: Inventory(Net Purchases), Purchase Returns, Purchase Discounts -- CR: Freight In, Purchases} (Adjust into Inventory Acc)\\
+\textit{COGS $=$ Inventory(begin) $+$ Net Purchases $-$ Inventory(end)}\\
+\textit{Cost of goods available for sale $=$ Beginning Inv Balance + Net Purchases}\\
+- One entry: \textbf{DR COGS -- CR Inventory}\\
+- When inventory price rises. Gross margin, net income, inventory(end) is highest with FIFO. WA and LIFO understate inventory(end).
+
+\subsubsection{\underline{Net Realizable Value, NRV}}
+If NRV $<$ Cost, write down item by item:\\
+\textbf{DR COGS -- CR Allowance for Inventory Write Down (Contra-Inventory, BL)}\\
+If NRV $\geq$ Cost, no adjustments needed.\\
+\subsection{Liabilities}
+
+\subsubsection{\underline{Payroll and Payroll Related Liabilities}}
+
+- Employers withhold payroll taxes, pensions, insurances, and other deductions to government and agencies.\\
+\textbf{DR Salaries Expense -- CR Salaries Payable; Various Payables...}\\
+\textbf{DR Salaries Payable -- CR Cash}\\
+- Employers contribute to insurance premium and pensions for employees.\\
+\textbf{DR Various Expenses... -- CR Various Payables...;}\\
+- Employers pay amount withheld for employees and its own contributions.\\
+\textbf{DR Various Payables... -- CR Cash}\\
+- For this course: 17\% CPF for employer, 20\% CPF for employees. (applied on gross salary)\\
+\textbf{DR Salaries Expense -- CR Employees's CPF Payable; Salaries Payable;}\\
+\textbf{DR Employer's CPF Expense -- CR Employers CPF Payable}\\
+- Employer making payment to CPF Board and Employees.\\
+\textbf{Salaries Payable -- CR Cash;}\\
+\textbf{Employers CPF Payable; Employees's CPF Payable -- CR Cash}\\
+
+\subsubsection{\underline{Sales Tax Payable}}
+
+- Sales taxes are paid by customers to the seller, who in turn pays the taxes to the government agency.\\
+\textbf{DR Cash -- CR Sales Revenue; Sales Tax Payable}\\
+
+\subsubsection{\underline{GST and VAT}}
+
+$\text{Supplier} \xrightarrow[\text{Input Tax}]{}$ Seller $\xrightarrow[\text{Output Tax}]{}$ Customer
+\textbf{DR Inventory/Purchases -- CR Cash; GST Input Tax [Purchasing inventory]}\\
+\textbf{DR Cash -- CR Sales Revenue; GST Output Tax [Making a sale]}\\
+\textbf{DR GST Output Tax -- CR GST Input Tax; GST Tax Payable (Calculated Net GST Payable)}\\
+\textbf{DR GST Tax Payable -- CR Cash}\\
+- For VAT: Swap out "GST Tax Payable" with "Business Tax Payable"\\
+
+\subsubsection{\underline{Property and Income Tax Payable}}
+
+Property Tax:\\
+\textbf{DR Prepaid Property Taxes -- CR Cash}\\
+\textbf{DR Property Tax Expense -- CR Prepaid Property Taxes}\\
+(Remember to adjust according to months of prepaid used-up)\\
+Income Tax:\\
+Applied on income before tax in SCI. (Tax rate is 17\% in SG)\\
+\textbf{DR Income Tax Expense -- CR Income Tax Payable}\\
+
+\subsubsection{\underline{Provisions and Contingent Liabilities}}
+
+- Provision is reported as an estimated liability on the balance 
+sheet. It is recognised when the loss is probable and a
+reliable estimate can be made.\\
+- Contingent liabilities should be disclosed in notes to financial 
+statements if certain conditions are met. NOT reported on the balance sheet.\\
+\begin{itemize} \itemsep -2pt
+  \item When probability of losses 10-50\%, disclose in notes.
+  \item When probability of losses 50\% or more, recognise as provision.
+  \item When probability of losses less than 10\%, no need to disclose.
+\end{itemize}
+\textbf{DR Lawsuit Loss -- CR Lawsuit Provision}\\
+
+\subsubsection{\underline{Provision for Product Warranty}}
+
+\textbf{DR Product Warranty Expense -- Product Warranty Provision}\\
+\textbf{DR Product Warranty Provision -- CR Supplies; Wages Payable; Cash etc...}\\
+- The balance of warranty liability/provision account does not affect warranty expense.\\
+
+\subsubsection{\underline{Other Revenue and Expenses in SCI}}
+- Other Revenue and Expenses (or non-operating income 
+and expenses) are items that incurred or earned from 
+activities outside of, or peripheral to, the normal 
+operations of a firm.\\
+- Dividend Revenue, Gain on sale of land, Interest expense etc.\\
+
+\subsection{Property, Plant and Equipment (PPE)}
+- PPE Acquisition Cost = Purchase Price + All Costs to get it ready for use.\\
+- If PPE is acquired by purchase of two or more assets acquired together at a single price. 
+Fair market value is used to calculate the apportionment of lump-sum cost (used in JE).\\
+
+\subsubsection{\underline{Depreciation, DEPR}}
+- $\textbf{Depreciation amount} = \text{Cost} - \text{Residual Value}$ 
+- Recognised in income statement as operating expense.\\
+- Residual value $\rightarrow$ value of asset at end of its useful life.\\ 
+- Useful life $\rightarrow$ period over which asset is expected to be used/ number of productions.\\
+\textbf{DR Depreciation Expense -- CR Accumulated Depreciation, "PPE"}\\
+- Accumulated Depreciation is a contra-asset account to "PPE" account in BL.\\
+- $\textbf{Carrying amount} = \text{Cost} - \text{Accumulate Depreciation}$\\
+- Change in depreciation estimates only affect future years
+
+\subsubsection{\underline{Straight Line Method of Depreciation}}
+- $\textbf{Annual DEPR Expense} = \frac{\text{Cost - Residual Value}}{\text{Estimated Useful Life (Years)}}$\\
+- Note: It should be broken into months for end of fiscal year reporting. (Partial Year DEPR)\\
+
+\subsubsection{\underline{Unit of Production Method of Depreciation}}
+$\textbf{Annual DEPR Expense} = \frac{\text{Cost - Residual Value}}{\text{Estimated Useful Life (Units)}} \times \text{Units produced}$\\
+- Note: If units used in final year do not add up to useful life, carry over.
+- Used for natural resources (Depletion). dollar per ton\\
+- \textbf{DR Depletion Expense -- CR Accumulated Depletion, "PPE"}\\
+
+\subsubsection{\underline{Declining-Balance Method of Depreciation}}
+- Double Declining Balance (DDB) Method:\\
+- $\textbf{Depreciation Rate (DDB)} = \frac{1}{\text{Estimated Life (Years)}} \times 2$\\
+- Note: Change 2 to 1.5 for 150\% DDB.\\
+- $\textbf{Annual DEPR Expense} = \text{Depreciation Rate} \times \text{Remaining Carrying Amount}$\\
+- Note: If depreciation amount reduces carrying amount below residual value, reduce to residual value.
+
+\subsubsection{\underline{Impairment of PPE}}
+- \textbf{Net fair value} = Fair value - cost of disposal.\\
+- \textbf{Recoverable amount} = $\max \{\text{Net fair value, Value in use}\}$\\
+- If recoverable amount $<$ carrying amount, recognise impairment loss.\\
+- Impairment loss = Carrying amount - Recoverable amount.\\
+- Impairment loss is recognised in income statement as non-operating expense.\\
+- \textbf{DR Impairment Loss -- CR Accumulated Impairment Losses, "PPE"}\\
+- Accumulated Impairment Losses is a contra-asset account to "PPE" account in BL.\\
+- Carrying amount in BL = Cost - Accumulated Depreciation - Accumulated Impairment Losses.\\
+
+\subsubsection{\underline{Disposal or Sale of PPE}}
+- At disposal, remove 3 accounts: PPE, Accumulated Depreciation, Accumulated Impairment\\
+- Gain/Loss = Sales Proceeds - Cost of Disposal - Carrying Amount.\\
+- Gain/Loss of disposal is recognised in income statement as non-operating income/expense.\\
+- If Gain, debit side. If Loss, credit side.\\
+- \textbf{DR Accumulated Depreciation; Accumulated Impairment Loss; Cash -- CR PPE; Gain on Disposal}\\
+- \textbf{DR Accumulated Depreciation; Accumulated Impairment Loss; Loss on Disposal -- CR PPE; Cash}\\
+- \textbf{DR Accumulated Depreciation; Accumulated Impairment Loss; Cash -- CR PPE}\\
+
+\subsubsection{\underline{Intangible Assets, IA}}
+- Patents, trademarks, copyrights, franchises, licences, goodwill.\\
+- Internally generated IA are not recognised in BL.\\
+- Goodwill: Purchase price - fair market value of net assets acquired.\\
+- \textbf{DR Inventory; Long-term operating assets...; Goodwill -- CR Liabilities; Cash}\\
+
+\subsubsection{\underline{Amortisation of IA}}
+- Straight-line Amortisation = $\frac{\text{Cost}}{\text{Estimated Useful Life}}$\\
+- Intangibles with indefinite useful life are not amortised (goodwill/broadcast licence)\\
+- \textbf{DR Amortisation Expense, "IA" -- CR Accumulated Amortisation, "IA"}\\
+
+\subsubsection{\underline{Capitalise vs Expense}}
+- Maintenance, repairs, and minor improvements which does not increase productivity are expensed.\\
+- \textbf{DR Maintenance Expense -- CR Cash}\\
+- Major improvements, extensions, and replacements are capitalised.\\
+- \textbf{DR PPE -- CR Cash}\\
+- For long term assets, capitalisation can be permanent or limited.
+- Limited capitalisation is capitalised in separate account and depreciated over useful life.\\
+- Freehold land: Not depreciated. Leasehold land: Depreciated over lease term.\\
+- R\&D: Research (expensed) $\xrightarrow[]{\text{Tech Feasibility}}$ Development (capitalised)\\
+- Targeted advertising: Capitalised if it increases future benefits. General advertising is expensed.\\
+
+\subsection{Equity}
+
+\subsubsection{\underline{Issuance of Shares}}
+- Par Value: Legal capital per share. No correlation to Market Value of share\\
+- Premium: Amount received above par value. AKA Paid-in capital in Excess of Par\\
+- \textbf{DR Cash (Market) -- CR Ordinary Shares (Par); Paid-in Capital in Excess of Par, Ordinary Shares}\\
+- \textbf{DR Cash (Market) -- CR Preference Shares (Par); Paid-in Capital in Excess of Par, Preference Shares}\\
+- Total Contributed Capital = OS + PS + Paid-in Capital in Excess of Par, OS and PS\\
+- If no par value is stated, entire proceeds is credited to shares account.\\
+- \textbf{DR Cash -- CR Ordinary Shares}\\
+- Non-cash Basis: Use fair value of asset received. If not available, use fair market value of shares issued.\\
+- \textbf{DR "Asset" -- CR Ordinary Shares; Paid-in Capital in Excess of Par, Ordinary Shares}\\
+
+\subsubsection{\underline{Treasury Shares}}
+- Corporation buy back shares. Treasury Shares account is a contra-equity account. Normally has debit balance.\\
+- No dividends will be payable for Treasury shares.\\
+- Market price spent to acquire of treasury shares is recorded in Treasury Shares account.\\
+- \textbf{DR Treasury Shares -- CR Cash}\\
+- Reissuing treasuring share above acquisition cost:
+- \textbf{DR Cash (Issued Price) -- CR Treasury Shares (Cost); Paid-in Capital, Treasury Shares (Diff)}\\
+- Reissuing treasuring share below acquisition cost (Treasury Share sufficient balance):\\
+- \textbf{DR Cash (Issued Price); Paid-in Capital, Treasury Shares (Diff) -- CR Treasury Shares (Cost)}\\
+- Reissuing treasuring share below acquisition cost (Treasury Share insufficient balance):\\
+- \textbf{DR Cash (Issued Price); Paid-in Capital, Treasury Shares (Bal); Retained Earnings (Overflow) -- CR Treasury Shares (Cost)}\\
+- Treasury shares amount is deducted from contributed capital + RE in BL, based on acquisition cost.\\
+- Paid-in capital, Treasure Shares is \underline{ADDED} to contributed capital + RE in BL.
+
+\subsubsection{\underline{Cash Dividends}}
+- \textbf{DR Cash Dividends -- CR Cash Dividends Payable} [Declare]\\
+- \textbf{DR Retained Earnings-- CR Cash Dividends} [Close]\\
+- \textbf{DR Cash Dividends Payable -- CR Cash} [Pay]\\
+- Cash Dividends for Preference Shares: Non-cumulative and Cumulative\\
+- Preference Shares: Fixed dividend rate, paid before ordinary shares, use par value.\\
+- Non-cumulative: Only current year dividend is paid.\\
+- Cumulative: Current year dividend + any unpaid dividend in arrears.\\
+- PS and OS dividends are \underline{capped} by Total dividends declared.
+- \textbf{DR PS Dividends; OS Dividends -- CR Dividends Payable; Cash}\\
+
+\subsubsection{\underline{Share Dividends}}
+- Small share dividends are assigned at market value. (Division: 20-25\% of Total Issued Shares)\\
+- \textbf{DR Share Dividends (Market) -- CR Share Dividends Distributable (Par); Paid-in Capital in Excess of Par (Diff)}\\
+- Large share dividends are assigned at par value. \\
+- \textbf{DR Share Dividends (Par) -- CR Share Dividends Distributable (Par)}\\
+- Closing for both:
+- \textbf{DR Retained Earnings-- CR Share Dividends}
+- \textbf{DR Share Dividends Distributable -- CR Ordinary Shares}\\
+
+\subsubsection{\underline{Misc}}
+- \textbf{Share split:}
+- Par value is reduced by ratio, number of shares outstanding increased by same ratio.\\
+- \textbf{Other Comprehensive Income:}
+- Exchange differences arising on translation of the equity of foreign subsidaries, unrealised gains/losses of FVTOCI financial assets\\
+- Accumulated other Comprehensive Income is added to total contributed capital plus retained earnings.
+
+\subsection{Statement of Cash Flows}
+- Operating activities: Cash i/o primary business activities.\\
+- Investing activities: Cash i/o purchase/sale of long-term assets.\\
+- Financing activities: Cash i/o issuance/repurchase of shares, loans, payment of dividends.\\
+- Cash received from dividend and interest: OA or IA\\
+- Cash paid for interest and dividends: OA or FA\\
+- Cash paid for income tax: OA\\
+- Cash (begin) + OA + IA + FA = Cash (end)\\
+- Ignore non-cash items e.g., depreciation, amortisation and estimated credit loss.\\
+- SCF: Operating Act: Net; Investing Act: Net; Financing Act: Net; Net Increase in Cash; Beginning cash balance; End Cash Balance\\
+
+\subsection{Financial Statement Analysis}
+- Limitations: Lack of Comparability: differences in accounting classification, accounting 
+estimates and methods. Do not contain all relevant information: customer satisfaction, operational data. Historical Data.\\
+- Horizontal Analysis: Compare financial data over time.\\
+- Vertical Analysis: Compare financial data within a single period.\\
+- $\textbf{Percentage of Change} = \frac{\text{Current period amount - Base period amount}}{\text{Base period amount}}  \times 100\%$\\
+- $\textbf{Trend Percent} = \frac{\text{Current period amount}}{\text{Base period amount}} \times 100\%$
+
+\subsubsection{\underline{Liquidity Ratios}}
+- Use \underline{Year End} Figures.\\
+- $\textbf{Current Ratio} = \frac{\text{Current Asset}}{\text{Current Liability}}$\\
+- $\textbf{Acid-Test (Quick) Ratio} = \frac{\text{Current asset - Inventories - Prepayments}}{\text{Current Liabilities}}$\\
+
+\subsubsection{\underline{Efficiency Ratios}}
+- $\textbf{Fixed asset (PPE) turnover} = \frac{\text{Net Sales}}{\text{Avg Net PPE}}$\\
+- $\textbf{Operating Cycle days} = \text{\# Days Sales in Inventory + Avg Collection Period}$ [shorter better]\\
+- $\textbf{Purchases Turnover} = \frac{\text{Net Purchases}}{\text{Avg Accounts Payable}}$\\
+- $\textbf{Num of Days Purchases in Acc Payable } = \frac{365}{\text{Purchases Turnover}}$\\
+
+\subsubsection{\underline{Solvency Ratios}}
+- $\textbf{Debt Ratio} = \frac{\text{Total Liability}}{\text{Total Asset}}$\\
+- $\textbf{Debt-to-Equity Ratio} = \frac{\text{Total Liability}}{\text{Total Equity}}$\\
+- $\textbf{Time Interest Earned} = \frac{\text{Income before interest and taxes (Operating Profit)}}{\text{Annual Interest Expense}}$ [higher better]\\
+
+\subsubsection{\underline{Profitability Ratios}}
+- $\textbf{Profit Margin (ROS)} =\frac{\text{Net Income}}{\text{Net Sales}}$\\
+- $\textbf{Return of Assets} = \frac{\text{Net Income}}{\text{Avg Total Assets}}$\\
+- $\textbf{Asset Turnover} = \frac{\text{Net Sales}}{\text{Avg Total Assets}}$\\
+- $\textbf{Earnings per share (EPS)} = \frac{\text{Net Income - Preference Dividends}}{\text{Avg Num of Outstanding Ordinary Shares}}$\\
+- $\textbf{Price-Earnings (PE) Ratio} = \frac{\text{Market Value of Shares}}{\text{Net Income}} = \frac{\text{Price per share}}{\text{Earnings per share}}$\\
+
+\subsubsection{\underline{Cash Flow Ratios}}
+- $\textbf{Cash flow to Net Income Ratio} = \frac{\text{Cash Flow from Operations}}{\text{Net Income}}$\\
+- $\textbf{Cash flow Adequacy Ratio} = \frac{\text{Cash Flow from Operations}}{\text{Cash Paid for Capital Expenditure}}$\\
+
+\subsubsection{\underline{DuPont Framework}}
+- $Profitability \times Efficiency \times Leverage$\\
+- $\textbf{Return of Equity} = \text{Return on Sales} \times \text{Asset Turnover} \times \text{Assets-to-equity Ratio}$\\
+$ = \frac{\text{Net Income}}{\text{Net Sales}} \times \frac{\text{Net Sales}}{\text{Avg Total Assets}} \times \frac{\text{Avg Total Assets}}{\text{Avg Total Equity}}$\\
+- $\textbf{Accounts Receivable Turnover} = \frac{\text{Net Sales}}{\text{Average AR}}$\\
+- $\textbf{Average Collection Period} = \frac{365}{\text{Accounts Receivable Turnover}}$\\
+- $\textbf{Inventory Turnover} = \frac{\text{COGS}}{\text{Average Inventory}}$ (higher, better)\\
+- $\textbf{Num of Days Sales in Inventory} = \frac{365}{\text{Inventory Turnover}}$ (shorter, better)\\
+
+
+\end{scriptsize}
+
+\end{multicols}
+
+\end{document}
