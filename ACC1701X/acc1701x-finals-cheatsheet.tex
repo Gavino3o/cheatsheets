@@ -178,8 +178,8 @@ If NRV $\geq$ Cost, no adjustments needed.\\
 \textbf{DR Salaries Expense -- CR Employees's CPF Payable; Salaries Payable;}\\
 \textbf{DR Employer's CPF Expense -- CR Employers CPF Payable}\\
 - Employer making payment to CPF Board and Employees.\\
-\textbf{Salaries Payable -- CR Cash;}\\
-\textbf{Employers CPF Payable; Employees's CPF Payable -- CR Cash}\\
+\textbf{DR Salaries Payable -- CR Cash;}\\
+\textbf{DR Employers CPF Payable; Employees's CPF Payable -- CR Cash}\\
 
 \subsubsection{\underline{Sales Tax Payable}}
 
@@ -188,7 +188,7 @@ If NRV $\geq$ Cost, no adjustments needed.\\
 
 \subsubsection{\underline{GST and VAT}}
 
-$\text{Supplier} \xrightarrow[\text{Input Tax}]{}$ Seller $\xrightarrow[\text{Output Tax}]{}$ Customer
+$\text{Supplier} \xrightarrow[\text{Input Tax}]{}$ Seller $\xrightarrow[\text{Output Tax}]{}$ Customer\\
 \textbf{DR Inventory/Purchases -- CR Cash; GST Input Tax [Purchasing inventory]}\\
 \textbf{DR Cash -- CR Sales Revenue; GST Output Tax [Making a sale]}\\
 \textbf{DR GST Output Tax -- CR GST Input Tax; GST Tax Payable (Calculated Net GST Payable)}\\
@@ -238,7 +238,7 @@ operations of a firm.\\
 Fair market value is used to calculate the apportionment of lump-sum cost (used in JE).\\
 
 \subsubsection{\underline{Depreciation, DEPR}}
-- $\textbf{Depreciation amount} = \text{Cost} - \text{Residual Value}$ 
+- $\textbf{Depreciation amount} = \text{Cost} - \text{Residual Value}$\\
 - Recognised in income statement as operating expense.\\
 - Residual value $\rightarrow$ value of asset at end of its useful life.\\ 
 - Useful life $\rightarrow$ period over which asset is expected to be used/ number of productions.\\
@@ -278,7 +278,7 @@ $\textbf{Annual DEPR Expense} = \frac{\text{Cost - Residual Value}}{\text{Estima
 - At disposal, remove 3 accounts: PPE, Accumulated Depreciation, Accumulated Impairment\\
 - Gain/Loss = Sales Proceeds - Cost of Disposal - Carrying Amount.\\
 - Gain/Loss of disposal is recognised in income statement as non-operating income/expense.\\
-- If Gain, debit side. If Loss, credit side.\\
+- If Gain, credit side. If Loss, debit side.\\
 - \textbf{DR Accumulated Depreciation; Accumulated Impairment Loss; Cash -- CR PPE; Gain on Disposal}\\
 - \textbf{DR Accumulated Depreciation; Accumulated Impairment Loss; Loss on Disposal -- CR PPE; Cash}\\
 - \textbf{DR Accumulated Depreciation; Accumulated Impairment Loss; Cash -- CR PPE}\\
@@ -299,7 +299,7 @@ $\textbf{Annual DEPR Expense} = \frac{\text{Cost - Residual Value}}{\text{Estima
 - \textbf{DR Maintenance Expense -- CR Cash}\\
 - Major improvements, extensions, and replacements are capitalised.\\
 - \textbf{DR PPE -- CR Cash}\\
-- For long term assets, capitalisation can be permanent or limited.
+- For long term assets, capitalisation can be permanent or limited.\\
 - Limited capitalisation is capitalised in separate account and depreciated over useful life.\\
 - Freehold land: Not depreciated. Leasehold land: Depreciated over lease term.\\
 - R\&D: Research (expensed) $\xrightarrow[]{\text{Tech Feasibility}}$ Development (capitalised)\\
@@ -325,12 +325,12 @@ $\textbf{Annual DEPR Expense} = \frac{\text{Cost - Residual Value}}{\text{Estima
 - \textbf{DR Treasury Shares -- CR Cash}\\
 - Reissuing treasuring share above acquisition cost:
 - \textbf{DR Cash (Issued Price) -- CR Treasury Shares (Cost); Paid-in Capital, Treasury Shares (Diff)}\\
-- Reissuing treasuring share below acquisition cost (Treasury Share sufficient balance):\\
+- Reissuing treasuring share below acquisition cost (PIC, Treasury Share sufficient balance):\\
 - \textbf{DR Cash (Issued Price); Paid-in Capital, Treasury Shares (Diff) -- CR Treasury Shares (Cost)}\\
-- Reissuing treasuring share below acquisition cost (Treasury Share insufficient balance):\\
+- Reissuing treasuring share below acquisition cost (PIC, Treasury Share insufficient balance):\\
 - \textbf{DR Cash (Issued Price); Paid-in Capital, Treasury Shares (Bal); Retained Earnings (Overflow) -- CR Treasury Shares (Cost)}\\
 - Treasury shares amount is deducted from contributed capital + RE in BL, based on acquisition cost.\\
-- Paid-in capital, Treasure Shares is \underline{ADDED} to contributed capital + RE in BL.
+- Paid-in capital, Treasure Shares is \underline{ADDED} to contributed capital in BL.
 
 \subsubsection{\underline{Cash Dividends}}
 - \textbf{DR Cash Dividends -- CR Cash Dividends Payable} [Declare]\\
@@ -341,7 +341,8 @@ $\textbf{Annual DEPR Expense} = \frac{\text{Cost - Residual Value}}{\text{Estima
 - Non-cumulative: Only current year dividend is paid.\\
 - Cumulative: Current year dividend + any unpaid dividend in arrears.\\
 - PS and OS dividends are \underline{capped} by Total dividends declared.\\
-- \textbf{DR PS Dividends; OS Dividends -- CR Dividends Payable; Cash}\\
+- \textbf{DR PS Dividends; OS Dividends -- CR Dividends Payable}\\
+- \textbf{DR Dividends Payable -- CR Cash}\\
 
 \subsubsection{\underline{Share Dividends}}
 - Small share dividends are assigned at market value. (Division: 20-25\% of Total Issued Shares)\\
@@ -373,8 +374,8 @@ $\textbf{Annual DEPR Expense} = \frac{\text{Cost - Residual Value}}{\text{Estima
 \subsection{Financial Statement Analysis}
 - Limitations: Lack of Comparability: differences in accounting classification, accounting 
 estimates and methods. Do not contain all relevant information: customer satisfaction, operational data. Historical Data.\\
-- Horizontal Analysis: Compare financial data over time.\\
 - Vertical Analysis: Compare financial data within a single period.\\
+- Horizontal Analysis: Compare financial data over time.\\
 - $\textbf{Percentage of Change} = \frac{\text{Current period amount - Base period amount}}{\text{Base period amount}}  \times 100\%$\\
 - $\textbf{Trend Percent} = \frac{\text{Current period amount}}{\text{Base period amount}} \times 100\%$
 
@@ -388,14 +389,18 @@ estimates and methods. Do not contain all relevant information: customer satisfa
 - $\textbf{Operating Cycle days} = \text{\# Days Sales in Inventory + Avg Collection Period}$ [shorter better]\\
 - $\textbf{Purchases Turnover} = \frac{\text{Net Purchases}}{\text{Avg Accounts Payable}}$\\
 - $\textbf{Num of Days Purchases in Acc Payable } = \frac{365}{\text{Purchases Turnover}}$\\
+- $\textbf{Accounts Receivable Turnover} = \frac{\text{Net Sales}}{\text{Average AR}}$\\
+- $\textbf{Average Collection Period} = \frac{365}{\text{Accounts Receivable Turnover}}$\\
+- $\textbf{Inventory Turnover} = \frac{\text{COGS}}{\text{Average Inventory}}$ [higher, better]\\
+- $\textbf{Num of Days Sales in Inventory} = \frac{365}{\text{Inventory Turnover}}$ [shorter, better]\\
 
 \subsubsection{\underline{Solvency Ratios}}
 - $\textbf{Debt Ratio} = \frac{\text{Total Liability}}{\text{Total Asset}}$\\
 - $\textbf{Debt-to-Equity Ratio} = \frac{\text{Total Liability}}{\text{Total Equity}}$\\
-- $\textbf{Time Interest Earned} = \frac{\text{Income before interest and taxes (Operating Profit)}}{\text{Annual Interest Expense}}$ [higher better]\\
+- $\textbf{Time Interest Earned} = \frac{\text{Income bfr interest and taxes (Operating Profit)}}{\text{Annual Interest Expense}}$ [higher better]\\
 
 \subsubsection{\underline{Profitability Ratios}}
-- $\textbf{Profit Margin (ROS)} =\frac{\text{Net Income}}{\text{Net Sales}}$\\
+- $\textbf{Profit Margin (Return on Sales)} =\frac{\text{Net Income}}{\text{Net Sales}}$\\
 - $\textbf{Return of Assets} = \frac{\text{Net Income}}{\text{Avg Total Assets}}$\\
 - $\textbf{Asset Turnover} = \frac{\text{Net Sales}}{\text{Avg Total Assets}}$\\
 - $\textbf{Earnings per share (EPS)} = \frac{\text{Net Income - Preference Dividends}}{\text{Avg Num of Outstanding Ordinary Shares}}$\\
@@ -409,10 +414,7 @@ estimates and methods. Do not contain all relevant information: customer satisfa
 - $Profitability \times Efficiency \times Leverage$\\
 - $\textbf{Return of Equity} \newline = \text{Return on Sales} \times \text{Asset Turnover} \times \text{Assets-to-equity Ratio}$\\
 $ = \frac{\text{Net Income}}{\text{Net Sales}} \times \frac{\text{Net Sales}}{\text{Avg Total Assets}} \times \frac{\text{Avg Total Assets}}{\text{Avg Total Equity}}$\\
-- $\textbf{Accounts Receivable Turnover} = \frac{\text{Net Sales}}{\text{Average AR}}$\\
-- $\textbf{Average Collection Period} = \frac{365}{\text{Accounts Receivable Turnover}}$\\
-- $\textbf{Inventory Turnover} = \frac{\text{COGS}}{\text{Average Inventory}}$ [higher, better]\\
-- $\textbf{Num of Days Sales in Inventory} = \frac{365}{\text{Inventory Turnover}}$ [shorter, better]\\
+$ = \frac{\text{Net Income}}{\text{Avg Total Equity}}$
 
 
 \end{scriptsize}
