@@ -1,0 +1,307 @@
+\documentclass[10pt, landscape]{article}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{calc}
+\usepackage{multicol}
+\usepackage[a4paper,margin=3mm,landscape]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{color,graphicx,overpic}
+\usepackage{hyperref}
+\usepackage{newtxtext} 
+\usepackage{enumitem}
+\usepackage[table]{xcolor}
+\usepackage{mathtools}
+\setlist{nosep}
+% for including images
+\graphicspath{ {./images/} }
+
+\pdfinfo{
+  /Title (CS4225.pdf)
+  /Creator (TeX)
+  /Producer (pdfTeX 1.40.0)
+  /Author (Gavin Chiam)
+  /Subject (CS4225)
+/Keywords (CS4225, nus,cheatsheet, pdf, notes)}
+
+% Turn off header and footer
+\pagestyle{empty}
+
+% redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+  {-1ex plus -.5ex minus -.2ex}%
+  {0.5ex plus .2ex}%x
+{\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+  {-1explus -.5ex minus -.2ex}%
+  {0.5ex plus .2ex}%
+{\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+  {-1ex plus -.5ex minus -.2ex}%
+  {1ex plus .2ex}%
+{\normalfont\small\bfseries}}%
+\makeatother
+
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand\rmdefault{\sfdefault}
+%  makes nested numbering (e.g. 1.1.1, 1.1.2, etc)
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
+\renewcommand\labelitemii{•}
+\renewcommand\labelitemiii{•}
+
+\definecolor{mathblue}{cmyk}{1,.72,0,.38}
+\everymath\expandafter{\the\everymath \color{mathblue}}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+%% adjust spacing for all itemize/enumerate
+\setlength{\leftmargini}{0.5cm}
+\setlength{\leftmarginii}{0.5cm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm}
+\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm}
+\setlist[itemize,3]{leftmargin=4mm,labelindent=1mm,labelsep=1mm}
+
+% adding my commands
+\input{../commands/style-helpers.tex}
+
+% -----------------------------------------------------------------------
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols*}{4}
+  % multicol parameters
+  \setlength{\columnseprule}{0.25pt}
+
+  \begin{center}
+    \fbox{%
+      \parbox{0.8\linewidth}{\centering \textcolor{black}{
+          {\Large\textbf{CS4225}}
+        \\ \normalsize{AY24/25 SEM 1}}
+        \\ {\footnotesize \textcolor{gray}{github/Gavino3o}}
+      }%
+    }
+  \end{center}
+
+  \section {Apache Spark}
+  \subsection{Hadoop vs Spark}
+
+  \begin{itemize}
+    \item \textbf{Hadoop}: Disk-based, MapReduce, HDFS. Not suitable for iterative algorithms as it incurs network and disk I/O overhead for intermediate data.
+    \item \textbf{Spark}: In-memory, DAG, RDDs. In the event memory is insufficient, Spark spills data from memory to disk.
+  \end{itemize}
+
+  \subsection {Spark Architecture and APIs}
+  \includegraphics[width=0.95\linewidth]{spark_component_api_stack.png} 
+  \includegraphics[width=0.95\linewidth]{spark_architecture.png} 
+  \begin{itemize}
+    \item \textbf{Driver Process}: Manages the execution of the Spark job. Responds to user inputs. Distribute work to the executors.
+    \item \textbf{Cluster Manager}: Manages the resources of the cluster. Eg. YARN, Mesos, Kubernetes.
+    \item \textbf{Worker Node}: Runs the executors.
+    \item \textbf{Executor}: Runs tasks and keeps data in memory or disk storage across them.
+    \item \textbf{RDDs}: Resilient Distributed Datasets. A collection of JVM objects. Functional operators (map, filter, etc) are applied to RDDs to transform them.
+    \item \textbf{DataFrames}: A distributed collection of data organized into named columns. Similar to a table in a relational database. Expression-based transformation operations. Logical plans and optimisers.
+    \item \textbf{Datasets}: A distributed collection of data with a known schema. Combines the benefits of RDDs and DataFrames. Internally rows, externally JVM objects. Typs safe and fast.
+  \end{itemize}
+
+  \subsection{RDDs}
+  \begin{itemize}
+    \item \textbf{Resilient Distributed Datasets}
+    \item Fault-tolerant collection of elements that can be operated on in parallel
+    \item Immutable, partitioned collection of records
+    \item Distributed across a cluster of machines.
+  \end{itemize}
+
+  \subsubsection*{Transformations and Actions}
+  \begin{itemize}
+    \item Transformations are operations that create a new RDD from an existing one.
+    \item Lazy evaluation: Transformations are not executed immediately. They are only executed when an action is called. This allows Spark to optimise the execution plan.
+    \item Example: \texttt{map}, \texttt{filter}, \texttt{flatMap}, \texttt{groupByKey}, \texttt{reduceByKey}, \texttt{join}, \texttt{order}, \texttt{select}
+    \item Actions are operations that return a value to the driver program after running a computation on the dataset.
+    \item Example: \texttt{collect}, \texttt{count}, \texttt{reduce}, \texttt{saveAsTextFile}, \texttt{foreach}, \texttt{take}, \texttt{show}
+    \item Execution of transformations and actions are executed in parallel accross different worker machines as RDDs are distributed across different worker machines. Results are returned to the driver program in the final step.
+    \item Caching: Persisting RDDs in memory across operations. Useful for iterative algorithms.
+    \item \texttt{cache()} is a transformation that persists the RDD in memory.
+    \item \texttt{persist(options)} is an action that allows for more control over the persistence of the RDD.
+    \item \texttt{unpersist()} is an action that removes the RDD from memory.
+    \item We should cache RDDs that are used multiple times in the computation or when it is expensive to recompute the RDD.
+    \item If we did not cache the RDD, Spark will recompute the RDD each time it is used in an action.
+    \item When worker nodes have insufficient memory, Spark may evict LRU RDDs from memory to disk.
+  \end{itemize}
+
+  \subsection{Directed Acyclic Graph (DAG)}
+  \begin{itemize}
+    \item A DAG is a graph with directed edges and no cycles.
+    \item In Spark, the DAG is a logical representation of the computation.
+    \item Transformations construct the DAG; actions execute the DAG.
+    \item Spark optimises the DAG by combining operations and minimising data shuffling.
+    \item Narrow dependencies: Each partition of the parent RDD is used by at most one partition of the child RDD. Example: \texttt{map}, \texttt{filter}, \texttt{flatMap}, \texttt{contains}
+    \item Wide dependencies: Each partition of the parent RDD may be used by multiple partitions of the child RDD. Example: \texttt{groupByKey}, \texttt{join}, \texttt{reduceByKey}, \texttt{sortByKey}, \texttt{orderByKey} 
+    \item In the DAG, consecutive narrow transformations are combined into a single stage and executed on the same machines. Wide transformations are separated into different stages.
+    \item Across stages, data is shuffled across the network, which involves writing intermediate data to disk.
+    \item Spark tries to minimise the number of stages and the amount of data shuffled.
+    \item \textbf{Lineage}: The sequence of transformations that lead to an RDD.
+    \item If a worker node fails, Spark can recompute the lost partitions of an RDD using the lineage. Note: we only need to recompute the lost partitions, not the entire RDD.
+  \end{itemize}
+
+  \includegraphics[width=0.95\linewidth, height=185px]{spark_dependency_stages.png}
+
+  \subsection{DataFrames}
+  \begin{itemize}
+    \item A distributed collection of data organised into named columns.
+    \item Similar to a table in a relational database.
+    \item Easier to use than RDDs as it has a higher-level API.
+    \item All Dataframe operations are still ultimately compiled down to RDD operation by Spark.
+    \item Generally, transformation functions take in either strings or column objects.
+    \item Transformations are still lazyly evaluated.
+  \end{itemize}
+
+  \subsection{Spark SQL}
+
+  \begin{itemize}
+    \item Spark SQL is a module for working with structured data.
+    \item It provides a programming abstraction called DataFrames and can also act as a distributed SQL query engine.
+    \item Spark SQL provides a domain-specific language for working with structured data.
+    \item It allows running SQL queries on existing RDDs and DataFrames.
+    \item Catalyst optimiser is the Spark SQL query optimiser. It takes a computational query and converts it into an optimised logical plan. Four Phases: Analysis, Logical Optimisation, Physical Planning, Code Generation (Project Tungsten).
+    \item Multiple physical plans can be generated for a single logical plan. The optimiser chooses the best physical plan based on cost estimation.
+    \item Project Tungsten is the Spark SQL execution engine. It aims to improve performance by optimising memory usage and CPU utilisation.
+    \item Tungsten optimises memory usage by using binary processing, cache-aware computation, and code generation.
+    \item \textbf{Unified API}: Spark SQL can be used with Java, Scala, Python, SQL, and R. It has one engine for all types of data processing.
+  \end{itemize}
+
+  \subsection{Machine Learning with Spark}
+
+  \includegraphics[width=0.95\linewidth]{ml_pipeline.png} 
+
+  \begin{itemize}
+    \item Data Quality: Missing values (impute, drop, add column indicating it is missing or not)
+    \item Categorical Encoding: Convert categorical variables to numerical variables. Numerical values are often assigned in a way that represents the ordinal relationship between the categories or inherent order among the categories.
+    \item One Hot Encoding: Convert categorical variables to binary vectors. Each category is represented by a binary vector. Useful when there is no ordinal relationship between the categories, and to ensure that the categorical variable does not imply any numerical relationship.
+    \item Normalization: Scale the features to a standard range. Useful for algorithms that are sensitive to the scale of the input features. Example: clipping, log transform, standard scalerm, min-max scaler.
+    \item Logistic Regression: A linear model for binary classification. It models the probability that the output is 1 given the input features. Ultilses the sigmoid function. $\sigma(x) = \frac{1}{1 + e^{-x}}$
+    \item $ \hat{y} = \sigma(x \cdot w + b) $
+    \item Cross Entroypy Loss: Measures the difference between two probability distributions. It is used as the loss function for logistic regression. $L(y, \hat{y}) = -y \log(\hat{y}) - (1 - y) \log(1 - \hat{y})$
+    \item Gradient Descent: An optimisation algorithm that minimises the loss function. It iteratively updates the weights and biases in the direction of the negative gradient of the loss function.
+    \item $w_{t+1} = w_t - \alpha \nabla_w L(w_t)$
+    \item Evaluation Metrics: Accuracy, Precision, Recall, F1 Score, ROC Curve, AUC.
+    \item Accuracy: $\frac{TP + TN}{TP + TN + FP + FN}$
+    \item Precision: $\frac{TP}{TP + FP}$
+    \item Recall: $\frac{TP}{TP + FN}$
+    \item F1 Score: $2 \times \frac{Precision \times Recall}{Precision + Recall}$
+    \item Errors: Mean Squared Error, Mean Absolute Error, Root Mean Squared Error.
+    \item Mean Squared Error: $\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y_i})^2$
+    \item Mean Absolute Error: $\frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y_i}|$
+    \item Root Mean Squared Error: $\sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y_i})^2}$
+    \item R Squared Value (0 to 1): Measures the proportion of the variance in the dependent variable that is predictable from the independent variable. The higher the better.
+  \end{itemize}
+
+  \subsubsection*{Pipelines}
+  \includegraphics[width=0.95\linewidth]{pipeline_model.png} 
+  \begin{itemize}
+    \item Benefits: Better code reuse, Easier to perform cross validation, Easier to tune hyperparameters, Easier to productionise the model.
+    \item Transformers are the building blocks of a pipeline.
+    \item A transformer has a transform() method that takes in a DataFrame and returns a new DataFrame.
+    \item Example: VectorAssembler, StringIndexer, OneHotEncoder, StandardScaler, LogisticRegression
+    \item Generally, these transformers output a new DataFrame which append their result to the original DataFrame. 
+    \item A fitted model (e.g LogisticRegressionModel) is also a transformer. It transforms Dataframe by adding a prediction column.
+    \item Estimators is an algorithm that takes in data, and outputs a fitted model. Example: A learnign algorithm like LogisticRegression can be fit to data, producing the trained logistic regression model.
+    \item Estimators have a \texttt{fit()} method that takes in a DataFrame and returns a Transformer.
+          \includegraphics[width=0.95\linewidth]{estimator.png} 
+    \item Pipelines are a sequence of stages. Each stage is either a Transformer or an Estimator.
+    \item Pipeline itself is an Estimator. It has a \texttt{fit()} method that takes in a DataFrame and returns a PipelineModel.
+    \item When \texttt{fit()} is called on a Pipeline, the stages are executed in order. For Transformers, the \texttt{transform()} method is called. For Estimators, the \texttt{fit()} method is called.
+    \item The output of \texttt{Pipeline.fii()} is a PipelineModel, which is a Transformer, and consists of a series of Transformers.
+    \item The \texttt{transform()} method of the PipelineModel applies the fitted model to the input DataFrame.
+  \end{itemize}
+
+  \includegraphics[width=0.95\linewidth]{ml_code_ex1.png}
+  \includegraphics[width=0.95\linewidth]{ml_code_ex2.png} 
+  \includegraphics[width=0.95\linewidth]{ml_code_ex3.png} 
+
+  \section{Stream Processing}
+  \includegraphics[width=0.95\linewidth]{stream_process.png}
+  Goal: Process data in real-time as it is generated. State can be stored and accessed in many different places including program variables, local files, or embedded/external databases.
+
+  \subsection{Micro-Batch Stream Processing}
+  \begin{itemize}
+    \item Spark Structured Streaming uses a micro-batch processing model.
+    \item Data from the input stream is divided into micro batches, each of which will be processed in the Spark cluster in a distributed manner.
+    \item Small deterministic tasks generate the output of each micro-batch. Time is divided into small intervals, and data is processed in each interval.
+    \item Advantages: quick; recover from failures efficently; deterministic nature ensures end-to-end exactly-once processing.
+    \item Disadvantages: latency (cannot handle millisecond); micro-batch size affects latency and throughput; micro-batch processing can be less efficient than true stream processing.
+    \item It is sufficient for most use cases.
+    \item In Spark Structured Streaming, the input data is treated as an unbounded table. \includegraphics[width=0.95\linewidth]{spark_stream_unbound_table.png}
+    \item Five Steps to Define Steaming Query: 
+          \begin{enumerate}
+            \item Define the input source.
+            \item Transform Data.
+            \item Define output sink and output mode.
+            \item Specifying processing details. (Triggering details, checkpointing, etc)
+            \item Start the query.
+          \end{enumerate}
+  \end{itemize}
+
+  \includegraphics[width=0.95\linewidth]{incremental_excution_stream.png}
+  \includegraphics[width=0.95\linewidth]{spark_stream_fault_tolerance.png}
+
+  \subsubsection{Data Transformation}
+  \begin{itemize}
+    \item \textbf{Stateless Transformations:}
+        \begin{itemize}
+          \item Process each row individually without needing information from previous rows
+          \item Projection operations: \texttt{select()}, \texttt{explode}, \texttt{map()}, \texttt{flatMap()}
+          \item Selection operations: \texttt{filter()}, \texttt{where()}
+        \end{itemize}
+    \item \textbf{Stateful Transformations:}
+          \begin{itemize}
+            \item Process each row based on information from previous rows.
+            \item Example: \texttt{DataFrame.groupBy().count()}
+            \item In every micro-batch, the incremental plan adds the count of new 
+            records to the previous count generated by the previous micro-batch
+            \item The state is maintained in the memory of the Spark executors and is 
+            checkpointed to the configured location to tolerate failures.
+          \end{itemize}
+    \item \textbf{Stateful Streaming Aggregations:}
+          \begin{itemize}
+            \item \textbf{Aggregations not based on time windows:}
+            \begin{itemize}
+              \item Global aggregations: \texttt{groupBy().count()}
+              \item Grouped aggregations: \texttt{groupBy("sensorId").mean("value")}
+              \item Supported aggregations: \texttt{count()}, \texttt{sum()}, \texttt{avg()}, \texttt{min()}, \texttt{max()}, \texttt{countDistinct()}, \texttt{collect\_set()}, \texttt{approx\_count\_distinct()}
+            \end{itemize}
+            
+            \item Processing Time: The time at which the data is processed by the system. (Not deterministic, susceptible to system delays)
+            \item Event Time: The time at which the event occurred in the real world. (Deterministic)
+            \item Event time decouples the processing speeed from the results. An event time window computation will yield the same result regardless of the processing time.
+            \item Watermark: A threshold that determines how late the data can be in event time. Data that arrives later than the watermark is considered late data.
+            
+            \item \textbf{Aggregations with Event-Time Windows:}
+                \begin{itemize}
+                  \item Example: \texttt{sensorReadings.groupBy("sensorId", window("eventTime", windowLength, shiftAmt)).count()}
+                  \includegraphics[width=0.95\linewidth]{event_time_no_overlap.png}
+                  \includegraphics[width=0.95\linewidth]{event_time_overlap.png}
+                  \includegraphics[width=0.95\linewidth]{spark_stream_no_watermark.png}
+                  \includegraphics[width=0.95\linewidth]{spark_stream_watermark.png}
+                  \item Take the latest \textbf{event time} and minus the watermark time. Let go of the rows in the result window with end interval time lower than calculated time.
+                  \item Watermark just determines which window records in the table to drop off. If it was not dropped, it may still be updated even though the late data event time is before the watermark time.
+                  \item Data with event time of 12:07 is still updated as the event window 
+                  [12:05 $-$ 12:15] is not dropped as the window end interval time is not before the watermark time.
+                  \item \textbf{Performance Tuning: }
+                      \begin{itemize}
+                        \item Cluster resource provisioning appropriately to run 24/7
+                        \item Number of partitions for shuffles to be set much lower than batch queries
+                        \item Setting source rate limits for stability
+                        \item Multiple streaming queries in the same Spark application
+                        \item Tuning Spark SQL Engine
+                      \end{itemize} 
+                \end{itemize}
+          \end{itemize}
+  \end{itemize}
+
+\end{multicols*}
+
+\end{document}
