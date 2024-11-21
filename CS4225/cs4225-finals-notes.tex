@@ -302,6 +302,90 @@
           \end{itemize}
   \end{itemize}
 
+  \subsection{Flink}
+  \includegraphics[width=0.95\linewidth]{event_driven_streaming.png}
+  \includegraphics[width=0.95\linewidth]{event_logs_kafka.png}
+  \includegraphics[width=0.95\linewidth]{streaming_analytics_application.png}
+  \includegraphics[width=0.95\linewidth]{flink_sys_architecture.png}
+
+  \subsubsection*{Task Execution}
+  \begin{itemize}
+    \item A Task Manager can run multiple tasks concurrently
+          \begin{itemize}
+            \item Tasks of the same operator (data parallelism)
+            \item Tasks of different operators (task parallelism)
+            \item Tasks of different applications (job parallelism)
+          \end{itemize}
+    \item Task Managers offers certain number of processing slots to control the number of tasks it is able to concurrently execute. Think of slots as CPU cores.
+    \item A processing slot can execute one slice of an application, i.e one parallel task of each operator of the application
+    \includegraphics[width=0.95\linewidth]{flink_task_manager.png}
+    \item The tasks of a running application are continuously exchanging data.
+    \item Task Managers take care of shipping data from sending tasks to receiving tasks.
+    \item The network component of a Task Manager collects records in buffers before they are shipped.
+    \includegraphics[width=0.95\linewidth]{flink_network_component.png}
+  \end{itemize}
+  
+\subsection{Event-Time Processing in Flink}
+\begin{itemize}
+  \item Flink allows for event-time processing by allowing the user to assign \textbf{timestamps} to events/records.
+  \item Flink can handle out-of-order events by using watermarks.
+  \item \textbf{Watermarks} are used to derive the current event time at each task in an event-time application.
+  \item In Flink, watermarks are implemented as special records holding a timestamp as a Long value. Wtermarks flow in a stream of regular records with annotated timestamps.
+  \item Watermarks in Flink is not directly invovled in late data handling. It is used to determine when to emit results of windowed operations.
+\end{itemize}
+
+\subsubsection{Statem Management}
+
+\begin{itemize}
+  \item Stateful Stream Processing Task: All data maintained by a task and used to compute the results of a function belong to the state of the task.
+  \item \textbf{State Backend:}
+       \begin{itemize}
+        \item Local State Management: A task of a stateful operator reads and updates its state for each incoming record.
+        \item Each parallel task locally maintains its state in memory to ensure fast state accesses.
+       \end{itemize}
+  \item \textbf{Checkpointing:}
+        \begin{itemize}
+          \item A Task Manager process may fail at any point, hence its storage must be considered volatile
+          \item Checkpointing the state of a task to a remote and persistent storage
+          \item The remote storage for checkpointing could be a distributed filesystem or a database system
+          \item \textit{Consistent Checkpoints} (similar to Spark's micro-batch checkpointing, Stop the world, not used by Flink)
+            \begin{enumerate}
+              \item Pause the ingestion of all input streams
+              \item Wait for all in-flight data to be completely processed, meaning all tasks have processed all their input data
+              \item Take a checkpoint by copying the state of each task to a remote, 
+              persistent storage. The checkpoint is complete when all tasks have 
+              finished their copies.
+              \item Resume the ingestion of all streams.
+            \end{enumerate}
+          \item To execute failure recovery from consistent checkpointing. Simply restart the application, reset the state of all staetful tasks to latest checkpoint, and resume tasks.
+          \item \textbf{Flink Checkpointing Algorithm}
+              \begin{itemize}
+                \item Chandy-Lamport Algorithm: A distributed algorithm for recording a consistent global snapshot of a distributed system.
+                \item Does not pause the application but decouples checkpointing from processing
+                \item Some tasks contninue processing while others persist their state
+                \item Uses \textbf{checkpoint barrier}, a special record that signals the tasks to persist their state
+                \item Checkpoint barriers are injected by source operators into the regular 
+                stream of records and cannot overtake or be passed by other records
+                \item A checkpoint barrier carries a checkpoint ID to identify the checkpoint it 
+                belongs to and logically splits a stream into two parts
+                \item All state modifications due to records that precede a barrier are 
+                included in the barrier’s checkpoint and all modifications due to records 
+                that follow the barrier are included in a later checkpoint.
+                \includegraphics[width=0.95\linewidth]{flink_checkpoint_buffer.png}
+                \item Job manager initiates checkpoints by sending message to all sources.
+                \item Sources checkpoint their state and emit a checkpoint barrier.
+                \item Records from input streams for which a barrier already arrived are buffered.
+                \item All other records are regularly processed
+                \item Tasks checkpoint their state once all barriers have been received, then they forward the checkpoint barrier
+                \item Tasks continue regular processing after the checkpoint barrier is forwarded
+                \item Sinks acknowledge the reception of a checkpoint barrier to the JobManager
+                \item A checkpoint is complete when all tasks have acknowledged the successful checkpointing of their state
+                \includegraphics[width=0.95\linewidth]{flink_checkpoint_end_acknowledgement.png}
+                \includegraphics[width=0.95\linewidth]{flink_vs_spark.png}
+              \end{itemize}
+        \end{itemize}
+\end{itemize}
+
 \end{multicols*}
 
 \end{document}
