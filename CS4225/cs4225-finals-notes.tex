@@ -457,10 +457,67 @@
         \item If at a Dead End, Always Teleport: preprocess random walk matrix $M$ and set each entry in the column of the dead-end page to $\frac{1}{N}$. This makes the matrix column stochastic. \includegraphics*[width=0.95\linewidth]{teleport_deadend.png}
       
     \end{itemize}
-    
+    \end{itemize}
     \subsubsection*{Topic Specific PageRank}
     
-\end{itemize}
+    Problems with Simple Page Rank:
+    \begin{itemize}
+      \item Measures generic popularity of a page and does not consider popularity based on specific topics. Solution: Topic-Specific PageRank.
+      \item Uses a single measure of importance. Solution: Hubs-and-Authorities.
+      \item Susceptible to link spamming. Solution: TrustRank.
+    \end{itemize}
+
+    \begin{itemize}
+      \item Idea: Bias the random walk towards a specific topic.
+      \item When random walker teleports, it picks a page from a set $S$.
+      \item $S$ contains only pages that are relevant to the topicFor each teleport set $S$, we get a different PageRank vector $r_s$.
+      \item \begin{equation*}
+        A_{ij} =
+        \begin{cases}
+          \beta M_{ij} + (1 - \beta) \cdot \frac{1}{|S|} &\text{if } i \in S\\
+          \beta M_{ij} + 0  &\text{otherwise}
+        \end{cases}
+      \end{equation*}
+       \item $A$ is stoaachstic and column-normalised.
+       \item \includegraphics*[width=0.95\linewidth]{topic_specific_variables.png}
+       \item We can create different PageRank for different topics.
+       \item Which topic ranking to use: User can pick from menu, classify query into topic, use context of query, user context.
+    \end{itemize}
+
+    \subsection*{PageRank Implementation}
+    \begin{itemize}
+      \item For Graph Algorithms, it involves local computation at each vertex, and communication between vertices.
+      \item \textbf{Think like a vertex:} Similar to MapReduce, the user only implements a function that is applied to each vertex.
+      \item The framework abstracts away scheduling and implementation details.
+    \end{itemize}
+
+    \subsubsection*{Pregel Model}
+    \begin{itemize}
+      \item Pregel is a distributed graph processing model developed by Google.
+      \item It is based on the Bulk Synchronous Parallel (BSP) model.
+      \item The computation is divided into \textbf{supersteps}. Each superstep consists of three phases: Computation, Messaging, Synchronization.
+      \item \textbf{Computation:} Each vertex processes incoming messages and updates its state.
+      \item \textbf{Messaging:} Vertices send messages to other vertices.
+      \item \textbf{Synchronization:} All vertices synchronise and move to the next superstep.
+      \item \texttt{Vertex.compute()} is the user-defined function that is called at each vertex in each superstep.
+            \begin{itemize}
+              \item It can read messages sent to $v$ in superstep $s - 1$.
+              \item It can send messages to other verices that will be read in superstep $s + 1$.
+              \item I can read or write the value of $v$ and the values of its outgoing edges. Or even, add and remove edges.
+            \end{itemize}
+      \item The computation is repeated until a termination condition is met.
+            \begin{itemize}
+              \item A vertex can choose to deactivate itself
+              \item A vertex is "woken up" if it receives a message
+              \item Computation halts when all vertices are deactivated
+            \end{itemize}
+      \item \includegraphics*[width=0.95\linewidth]{pregel_count_max.png}
+      \item \includegraphics*[width=0.95\linewidth]{pregel_architecture.png}
+      \item Fault Tolerance: Checkpointing to persistent storage, Failure detected through heartbeats, Corrupt workers are reassigned and reloaded from checkpoints.
+      \item \includegraphics*[width=0.95\linewidth]{pregel_pagerank.png}
+      \item Other Graph Processing Systems: Spark GraphX/GraphFrame ( Extends RDDs to Resilient Distributed Property Graphs, uses vertex cut), Giraph, GraphLab, PowerGraph, Trinity, Pregel+, Neo4j.
+      \item \includegraphics*[width=0.95\linewidth]{spark_pagerank.png}
+  \end{itemize}
 
 \end{multicols*}
 
