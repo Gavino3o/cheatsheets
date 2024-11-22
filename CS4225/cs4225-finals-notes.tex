@@ -386,6 +386,82 @@
         \end{itemize}
 \end{itemize}
 
+\section{Graphs}
+
+\subsection{Graph Processing}
+\includegraphics[width=0.95\linewidth]{graph_processing_tech.png}
+
+\subsubsection{Simple PageRank}
+
+\begin{itemize}
+  \item We can visualise the web as a directed graph where each page is a node and each hyperlink is an edge.
+  \item PageRank is an algorithm that measures the importance of a page in a network.
+  \item The importance of a page is determined by the number of incoming links and the importance of the pages that link to it.
+  \item If we assume incoming links are harder to manipulate, we can rank each page based on the number of incoming links.
+  \item Problem: Malicious users can create a large number of pages that link to a target page to increase its rank.
+  \item Solution: Make the rank of a page dependent on the rank of the pages that link to it.
+  \item Therefore, links from important pages count more, this is true recursively.
+  \item PageRank recursively computes the rank of a page based on the ranks of the pages that link to it. [Weighted edges]
+  \item \textbf{Voting Formulation:}
+        \begin{itemize}
+          \item For each page $j$, we define its importance as $r_j$
+          \item If page $j$ with importance $r_j$ has $n$ outgoing links, each link gets $\frac{r_j}{n}$ importance.
+          \item Page $j$'s own importance is the sum of the votes on its incoming links.
+          \item Formally: $r_j = \underset{i \rightarrow j}{\sum} \frac{r_i}{d_i}$. \newline Where $d_i$ is the number of outgoing links from page $i$.
+          \item The sum of importances of pages linking to j, each divided by number of outgoing links from that page.
+          \item In the event that the flow equations have no unique solution, we can add an additional constain to force uniqueness:\newline
+                $r_a + r_b + r_c = 1$
+        \end{itemize}
+    \item \textbf{Matrix Formulation:}
+          \begin{itemize}
+            \item Stochastic adjacency matrix, $M$
+            \item Let page $i$ has $d_i$, out-links.
+            \item If $ i \rightarrow j $, then $M_{ji} = \frac{1}{d_i} $, else $M_{ji} = 0$
+            \item $M$ is a column-stochastic matrix, whjen each column sums to 1.
+            \item Let \textbf{Rank Vector} $= r$ and $r_i$ is the rank of page $i$.
+            \item $\sum_i r_i = 1$
+            \item The flow equation can be written as $r = M \cdot r$
+            \item Column points to row. Each column is a page, each row is a page.
+            \includegraphics[width=0.95\linewidth]{flow_equation_matrix_example.png}
+          \end{itemize}
+    \item \textbf{Power Iteration Method:}
+        \begin{itemize}
+          \item  Each node starts with 
+          equal importance (of $\frac{1}{N}$). During each step, each node passes its 
+          current importance along its outgoing edges, to its neighbors.
+          \begin{enumerate}
+            \item Suppose there are $N$ web pages
+            \item Initialise: $r^{(0)} = [\frac{1}{N}, ... ,\frac{1}{N}]^T$
+            \item Iterate: $r^{t+1} = M \cdot r^{(t)}$
+            \item Stop when $ | r^{t+1} - r^{t} |_1 < \epsilon $
+          \end{enumerate}
+        \end{itemize}
+    \item \textbf{Random Walk Interpretation:}
+          \includegraphics*[width=0.95\linewidth]{random_walk_interpretation.png}
+    \item \begin{itemize}
+      \item Stationary Distribution: as $ t \rightarrow \inf $, the probability distribution approaches a steady state, representing the long term probability that the random walker is at each node, which is the PageRank scores.
+      \item Three Questions:
+          \begin{enumerate}
+            \item Does the random walk converge? Not always
+            \item Does it converge to what we want? 
+            \item Are results reasonable?
+          \end{enumerate}
+        \item Some pages are \textbf{Dead Ends}: Pages with no outgoing links. Causes importance to leak out of the network. \includegraphics*[width=0.95\linewidth]{deadend.png}
+        \item \textbf{Spider Traps}: Pages that link to each other but have no outgoing links. Eventually, all importance will be trapped in the spider trap. \includegraphics*[width=0.95\linewidth]{spider_trap.png}
+        \item To solve deadends and spider traps, we cam introduce teleportation. At each step, the random walker has a small probability of teleporting to a random page. This ensures that the random walker can escape deadends and spider traps.
+        \item PageRank Equation: $r_j = \underset{i \rightarrow j}{\sum} \beta \frac{r_i}{d_i} + (1 - \beta) \frac{1}{N}$
+        \item $\beta$ is also known as the damping factor. It is the probability that the random walker follows a link, and $1 - \beta$ is the probability that the random walker teleports.
+        \item Google Matrix A: $A  = \beta M + (1 - \beta) [\frac{1}{N}]_{N \times N} $
+        \item PagreRank Equation (Matrix Form): $r = A \cdot r$
+        \item In practice, $\beta$ is usually set to 0.8 to 0.9. Which allows for 5 to 10 steps on average before teleport.
+        \item If at a Dead End, Always Teleport: preprocess random walk matrix $M$ and set each entry in the column of the dead-end page to $\frac{1}{N}$. This makes the matrix column stochastic. \includegraphics*[width=0.95\linewidth]{teleport_deadend.png}
+      
+    \end{itemize}
+    
+    \subsubsection*{Topic Specific PageRank}
+    
+\end{itemize}
+
 \end{multicols*}
 
 \end{document}
