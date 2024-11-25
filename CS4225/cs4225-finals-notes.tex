@@ -87,7 +87,7 @@
   \end{center}
 
 
-  \section{Introduction}
+  \section{\underline{Introduction}}
 
   \begin{itemize}
     \item What is data science? The study of data. It involves developing methods of recording, storing, and analysing data to effectively extract useful information.
@@ -99,7 +99,7 @@
     \item Software as a Service (SaaS): Software that is centrally hosted and licensed on a subscription basis.
   \end{itemize}
 
-  \subsubsection*{Data Centers}
+  \subsubsection*{\underline{Data Centers}}
   \begin{itemize}
     \item A facility composed of networked computers and storage that businesses or other organisations use to organise, process, store, and disseminate large amounts of data.
     \item Single Server: A single physical server that runs a single operating system.
@@ -127,7 +127,7 @@
     \end{itemize}
   \end{itemize}
 
-  \section{MapReduce (Hadoop)}
+  \section{\underline{MapReduce (Hadoop)}}
 
   \begin{itemize}
     \item MapReduce is a programming model for processing and generating large data sets with a parallel, distributed algorithm on a cluster.
@@ -166,7 +166,7 @@
     \end{itemize}
   \end{itemize}
 
-  \subsubsection*{Partitioner and Combiner}
+  \subsubsection*{\underline{Partitioner and Combiner}}
   \begin{itemize}
     \item Task Straggler Problem: Some tasks take longer to complete than others. This can slow down the entire job.
     \item It can be caused by certain keys in the data set that have too high of a frequency compared to other keys.
@@ -179,7 +179,7 @@
     \item Guideline for basic algorithmic design: Linear scalibility, minimise disk and network I/O, reduce memory working set of each task/worker.
   \end{itemize}
 
-  \subsubsection*{Secondary Sort}
+  \subsubsection*{\underline{Secondary Sort}}
 
   \begin{itemize}
     \item In the Reduce phase, the intermediate data is sorted by key. However, we may want to sort the values for each key.
@@ -191,7 +191,7 @@
     \item Sorting data in the reducer is expensive as it involves disk I/O. Sorting data in the map phase is cheaper as it involves memory I/O.
   \end{itemize}
 
-  \subsubsection*{Preserving State in MapReduce}
+  \subsubsection*{\underline{Preserving State in MapReduce}}
   \begin{itemize}
     \item In-mapper combiner: A combiner that runs within the map task. It is used to reduce the amount of data that needs to be transferred to the reduce tasks.
     \item Different calls to the function used in the mapping or reducing phase can preserve a state (e.g store variables) to be shared between the function calls.
@@ -205,7 +205,7 @@
     \end{itemize}
   \end{itemize}
 
-  \subsection{Hadoop Distributed File System (HDFS)}
+  \subsection{\underline{Hadoop Distributed File System (HDFS)}}
 
   \begin{itemize}
     \item Conceptually similar to a regular file system, but with the data spread accross a cluster of machines.
@@ -222,7 +222,7 @@
     \item Data Locality: \includegraphics[width=0.95\linewidth]{hadoop_data_locality.png}
   \end{itemize}
 
-  \section{Relational Databases}
+  \section{\underline{Relational Databases}}
 
   \begin{itemize}
     \item Projection (SELECT): Map-only job. Output of the map function is the final output desired.
@@ -242,7 +242,7 @@
       \end{itemize}
   \end{itemize}
 
-  \section{Similarity Search}
+  \section{\underline{Similarity Search}}
 
   \begin{itemize}
     \item Near Neighbours: Objects that are similar to each other.
@@ -260,7 +260,7 @@
     \item \textbf{Min-Hashing:} A technique to estimate the Jaccard similarity between two sets. It is used to reduce the size of the shingle set.
   \end{itemize}
 
-  \subsubsection{Shingles}
+  \subsubsection{\underline{Shingles}}
   \begin{itemize}
     \item Matrix Representation: Each row represents a shingle, each column represents a document. 
     \item A cell is 1 if the shingle is in the document, 0 otherwise.
@@ -269,7 +269,7 @@
     \item K-Shingle Set: Set of all possible k-shingles in a document.
   \end{itemize}
 
-  \subsubsection{Min-Hashing}
+  \subsubsection{\underline{Min-Hashing}}
   \begin{itemize}
     \item \textbf{Key Property:} The probability that two documents have the same min-hash value is equal to the Jaccard similarity of the documents.
     \item Formally: $P(h(A) = h(B)) = J(A, B)$
@@ -286,7 +286,7 @@
     \end{itemize}
   \end{itemize}
 
-  \section{K-Means Clustering}
+  \section{\underline{K-Means Clustering}}
 
   \begin{itemize}
     \item K-Means is an iterative algorithm that partitions the data into K clusters.
@@ -306,7 +306,7 @@
      \item \includegraphics[width=0.95\linewidth]{kmeans_mapreduce.png}
   \end{itemize}
 
-  \section{NoSQL Databases}
+  \section{\underline{NoSQL Databases}}
 
   \begin{itemize}
     \item NoSQL databases are non-relational databases that provide a mechanism for storage and retrieval of data that is modelled in means other than the tabular relations used in relational databases.
@@ -317,7 +317,7 @@
     \item Cons: No declarative query language, Weaker consistency guarantees.
   \end{itemize}
 
-  \subsection{Key-Value Stores}
+  \subsection{\underline{Key-Value Stores}}
   \begin{itemize}
     \item \textbf{Keys} are usually primitive data types (ints, string, raw bytes, etc) and can be queried.
     \item \textbf{Values} can be any data type (string, JSON, XML, BLOB, etc) and are opaque to the database. It usually does not support querying.
@@ -332,7 +332,7 @@
     \end{itemize}
   \end{itemize}
 
-  \subsection{Document Stores}
+  \subsection{\underline{Document Stores}}
   \begin{itemize}
     \item Basically Hierarchical Key-Value Stores. Values are documents (JSON, XML, etc).
     \item Collections = Tables, Documents = Rows, Fields = Columns.
@@ -343,7 +343,7 @@
     \item \includegraphics[width=0.95\linewidth]{mongodb_example.png}
   \end{itemize}
 
-  \subsubsection*{MongoDB}
+  \subsubsection*{\underline{MongoDB}}
   \begin{itemize}
     \item Routers(mongos): Handles requests from application and route the queries to the correct shards.
     \item Config Server: Stores metadata and configuration settings for the cluster (e.g. which data is in which shard)
@@ -355,7 +355,7 @@
     \item Supports join queries through denormalisation. Data is duplicated across multiple collections to avoid joins.
   \end{itemize}
 
-  \subsubsection*{Replication in MongoDB}
+  \subsubsection*{\underline{Replication in MongoDB}}
   \begin{itemize}
     \item Standard Configuration: 3 nodes, 1 primary, 2 secondaries.
     \item Primary receives all write operations.
@@ -364,7 +364,7 @@
     \item Secondaries have eventual consistency. They may lag behind the primary. But allowing reads from secondaries can improve decrease latency and distribute load (improving thoughput).
   \end{itemize}
 
-  \subsection{Wide Column Stores}
+  \subsection{\underline{Wide Column Stores}}
   \begin{itemize}
     \item Column Families: A collection of columns. Each column family has a unique name.
     \item Sparsity: Columns can be added to a row without adding them to all rows.
@@ -372,7 +372,7 @@
     \item Example: BigTable, HBase, Cassandra.
   \end{itemize}
 
-  \subsection{Vector Databases}
+  \subsection{\underline{Vector Databases}}
   \begin{itemize}
     \item Each row is a vector. Each column is a dimension.
     \item Usually used to store dense, numerical and high-dimensional data.
@@ -384,7 +384,7 @@
     \item Similarly, vision models convert images into embeddings.
   \end{itemize}
 
-  \subsection{Strong Vs Eventual Consistency}
+  \subsection{\underline{Strong Vs Eventual Consistency}}
   \begin{itemize}
     \item Strong Consistency: Any reads immediately after an update must give the same result on all observers.
     \item Eventual Consistency: If the system is functioning and given enough time, eventually all reads will return the last written value.
@@ -398,7 +398,7 @@
     \item Eventual consistency offers better availability at the cost of weaker consistency guarantee. It is suitable for applications that can tolerate stale data.
   \end{itemize}
 
-  \section{Distributed Databases}
+  \section{\underline{Distributed Databases}}
   \begin{itemize}
     \item Advantages: Scalability, Availability, Fault Tolerance, Lower Latency (Nearest Replica)
     \item Architectures: Shared Everything, Shared Memory, Shared Disk, Shared Nothing.
@@ -415,7 +415,7 @@
     \item But databases often have tunable consistency levels.
   \end{itemize}
 
-  \subsection{Data Partitioning}
+  \subsection{\underline{Data Partitioning}}
   \begin{itemize}
     \item \textbf{Table Partitioning:} Put different tables (or collections) on different nodes.
     \item Problem: Scalability is an issue as each table cannnot be split accross multiple nodes.
@@ -432,7 +432,7 @@
     \item It can still lead to hotspots if the hash function is not well distributed.
   \end{itemize}
 
-  \subsubsection{Consistent Hashing}
+  \subsubsection{\underline{Consistent Hashing}}
   \begin{itemize}
     \item Weakness of Hash/Range Partitioning: How do we distribute the data when we add or remove nodes?
     \item If we redo the partitioning, we will have to move a lot of data which is inefficient.
@@ -449,15 +449,16 @@
   
   % --------------------------------------------------------------
 
-  \section {Apache Spark}
-  \subsection{Hadoop vs Spark}
+  \section {\underline{Apache Spark}}
+  \subsection{\underline{Hadoop vs Spark}}
 
   \begin{itemize}
     \item \textbf{Hadoop}: Disk-based, MapReduce, HDFS. Not suitable for iterative algorithms as it incurs network and disk I/O overhead for intermediate data.
     \item \textbf{Spark}: In-memory, DAG, RDDs. In the event memory is insufficient, Spark spills data from memory to disk.
   \end{itemize}
 
-  \subsection {Spark Architecture and APIs}
+  \subsection {\underline{Spark Architecture and APIs}}
+
   \includegraphics[width=0.95\linewidth]{spark_component_api_stack.png} 
   \includegraphics[width=0.95\linewidth]{spark_architecture.png} 
   \begin{itemize}
@@ -470,7 +471,7 @@
     \item \textbf{Datasets}: A distributed collection of data with a known schema. Combines the benefits of RDDs and DataFrames. Internally rows, externally JVM objects. Typs safe and fast.
   \end{itemize}
 
-  \subsection{RDDs}
+  \subsection{\underline{RDDs}}
   \begin{itemize}
     \item \textbf{Resilient Distributed Datasets}
     \item Fault-tolerant collection of elements that can be operated on in parallel
@@ -478,7 +479,7 @@
     \item Distributed across a cluster of machines.
   \end{itemize}
 
-  \subsubsection*{Transformations and Actions}
+  \subsubsection*{\underline{Transformations and Actions}}
   \begin{itemize}
     \item Transformations are operations that create a new RDD from an existing one.
     \item Lazy evaluation: Transformations are not executed immediately. They are only executed when an action is called. This allows Spark to optimise the execution plan.
@@ -495,7 +496,7 @@
     \item When worker nodes have insufficient memory, Spark may evict LRU RDDs from memory to disk.
   \end{itemize}
 
-  \subsection{Directed Acyclic Graph (DAG)}
+  \subsection{\underline{Directed Acyclic Graph (DAG)}}
   \begin{itemize}
     \item A DAG is a graph with directed edges and no cycles.
     \item In Spark, the DAG is a logical representation of the computation.
@@ -512,7 +513,7 @@
 
   \includegraphics[width=0.95\linewidth, height=185px]{spark_dependency_stages.png}
 
-  \subsection{DataFrames}
+  \subsection{\underline{DataFrames}}
   \begin{itemize}
     \item A distributed collection of data organised into named columns.
     \item Similar to a table in a relational database.
@@ -522,7 +523,7 @@
     \item Transformations are still lazyly evaluated.
   \end{itemize}
 
-  \subsection{Spark SQL}
+  \subsection{\underline{Spark SQL}}
 
   \begin{itemize}
     \item Spark SQL is a module for working with structured data.
@@ -536,7 +537,7 @@
     \item \textbf{Unified API}: Spark SQL can be used with Java, Scala, Python, SQL, and R. It has one engine for all types of data processing.
   \end{itemize}
 
-  \subsection{Machine Learning with Spark}
+  \subsection{\underline{Machine Learning with Spark}}
 
   \includegraphics[width=0.95\linewidth]{ml_pipeline.png} 
 
@@ -562,7 +563,7 @@
     \item R Squared Value (0 to 1): Measures the proportion of the variance in the dependent variable that is predictable from the independent variable. The higher the better.
   \end{itemize}
 
-  \subsubsection*{Pipelines}
+  \subsubsection*{\underline{Pipelines}}
   \includegraphics[width=0.95\linewidth]{pipeline_model.png} 
   \begin{itemize}
     \item Benefits: Better code reuse, Easier to perform cross validation, Easier to tune hyperparameters, Easier to productionise the model.
@@ -585,11 +586,11 @@
   \includegraphics[width=0.95\linewidth]{ml_code_ex2.png} 
   \includegraphics[width=0.95\linewidth]{ml_code_ex3.png} 
 
-  \section{Stream Processing}
+  \section{\underline{Stream Processing}}
   \includegraphics[width=0.95\linewidth]{stream_process.png}
   Goal: Process data in real-time as it is generated. State can be stored and accessed in many different places including program variables, local files, or embedded/external databases.
 
-  \subsection{Micro-Batch Stream Processing}
+  \subsection{\underline{Micro-Batch Stream Processing}}
   \begin{itemize}
     \item Spark Structured Streaming uses a micro-batch processing model.
     \item Data from the input stream is divided into micro batches, each of which will be processed in the Spark cluster in a distributed manner.
@@ -611,7 +612,7 @@
   \includegraphics[width=0.95\linewidth]{incremental_excution_stream.png}
   \includegraphics[width=0.95\linewidth]{spark_stream_fault_tolerance.png}
 
-  \subsubsection{Data Transformation}
+  \subsubsection{\underline{Data Transformation}}
   \begin{itemize}
     \item \textbf{Stateless Transformations:}
         \begin{itemize}
@@ -665,13 +666,14 @@
           \end{itemize}
   \end{itemize}
 
-  \subsection{Flink}
+  \subsection{\underline{Flink}}
+
   \includegraphics[width=0.95\linewidth]{event_driven_streaming.png}
   \includegraphics[width=0.95\linewidth]{event_logs_kafka.png}
   \includegraphics[width=0.95\linewidth]{streaming_analytics_application.png}
   \includegraphics[width=0.95\linewidth]{flink_sys_architecture.png}
 
-  \subsubsection*{Task Execution}
+  \subsubsection*{\underline{Task Execution}}
   \begin{itemize}
     \item A Task Manager can run multiple tasks concurrently
           \begin{itemize}
@@ -688,7 +690,7 @@
     \includegraphics[width=0.95\linewidth]{flink_network_component.png}
   \end{itemize}
   
-\subsection{Event-Time Processing in Flink}
+\subsection{\underline{Event-Time Processing in Flink}}
 \begin{itemize}
   \item Flink allows for event-time processing by allowing the user to assign \textbf{timestamps} to events/records.
   \item Flink can handle out-of-order events by using watermarks.
@@ -697,7 +699,7 @@
   \item Watermarks in Flink is not directly invovled in late data handling. It is used to determine when to emit results of windowed operations.
 \end{itemize}
 
-\subsubsection{State Management}
+\subsubsection{\underline{State Management}}
 
 \begin{itemize}
   \item Stateful Stream Processing Task: All data maintained by a task and used to compute the results of a function belong to the state of the task.
@@ -749,12 +751,12 @@
         \end{itemize}
 \end{itemize}
 
-\section{Graphs}
+\section{\underline{Graphs}}
 
-\subsection{Graph Processing}
+\subsection{\underline{Graph Processing}}
 \includegraphics[width=0.95\linewidth]{graph_processing_tech.png}
 
-\subsubsection{Simple PageRank}
+\subsubsection{\underline{Simple PageRank}}
 
 \begin{itemize}
   \item We can visualise the web as a directed graph where each page is a node and each hyperlink is an edge.
@@ -821,7 +823,8 @@
       
     \end{itemize}
     \end{itemize}
-    \subsubsection*{Topic Specific PageRank}
+
+    \subsubsection*{\underline{Topic Specific PageRank}}
     
     Problems with Simple Page Rank:
     \begin{itemize}
@@ -847,14 +850,14 @@
        \item Which topic ranking to use: User can pick from menu, classify query into topic, use context of query, user context.
     \end{itemize}
 
-    \subsection*{PageRank Implementation}
+    \subsection*{\underline{PageRank Implementation}}
     \begin{itemize}
       \item For Graph Algorithms, it involves local computation at each vertex, and communication between vertices.
       \item \textbf{Think like a vertex:} Similar to MapReduce, the user only implements a function that is applied to each vertex.
       \item The framework abstracts away scheduling and implementation details.
     \end{itemize}
 
-    \subsubsection*{Pregel Model}
+    \subsubsection*{\underline{Pregel Model}}
     \begin{itemize}
       \item Pregel is a distributed graph processing model developed by Google.
       \item It is based on the Bulk Synchronous Parallel (BSP) model.
