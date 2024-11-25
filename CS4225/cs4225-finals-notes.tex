@@ -86,6 +86,369 @@
     }
   \end{center}
 
+
+  \section{Introduction}
+
+  \begin{itemize}
+    \item What is data science? The study of data. It involves developing methods of recording, storing, and analysing data to effectively extract useful information.
+    \item Challenges of Big Data: Volume, Velocity, Variety, Veracity, Value.
+    \item Cloud Computing: The delivery of computing services over the internet. Eg. storage, databases, networking, software, analytics, intelligence, etc.
+    \item Virtualisation and Containers: \includegraphics[width=0.95\linewidth]{virtualisation_container.png}
+    \item Infrustructure as a Service (IaaS): Provides virtualised computing resources over the internet. Eg. AWS, Azure, Google Cloud.
+    \item Platform as a Service (PaaS): Provides a platform allowing customers to develop, run, and manage applications without the complexity of building and maintaining the infrastructure.
+    \item Software as a Service (SaaS): Software that is centrally hosted and licensed on a subscription basis.
+  \end{itemize}
+
+  \subsubsection*{Data Centers}
+  \begin{itemize}
+    \item A facility composed of networked computers and storage that businesses or other organisations use to organise, process, store, and disseminate large amounts of data.
+    \item Single Server: A single physical server that runs a single operating system.
+    \item Rack: Contains multiple servers, oftern connected to a rack switch (or top-of-rack switch).
+    \item Data Center: Contains multiple racks, often connected to a data center switch (or a core switch).
+    \item Bandwidth: The maximum amount of data that can be transmitted per unit time (e.g 1 Gbps). [Large Files]
+    \item Latency: The time it takes for data to travel from the source to the destination (one-way) or from source to destination and back to source (round trip). Measured in ms.  [Small Files]
+    \item Throughput: Rate at which data is \textit{actually} transmitted accross the network during a period of time.
+    \item Latency combines additatively. The lower the latency, the better the performance.
+    \item Bandwidth is approximately the minimum bandwidth throughout the network path. The higher the bandwidth, the better the performance.
+    \item Storage Hierarchy (Higher the storage capacity, the higher the network latency, lower the bandwidth as it is bottlenecked by switches)
+    \item Data Flow Paths (Local Disk -> Local DRAM -> TOR Switch -> Core Switch ... etc)
+    \item Disk read/write is slower than DRAM read/write. DRAM read/write is slower than L1/L2 Cache read/write.
+    \item Latency increases over the storage hiearchy as we go from Local Server to Rack to Data Center.
+    \item \textbf{Latency is dominated by disk speed. Disk transfer is very expensive, any transfer involving disks take about the same amount of time.}
+    \item Bandwidth decreases over the storage hiearchy as we go from Local to Rack to Dat Center
+    \item \textbf{Bandwidth tends to be bottlenecked by networking switches.}
+    \item Worst Performance: Disk read/write for Latency. Network switch bottleneck for Bandwidth.
+    \item Ideas for Massive Data Processing:
+    \begin{itemize}
+      \item Horizontal Scaling: Distributing the load accross multiple machines. Eg. Hadoop, Spark. Instead of vertical scaling (upgrading a single machine).
+      \item Move processing to the data
+      \item Process data sequentially and avoid random access as it involves disk seeks which leads to high latency.
+      \item Seamless scalability: The ability to increase the capacity of the system without affecting the performance of the system.
+    \end{itemize}
+  \end{itemize}
+
+  \section{MapReduce (Hadoop)}
+
+  \begin{itemize}
+    \item MapReduce is a programming model for processing and generating large data sets with a parallel, distributed algorithm on a cluster.
+    \item Divide, Conquer, Aggregate.
+    \item Challenges: Allocating Tasks, Scheduling, Partial Results, Aggregation, Synchronisation, Fault Tolerance.
+    \item Synchronisation Barrier between Map phase and Reduce phase.
+    \item Map Task is a basic unit of work. It is typically 128MB of data. At the beginning the input is broken into splits of 128MB. A map task is a job requiring to process one split, not a worker.
+    \item Map Function is a user-defined function that processes a key/value pair to generate a set of intermediate key/value pairs.
+    \item A map task can invoke the map function multiple times.
+    \item Reduce Task is a basic unit of work. It is typically 1GB of data. A reduce task is a job requiring to process one partition, not a worker.
+    \item Reduce Function is a user-defined function that processes a key and a set of values to generate a set of output values.
+    \item A reduce task can invoke the reduce function multiple times.
+    \item Data is \textbf{sorted by key and not value.}
+    \item All values with the same key are sent to the same reduce task.
+    \item Formally:
+    \begin{itemize}
+      \item \textbf{Map}: $(k_1, v_1) \rightarrow list(k_2, v_2)$
+      \item \textbf{Reduce}: $(k_2, list(v_2)) \rightarrow list(k_3, v_3)$
+    \end{itemize}
+    \item MapReduce execution framework handles scheduling, shuffling, synchronisaton, faults. Everything happens on top of a distributed file system, HDFS.
+    \item MapReduce execution steps:\newline Submit Job $\rightarrow$ Schedule Tasks $\rightarrow$ Read $\rightarrow$ MAP $\rightarrow$ Shuffle [Local Write, Remote Read] $\rightarrow$ REDUCE $\rightarrow$ Write.
+    \item \textbf{Shuffle}: The process of transferring data from the map tasks to the reduce tasks. It involves sorting, partitioning, and copying intermediate data.
+    \item \textbf{Partitioning (Local Write)}: The process of determining which reduce task will receive the intermediate data for a given key. Partitions are based of keys, a single partition can have multiple keys.
+    \item \textbf{Sorting}: The process of sorting the intermediate data by key. Key value pairs arrive to the reduce task in order sorted by key.
+    \item \textbf{Copying (Remote Read)}: The process of transferring the intermediate data from the map tasks to the reduce tasks. Reduce worker reads data from the \textbf{same corresponding partition from each Map worker}.
+    \item Reduce phase is often the slowest phase as it involves network I/O and synchronisaton.
+    \item The \textbf{Master Node} is responsible for scheduling tasks, monitoring tasks, and re-executing failed tasks. It does not execute tasks.
+    \item The \textbf{Worker Node} is responsible for executing tasks. It does not schedule tasks. A single worker can handle multiple map tasks.
+    \item \includegraphics[width=0.95\linewidth]{mapreduce_implementation.png}
+    \item The number of:
+    \begin{itemize}
+      \item Map Function Calls = Number of Input Key-Value pairs
+      \item Reduce Function Calls = Number of Unique Intermediate Keys
+      \item Map Tasks = Number of Input Splits
+      \item Reduce Tasks = Number of Partitions (Specified by user)
+    \end{itemize}
+  \end{itemize}
+
+  \subsubsection*{Partitioner and Combiner}
+  \begin{itemize}
+    \item Task Straggler Problem: Some tasks take longer to complete than others. This can slow down the entire job.
+    \item It can be caused by certain keys in the data set that have too high of a frequency compared to other keys.
+    \item User can define a custom partitioner to partition the data in a way that reduces the load on the reduce tasks.
+    \item Combiner is a mini-reduce function that runs on the map side. It is used to reduce the amount of data that needs to be transferred to the reduce tasks.
+    \item Generally, ensure that the computation is associative and commutative to ensure that the correctness of the combiner.
+    \item Combiners are invoked after the map function, during the local write phase (but before the actual disk write to save disk I/O).
+    \item Paritioners are invoked during the local write phase, as this stage requires knowing which keys need to go to which reducer.
+    \item Both paritioners and combiners are optional and can be defined by the user.
+    \item Guideline for basic algorithmic design: Linear scalibility, minimise disk and network I/O, reduce memory working set of each task/worker.
+  \end{itemize}
+
+  \subsubsection*{Secondary Sort}
+
+  \begin{itemize}
+    \item In the Reduce phase, the intermediate data is sorted by key. However, we may want to sort the values for each key.
+    \item Secondary Sort is the process of sorting the values for each key in the Reduce phase.
+    \item Composite Key $(k_1, k_2, v)$ + Custom Comparator (Compare $k_1$; If equal, compare $k_2$) + Custom Partitioner (Partition by $k_1$ only)
+    \item It is not suitable to used hash based partitioning as it will not guarantee that all values for a key will go to the same reducer.
+    \item Since we defined the custom comparator to sort based on the composite key, the values for each key will be sorted.
+    \item This ultises the fact that the intermediate data is sorted by key in the shuffle phase.
+    \item Sorting data in the reducer is expensive as it involves disk I/O. Sorting data in the map phase is cheaper as it involves memory I/O.
+  \end{itemize}
+
+  \subsubsection*{Preserving State in MapReduce}
+  \begin{itemize}
+    \item In-mapper combiner: A combiner that runs within the map task. It is used to reduce the amount of data that needs to be transferred to the reduce tasks.
+    \item Different calls to the function used in the mapping or reducing phase can preserve a state (e.g store variables) to be shared between the function calls.
+    \item A key thing to note is that one of our goals is to reduce the amount of disk and memory IOs to maximise efficiency. However, with the context of the program, we will emit many intermediate results which incurs an IO each time.
+    \item Word Count Example:
+    \begin{itemize}
+      \item Version 1: Using a hash table in the mapping function. In a way, the mapping is already doing combining job using the properties of a hash table. [IN-MAPPER COMBINER as opposed to regular combiner (externally defined)]
+      \item For version 1, regular combiners are still used. As regular combiners can combine outputs for the whole map task, not just the map function. (I.e it can combine each hash table produced by each map function call)
+      \item Version 2: A single hash table is stored for the execution of the map task in the Mapper object. Each map function call will update the shared hash table in the Mapper object.
+      \item For version 2, a drawback is that the hash table is stored in memory (increased memory working set). If the hash table is too large, it may cause memory issues.
+    \end{itemize}
+  \end{itemize}
+
+  \subsection{Hadoop Distributed File System (HDFS)}
+
+  \begin{itemize}
+    \item Conceptually similar to a regular file system, but with the data spread accross a cluster of machines.
+    \item Same data is replicated across multiple machines to ensure fault tolerance. Default replication factor is 3.
+    \item Single master node (NameNode) and multiple worker nodes (DataNodes). Centralised metadata management.
+    \item File stored as blocks (default 128MB). Blocks are replicated across multiple DataNodes.
+    \item Write Once, Read Many (WORM) model. Once a file is written, it cannot be modified. But files can be appended to.
+    \item HDFS is optimised for large files. It is not suitable for small files as it incurs overhead for each file.
+    \item HDFS is designed for high throughput, not low latency. It is not suitable for real-time or random access.
+    \item \includegraphics[width=0.95\linewidth]{hdfs_reading_data.png}
+    \item \includegraphics[width=0.95\linewidth]{hdfs_writing_data.png}
+    \item NameNode: Manages the fiile system namespace (file/directory structure, metadata, file-to-block mapping, access permissions). Directs clients to datanodes. It does not store the data itself.
+    \item NameNode also maintains overall health of the cluster through heartbeats, block rebalancing.
+    \item Data Locality: \includegraphics[width=0.95\linewidth]{hadoop_data_locality.png}
+  \end{itemize}
+
+  \section{Relational Databases}
+
+  \begin{itemize}
+    \item Projection (SELECT): Map-only job. Output of the map function is the final output desired.
+    \item Selection (WHERE): Map-only job. Predicate is applied in the map function.
+    \item Aggregation (GROUP BY, COUNT, SUM, AVG): Map-Reduce job. Map function emits intermediate key-value pairs. Reduce function aggregates the values for each key.
+    \item Join (INNER JOIN, OUTER JOIN):
+      \begin{itemize}
+        \item \textbf{Method 1: Braodcast Join (Map Join):}
+        \item Small table is broadcasted to all worker nodes. Large table is partitioned and sent to worker nodes.
+        \item The small table can be converted to a hash table and stored in memory.
+        \item Mapper iterates through the large table and looks up the corresponding value in the hash table for the join.
+        \item \textbf{Method 2: Common Join (Reduce-Side Join):}
+        \item Slower than broadcast join as it involves network I/O, but it uses less memory.
+        \item Different mapper tasks are used for each table. The reducer task is used to join the tables.
+        \item The key of intermediate results is appended with \texttt{table\_id} to create a composite key. Secondary sort is used to ensure that keys from one table all arrive before keys from the other table.
+        \item The reducer task will hold the intermediate results from a table in memory, then iterate through the values from the other table and perform the join.
+      \end{itemize}
+  \end{itemize}
+
+  \section{Similarity Search}
+
+  \begin{itemize}
+    \item Near Neighbours: Objects that are similar to each other.
+    \item Distance Measure: A function that measures the distance between two objects.
+    \item Similarity Measure: A function that measures the similarity between two objects. Opposite of distance measure.
+    \item Euclidean Distance: $\sqrt{\sum_{i=1}^{n} (x_i - y_i)^2}$
+    \item Manhattan Distance: $\sum_{i=1}^{n} |x_i - y_i|$
+    \item Cosine Similarity: $\frac{A \cdot B}{||A|| \cdot ||B||}$ where $A \cdot B = \sum_{i=1}^{n} A_i \cdot B_i$
+    \item Cosine Similarity is often used for text data as it is invariant to the magnitude of the vectors. Only considers the direction of the vectors.
+    \item Jaccard Similarity: $\frac{|A \cap B|}{|A \cup B|}$. Intersection over Union.
+    \item Jaccard Distance = 1 - Jaccard Similarity
+    \item \textbf{All pairs similarity search}: Given a large number of documents, find pairs of documents that are similar to each other.
+    \item \textbf{Similarity search:} Given a query document, find the similar documents in the database.
+    \item \textbf{Shingling:} A technique to convert a document into a set of shingles. A shingle is a sequence of words in a document. Imagine sliding window of size k over the document.
+    \item \textbf{Min-Hashing:} A technique to estimate the Jaccard similarity between two sets. It is used to reduce the size of the shingle set.
+  \end{itemize}
+
+  \subsubsection{Shingles}
+  \begin{itemize}
+    \item Matrix Representation: Each row represents a shingle, each column represents a document. 
+    \item A cell is 1 if the shingle is in the document, 0 otherwise.
+    \item Intersection: Number of rows with both columns as 1. 
+    \item Union: Number of rows with at least one column as 1.
+    \item K-Shingle Set: Set of all possible k-shingles in a document.
+  \end{itemize}
+
+  \subsubsection{Min-Hashing}
+  \begin{itemize}
+    \item \textbf{Key Property:} The probability that two documents have the same min-hash value is equal to the Jaccard similarity of the documents.
+    \item Formally: $P(h(A) = h(B)) = J(A, B)$
+    \item \textbf{Key Idea:} Use a hash function to map the shingle set to a smaller set of hash values. The minimum hash value is used as the signature of the document.
+    \item Multiple hash functions are used to generate multiple signatures for each document. The signatures are used to estimate the Jaccard similarity.
+    \item Documents with Jaccard similarity above a threshold will be accepted as candidate pairs.
+    \item Candidate pairs can themselves be the output or can be further verified using the original shingle set.
+    \item \textbf{MapReduce Framework:}
+    \begin{itemize}
+      \item Map: Read over the document and extract the shingles. Hash each shingle and take the min of them to get the MinHash signature
+      \item Emit \texttt{<signature, document\_id>}. \textit{Notice that the signature is the key}
+      \item Redicue: Receive all documents with a given MinHash signature. Generate all candidate pairs from these documents.
+      \item (Optional): Verify the candidate pairs using the original shingle set.
+    \end{itemize}
+  \end{itemize}
+
+  \section{K-Means Clustering}
+
+  \begin{itemize}
+    \item K-Means is an iterative algorithm that partitions the data into K clusters.
+         \begin{enumerate}
+          \item Randomly initialise K cluster centroids.
+          \item Assign each data point to the nearest cluster centroid.
+          \item Recompute the cluster centroids based on the data points assigned to the cluster.
+          \item Stop when the cluster centroids do not change significantly or no data points change clusters.
+         \end{enumerate}
+     \item Map Phase: Assign each data point to the nearest cluster centroid. Emit \texttt{<cluster\_id, point>}.
+     \item Reduce Phase: Recompute the cluster centroids based on the data points assigned to the cluster. Emit \texttt{<cluster\_id, new\_centroid>}.
+     \item Extending Point: Adding a dimension to the coordinate emitted which is just a 1 to help with the computation of the sum and count.
+     \item V1: Emits each point with the cluster it belongs to without combining.
+     \item Disk I/O exchanged: $O(nmd)$. Where n is the number of data points, m is the number of iterations, d is the number of dimensions.
+     \item V2: In-mapper combiner combines points in the same cluster within the map task using a hash table. Emits each cluster and the list of points assigned to it in the current iteration.
+     \item Disk I/O exchanged: $O(kmd)$. Where k is the number of clusters.
+     \item \includegraphics[width=0.95\linewidth]{kmeans_mapreduce.png}
+  \end{itemize}
+
+  \section{NoSQL Databases}
+
+  \begin{itemize}
+    \item NoSQL databases are non-relational databases that provide a mechanism for storage and retrieval of data that is modelled in means other than the tabular relations used in relational databases.
+    \item Stands for "Not Only SQL"
+    \item Examples: Key-Value Stores, Document Stores, Wide Column Stores, Graph Databases, Vector Databases.
+    \item Features: Horizontally Scalable, Replicated/Distributed over many servers, Schema-less, Eventual Consistency, High Availability, Simple call interface, often weaker concurrency model than RDBMS, Effcient use of distributed indexes and RAM, Flexible Schemas.
+    \item Pros: Flexible/Dynamic Schema, Horizontal Scalability, High Performance and Availability
+    \item Cons: No declarative query language, Weaker consistency guarantees.
+  \end{itemize}
+
+  \subsection{Key-Value Stores}
+  \begin{itemize}
+    \item \textbf{Keys} are usually primitive data types (ints, string, raw bytes, etc) and can be queried.
+    \item \textbf{Values} can be any data type (string, JSON, XML, BLOB, etc) and are opaque to the database. It usually does not support querying.
+    \item \textbf{Operations}: Get, Put,Multi-Get, Multi-Put, Range Queries.
+    \item Suitable for:
+    \begin{itemize}
+      \item Small continuous reads and writes
+      \item Storing basic information (user profiles, session information, caches, raw chunks of bytes). Or no clear schema.
+      \item When compex queries are not needed.
+      \item Non-persistent: Big in-memory hash table. Example: Memcached, Redis.
+      \item Persistent: Data is stored persistently on disk. Example: RocksDB, Dynamo, Riak
+    \end{itemize}
+  \end{itemize}
+
+  \subsection{Document Stores}
+  \begin{itemize}
+    \item Basically Hierarchical Key-Value Stores. Values are documents (JSON, XML, etc).
+    \item Collections = Tables, Documents = Rows, Fields = Columns.
+    \item Unlike Key-Value Stores, the database can query the values.
+    \item Example Document Stores: \textbf{MongoDB}, CouchDB, Couchbase.
+    \item The \$ operator represents a special key in MongoDB. It is used to project elements in an array.
+    \item 1 stands for true/include, 0 stands for false/exclude in MongoDB.
+    \item \includegraphics[width=0.95\linewidth]{mongodb_example.png}
+  \end{itemize}
+
+  \subsubsection*{MongoDB}
+  \begin{itemize}
+    \item Routers(mongos): Handles requests from application and route the queries to the correct shards.
+    \item Config Server: Stores metadata and configuration settings for the cluster (e.g. which data is in which shard)
+    \item Shards: Data is partitioned based on a shard key(variable of the record). Within each shard, data is stored in replica sets for redundancy and fault tolerance.
+    \item Sharding allows for horizontal scalability.
+    \item \includegraphics[width=0.95\linewidth]{mongo_db_read_example.png}
+    \item Partition Pruning: Only the relevant shards are queried. The query is sent to the relevant shards based on the shard key.
+    \item If query is not based on the shard key, the query is sent to all shards. This is called scatter-gather.
+    \item Supports join queries through denormalisation. Data is duplicated across multiple collections to avoid joins.
+  \end{itemize}
+
+  \subsubsection*{Replication in MongoDB}
+  \begin{itemize}
+    \item Standard Configuration: 3 nodes, 1 primary, 2 secondaries.
+    \item Primary receives all write operations.
+    \item Secondaries replicate the primary's \textbf{operation log} and apply the operations.
+    \item Users can configure the read preference to allow reading from secondaries.
+    \item Secondaries have eventual consistency. They may lag behind the primary. But allowing reads from secondaries can improve decrease latency and distribute load (improving thoughput).
+  \end{itemize}
+
+  \subsection{Wide Column Stores}
+  \begin{itemize}
+    \item Column Families: A collection of columns. Each column family has a unique name.
+    \item Sparsity: Columns can be added to a row without adding them to all rows.
+    \item If a column is not used for a row, it does not use any space.
+    \item Example: BigTable, HBase, Cassandra.
+  \end{itemize}
+
+  \subsection{Vector Databases}
+  \begin{itemize}
+    \item Each row is a vector. Each column is a dimension.
+    \item Usually used to store dense, numerical and high-dimensional data.
+    \item Allows fast similarity search and clustering.
+    \item Major Types of algorithm: Min-Hashing, Locality Sensitive Hashing (LSH).
+    \item Features: Scalability, Real-Time Updates, Replication, Fault Tolerance, High Availability.
+    \item Examples: Milvus, Redis, Weaviate, MongoDB Atlas.
+    \item Commonly used for AI/ML applications, especially large language models are often used to convert text into vectors which are used for search, recommendation, clustering.
+    \item Similarly, vision models convert images into embeddings.
+  \end{itemize}
+
+  \subsection{Strong Vs Eventual Consistency}
+  \begin{itemize}
+    \item Strong Consistency: Any reads immediately after an update must give the same result on all observers.
+    \item Eventual Consistency: If the system is functioning and given enough time, eventually all reads will return the last written value.
+    \item RDBMS provides ACID properties (Atomicity, Consistency, Isolation, Durability).
+    \item NoSQL databases often provide BASE properties (Basically Available, Soft State, Eventually Consistent).
+    \begin{itemize}
+      \item Basically Available: Basic reading and writing operations are available most of the time
+      \item Soft State: Without guarantees, we only have some probability of knowing the state at any time.
+      \item Eventually Consistent: The system will eventually become consistent.
+    \end{itemize}
+    \item Eventual consistency offers better availability at the cost of weaker consistency guarantee. It is suitable for applications that can tolerate stale data.
+  \end{itemize}
+
+  \section{Distributed Databases}
+  \begin{itemize}
+    \item Advantages: Scalability, Availability, Fault Tolerance, Lower Latency (Nearest Replica)
+    \item Architectures: Shared Everything, Shared Memory, Shared Disk, Shared Nothing.
+    \item RDBMS and NoSQL databases often use the Shared Nothing architecture.
+    \item Network conditions between nodes may fail. In some cases, the network may be partitioned.
+    \item \textbf{CAP Theorem:} Consistency, Availability, Partition Tolerance. A distributed system can only guarantee two of the three.
+    \begin{itemize}
+      \item Consistency: Every read receives the most recent write or an error. (Strong Consistency)
+      \item Availability: Every request receives a response.
+      \item Partition Tolerance: The system continues to operate despite network partitions.
+    \end{itemize}
+    \item Intutition: In the event of a network partition, the system can either choose to be consistent or available.
+    \item Generally, NoSQL databases choose to be available and partition tolerant (AP). RDBMS choose to be consistent and partition tolerant (CP).
+    \item But databases often have tunable consistency levels.
+  \end{itemize}
+
+  \subsection{Data Partitioning}
+  \begin{itemize}
+    \item \textbf{Table Partitioning:} Put different tables (or collections) on different nodes.
+    \item Problem: Scalability is an issue as each table cannnot be split accross multiple nodes.
+    \item \textbf{Horizontal Partitioning (Sharding):} Different rows (or documents) of the same table are stored on different nodes.
+    \item Records are partitioned based on a shard key. The shard key is used to determine which node the record is stored on.
+    \item We should choose a shard key based on the access patterns of the data (e.g. groupBy). It should be evenly distributed to avoid hotspots.
+    \item We want to ultilise partition pruning to reduce the number of nodes that need to be queried.
+    \item \textbf{Low Cardinality:} A shard key with low amounts of unique values. It is not suitable for sharding as it will lead to hotspots.
+    \item \textbf{High Frequency:} A single shard key with high amounts of records. It is not suitable for sharding as it will lead to hotspots.
+    \item To mitigate these issues, we can use \textit{composite shard keys}.
+    \item \textbf{Range Partitioning:} We can combine horizontal paritioning with range partitioning. Each node is responsible for a range of shard keys.
+    \item Beneficial for range queries as the query can be sent to the relevant node.
+    \item \textbf{Hash Partitioning:} Each node is responsible for a range of hash values of the shard key.
+    \item It can still lead to hotspots if the hash function is not well distributed.
+  \end{itemize}
+
+  \subsubsection{Consistent Hashing}
+  \begin{itemize}
+    \item Weakness of Hash/Range Partitioning: How do we distribute the data when we add or remove nodes?
+    \item If we redo the partitioning, we will have to move a lot of data which is inefficient.
+    \item \textbf{Consistent Hashing:} A technique that minimises the amount of data that needs to be moved when nodes are added or removed.
+    \item Think of the output of hashing the shard key as on a circle.
+    \item Each node has a marker on the circle. Each node can even have multiple markers.
+    \item Each record is assigned to the node in the clockwise direction of the first marker it encounters.
+    \item To delete a node, we simply remove the marker from the circle. The records that were assigned to the node will be assigned to the next node in the clockwise direction.
+    \item To add a node, we simply add a marker to the circle. The records that were assigned to the next node in the clockwise direction will be assigned to the new node.
+    \item Replication Strategy: Each record is assigned to the next $n$ nodes in the clockwise direction.
+    \item Benefits of multiple markers: Load balancing, when we remove a node, the records are distributed to different nodes in their clockwise direction.
+          \includegraphics[width=0.95\linewidth]{consistent_hashing.png}
+  \end{itemize}
+  
+  % --------------------------------------------------------------
+
   \section {Apache Spark}
   \subsection{Hadoop vs Spark}
 
@@ -334,7 +697,7 @@
   \item Watermarks in Flink is not directly invovled in late data handling. It is used to determine when to emit results of windowed operations.
 \end{itemize}
 
-\subsubsection{Statem Management}
+\subsubsection{State Management}
 
 \begin{itemize}
   \item Stateful Stream Processing Task: All data maintained by a task and used to compute the results of a function belong to the state of the task.
