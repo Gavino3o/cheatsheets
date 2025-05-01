@@ -1,0 +1,451 @@
+\documentclass[10pt, landscape]{article}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{calc}
+\usepackage{multicol}
+\usepackage[a4paper,margin=3mm,landscape]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{color,graphicx,overpic}
+\usepackage{hyperref}
+\usepackage{newtxtext} 
+\usepackage{enumitem}
+\usepackage[table]{xcolor}
+\usepackage{mathtools}
+\setlist{nosep}
+% for including images
+\graphicspath{ {./images/} }
+
+\pdfinfo{
+  /Title (CS2108.pdf)
+  /Creator (TeX)
+  /Producer (pdfTeX 1.40.0)
+  /Author (Gavin Chiam)
+  /Subject (CS2108)
+/Keywords (CS2108, nus, cheatsheet, pdf)}
+
+% Turn off header and footer
+\pagestyle{empty}
+
+% redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+  {-1ex plus -.5ex minus -.2ex}%
+  {0.5ex plus .2ex}%x
+{\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+  {-1explus -.5ex minus -.2ex}%
+  {0.5ex plus .2ex}%
+{\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+  {-1ex plus -.5ex minus -.2ex}%
+  {1ex plus .2ex}%
+{\normalfont\small\bfseries}}%
+\makeatother
+
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand\rmdefault{\sfdefault}
+%  makes nested numbering (e.g. 1.1.1, 1.1.2, etc)
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
+\renewcommand\labelitemii{•}
+\renewcommand\labelitemiii{•}
+
+\definecolor{mathblue}{cmyk}{1,.72,0,.38}
+\everymath\expandafter{\the\everymath \color{mathblue}}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+%% adjust spacing for all itemize/enumerate
+\setlength{\leftmargini}{0.4cm}
+\setlength{\leftmarginii}{0.4cm}
+\setlength{\leftmarginiii}{0.2cm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm}
+\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm}
+\setlist[itemize,3]{leftmargin=4mm,labelindent=1mm,labelsep=1mm}
+
+% adding my commands
+\input{../commands/style-helpers.tex}
+\makeatletter
+\newcommand*{\xdashrightarrow}[2][]{%
+  \mathrel{%
+    \mathpalette{\da@xarrow{#1}{#2}{}\da@rightarrow{\,}{}}{}%
+  }%
+}
+\newcommand*{\da@rightarrow}{\mathchar"0\hexnumber@\symAMSa 4B }
+\newcommand*{\da@xarrow}[7]{%
+  % #1: below
+  % #2: above
+  % #3: arrow left
+  % #4: arrow right
+  % #5: space left 
+  % #6: space right
+  % #7: math style 
+  \sbox0{$\ifx#7\scriptstyle\scriptscriptstyle\else\scriptstyle\fi#5#1#6\m@th$}%
+  \sbox2{$\ifx#7\scriptstyle\scriptscriptstyle\else\scriptstyle\fi#5#2#6\m@th$}%
+  \sbox4{$#7\dabar@\m@th$}%
+  \dimen@=\wd0 %
+  \ifdim\wd2 >\dimen@
+    \dimen@=\wd2 %   
+  \fi
+  \count@=2 %
+  \def\da@bars{\dabar@\dabar@}%
+  \@whiledim\count@\wd4<\dimen@\do{%
+    \advance\count@\@ne
+    \expandafter\def\expandafter\da@bars\expandafter{%
+      \da@bars
+      \dabar@ 
+    }%
+  }%  
+  \mathrel{#3}%
+  \mathrel{%   
+    \mathop{\da@bars}\limits
+    \ifx\\#1\\%
+    \else
+      _{\copy0}%
+    \fi
+    \ifx\\#2\\%
+    \else
+      ^{\copy2}%
+    \fi
+  }%   
+  \mathrel{#4}%
+}
+\makeatother
+
+% -----------------------------------------------------------------------
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols*}{4}
+  % multicol parameters
+  \setlength{\columnseprule}{0.25pt}
+
+  \begin{center}
+    \fbox{%
+      \parbox{0.8\linewidth}{\centering \textcolor{black}{
+          {\Large\textbf{CS2108}}
+        \\ \normalsize{AY24/25 SEM 2}}
+        \\ {\footnotesize \textcolor{gray}{github/Gavino3o}}
+      }%
+    }
+  \end{center}
+
+  \section{\underline{Sinusoids}}
+
+  \begin{itemize}
+    \item Sinusoids are periodic functions that can be represented as a sum of sine and cosine functions. The general form of a sinusoid is:
+    \begin{equation}
+      y(t) = A \sin(\omega t + \phi) + B \cos(\omega t + \phi)
+    \end{equation}
+    where:
+    \begin{itemize}
+      \item $A$ is the amplitude
+      \item $\omega$ is the angular frequency
+      \item $\phi$ is the phase shift
+      \item $B$ is the vertical shift
+    \end{itemize}
+    \item The angular frequency $\omega$ is related to the frequency $f$ and the period $T$ by:
+    \begin{equation}
+      \omega = 2\pi f = 2\pi \frac{1}{T}
+    \end{equation}
+    \item  Hence, the sinusoid can also be expressed in terms of frequency:
+    \begin{equation}
+      y(t) = A \sin(2\pi f t + \phi) + B \cos(2\pi f t + \phi)
+    \end{equation}
+  \end{itemize}
+
+  \subsection{Discrete Time Sinusoids}
+  \begin{itemize}
+    \item Discrete time sinusoids are sampled versions of continuous time sinusoids. The general form is:
+    \begin{equation}
+      x[n] = \sum_{k=0}^{K-1} a_k \sin(2 \pi f_k t_n) + b_k \cos(2 \pi f_k t_n)
+    \end{equation}
+    where:
+    \begin{itemize}
+      \item $n$ is the discrete time index
+      \item $k$ is the frequency index
+      \item $t_n$ is the discrete time variable $n \Delta t$
+      \item $f_k$ is the frequency of the $k$-th component $k \Delta f$
+      \item $\Delta t$ is the sampling period
+      \item $\Delta f$ is the frequency resolution
+      \item $K$ is the total number of frequencies
+    \end{itemize}
+    The coefficients $a_k$ and $b_k$ define the amplitude and phase of each frequency component.
+    \item The discrete time sinusoid can also be expressed in different forms:
+    \begin{equation}
+      \begin{aligned}
+      x[n] & = \sum_{k=0}^{K-1} a_k \sin(2 \pi f_k t_n) + b_k \cos(2 \pi f_k t_n) \\ 
+           & = \sum_{k=0}^{K-1} c_k \sin(2 \pi f_k t_n + \phi_k) \\ 
+           & = \sum_{k=0}^{K-1} d_k \cos(2 \pi f_k t_n + \theta_k)
+      \end{aligned}
+    \end{equation}
+    where:
+    \begin{itemize}
+      \item Second line is the same sinusoid a summation of shifted sine functions
+      \item Third line is the same sinusoid as a summation of shifted cosine functions
+      \item $c_k$ and $d_k$ are the coefficients for the sine and cosine forms
+      \item $\phi_k$ and $\theta_k$ are the phase shifts for the sine and cosine forms
+      \item The relationship between the coefficients is given by:
+      \begin{equation}
+        \begin{aligned}
+          c_k & = \sqrt{a_k^2 + b_k^2} \\
+          d_k & = \sqrt{a_k^2 + b_k^2} \\
+          \phi_k & = \tan^{-1}\left(\frac{b_k}{a_k}\right) \\
+          \theta_k & = \tan^{-1}\left(\frac{a_k}{b_k}\right)
+        \end{aligned}
+      \end{equation}
+      \item If $a_k$ = $b_k$, the sinusoid is a combination of sine and cosine functions with equal amplitude and phase shift. Phase shift is 45 degrees.
+      \item If $a_k$ = -$b_k$, the sinusoid is a combination of sine and cosine functions with equal amplitude and phase shift. Phase shift is 135 degrees.
+      \item If $a_k$ = 0, phase shift is 90 degrees
+      \item If $b_k$ = 0, phase shift is 0 degrees
+    \end{itemize}
+  \end{itemize}
+
+  \subsection{Periodicity}
+
+  \begin{itemize}
+    \item Fundamental period is the smallest period of a sinusoid. The fundamental period is the time it takes for the sinusoid to complete one full cycle.
+    \item The fundamental frequency is the reciprocal of the fundamental period:
+    \begin{equation}
+      f_0 = \frac{1}{T_0}
+    \end{equation}
+    \item The fundamental frequency is the lowest frequency of a sinusoid. It is the frequency at which the sinusoid oscillates.
+    \item Sinusoids are periodic functions, meaning they repeat their values at regular intervals. 
+    \item If we add sinoiuds with different frequencies, the resulting function is not periodic unless the frequencies are rationally related.
+    \item Suppose we have a sinusoid with the equation:
+     \begin{equation}
+      y(t) = a_1 \sin(\omega_1 t + \phi_1) + a_2 \cos(\omega_2 t + \phi_2)
+    \end{equation}
+    \item To determine if the sinusoid is periodic, we need to check if the ratio of the \textbf{frequencies} is rational:
+    \begin{equation}
+      \frac{\omega_1}{\omega_2} = \frac{p}{q}
+    \end{equation}
+    where $p$ and $q$ are integers.
+    \item To determine the \textbf{fundamental period} of the sinusoid, we need to find the least common multiple (LCM) of the periods of the individual sinusoids:
+    \begin{equation}
+      T = \text{lcm}(T_1, T_2)
+    \end{equation}
+    where $T_1$ and $T_2$ are the periods of the individual sinusoids. Calculate the period of each sinusoid using:
+    \begin{equation}
+      T_i = \frac{2\pi}{\omega_i}
+    \end{equation}
+    \item Hint: Let ratio of periods = $ \frac{T_1}{T_2} = \frac{q}{p}$, then $T = p T_1 = q T_2 $
+    \item Suppose we have a sinusoid with the equation:
+     \begin{equation}
+      y(t) = a_1 \sin(2 \pi f_1 t + \phi_1) + a_2 \cos(2 \pi f_2 t + \phi_2)
+    \end{equation}
+    where $f_1$ and $f_2$ are integers
+    \item To determine the \textbf{fundamental frequency} of the sinusoids, we need to find the greatest common divisor (GCD) of the frequencies of the individual sinusoids:
+    \begin{equation}
+      f = \text{gcd}(f_1, f_2)
+    \end{equation}
+    \item Then fundamental period is: $T = \frac{1}{f}$
+    \item The above calculatiosn can be done with sinusoids of more than 2 frequencies as well.
+
+  \end{itemize}
+
+
+  
+ \section{\underline{Fourier Series}}
+
+  \subsection{Recap}
+  \begin{itemize}
+    \item \textbf{Orthogonal Basis Set} a set of functions that are orthogonal to each other. This means that the inner product of any two functions in the set is zero.
+    \item Inner product of two functions $f(t)$ and $g(t)$ is defined as:
+    \begin{equation}
+      \langle f(t), g(t) \rangle = \int_{-\infty}^{\infty} f(t) g(t) dt
+    \end{equation}
+    \item Inner Product (continuous) = Dot Product (discrete)
+    \item \textbf{Sine and cosine functions are orthogonal to each other}, no matter their frequencies. Inner/Dot product = \textbf{zero}.
+    \includegraphics[width=0.95\linewidth]{sinecosineproduct.png} 
+    \item \textbf{Sine waves of different frequencies} are orthogonal to each other.Inner/Dot product = \textbf{zero}.
+    \includegraphics[width=0.95\linewidth]{sinesineproduct.png} 
+    \item Similarly, \textbf{Cosine waves of different frequencies} are orthogonal to each other. Inner/Dot product = \textbf{zero}.
+    \includegraphics[width=0.95\linewidth]{cosinecosineproduct.png} 
+
+    \item For sine and cosine with non-zero phase shifts:
+    \begin{equation}
+      \begin{aligned}
+        & \sin(2 \pi f t + \phi) = sin(2 \pi f t) \cos(\phi) + \cos(2 \pi f t) \sin(\phi) \\
+        & \cos(2 \pi f t + \phi) = cos(2 \pi f t) \cos(\phi) - \sin(2 \pi f t) \sin(\phi)
+      \end{aligned}
+    \end{equation}
+    \item In other words, with a phase shift, a sine or cosine function that is phase shifted can be expressed as a weighted sum of sine and cosine functions. 
+    \item So in general, the sum of sinusoidal signals, even with non-zero (but constant) phase, can be written as a linear combination of sine and cosine with zero phase.
+    \includegraphics[width=0.95\linewidth]{phaseshiftconversion.png} 
+  \end{itemize}
+
+
+  \subsection{Fourier Series}
+
+  \begin{itemize}
+    \item Fourier series is a way to represent a periodic signal as a sum of sine and cosine functions. It is used to analyze periodic signals in the frequency domain.
+    \begin{equation}
+      y(t) = \sum_{m=0}^{M-1} (a_m \sin(2 \pi f_m t) + b_m \cos(2 \pi f_m t))
+    \end{equation}
+    \item How do we determine all of the $a_m$ and $b_m$: 
+    \includegraphics[width=0.95\linewidth]{ambm.png}
+    \begin{equation}
+      \begin{aligned}
+        a_m & = A_m \cos(\phi_m) \\
+        b_m & = A_m \sin(\phi_m)
+      \end{aligned}
+    \end{equation}
+    \item The Fourier series coefficients $a_m$ and $b_m$ are calculated using the following formulas:
+    \begin{equation}
+      \begin{aligned}
+        a_m & = \frac{2}{T} \int_{0}^{T} y(t) \sin(2 \pi f_m t) dt \\
+        b_m & = \frac{2}{T} \int_{0}^{T} y(t) \cos(2 \pi f_m t) dt
+      \end{aligned}
+    \end{equation}
+    \includegraphics[width=0.95\linewidth]{signal_integration.png}
+    \includegraphics[width=0.95\linewidth]{finding_am_bm.png}
+    \item The ratio of $b_k$ to $a_k$ gives the phase shift of the sinusoid:
+    \begin{equation}
+      \begin{aligned}
+        & \ \frac{b_k}{a_k} = \frac{A_k \sin(\phi_k)}{A_k \cos(\phi_k)} = tan(\phi_k) \\
+        & \phi_k = \tan^{-1}\left(\frac{b_k}{a_k}\right)
+      \end{aligned}
+    \end{equation}
+    \item We can use complex numbers to represent the Fourier series:
+    \includegraphics[width=0.95\linewidth]{fourier_series_complex.png}
+    \item \textbf{Magnitude} = $|X_k| = \frac{T}{2}\sqrt{a_k^2 + b_k^2}$
+    \item \textbf{Phase} = $\tan^{-1}\left(\frac{b_k}{a_k}\right)$
+    \item We can also express the Fourier series in terms of \textbf{complex exponentials}, recall Eulers formula: $e^{j \theta} = \cos(\theta) + j \sin(\theta)$, then:
+    \begin{equation}
+      X(f_k) = \int_{0}^{T} [\sum_{m=0}^{M-1} A_m \sin(2 \pi f_m t + \phi_m] e^{-j 2 \pi f_k t} dt
+    \end{equation}
+    \item \textbf{Fourier series formula} (important):
+    \begin{equation}
+      X(f_k) = \int_{0}^{T} x(t) e^{-j 2 \pi f_k t} dt
+    \end{equation}
+  \end{itemize}
+
+  \section{\underline{Fourier Transform}}
+  \begin{itemize}
+    \item Fourier transform is a way to represent a non-periodic signal as a sum of sine and cosine functions. It is used to analyze non-periodic signals in the frequency domain.
+    \item \textbf{Intuition:} For non-periodic signals, we can think that its \textit{period is infinite}. Then the whole signal can be imagined as periodic with infinite period.
+    \item Fourier series comparison:
+    \begin{equation}
+      X(f) = \int_{0}^{T} x(t) e^{-j 2 \pi f t} dt
+    \end{equation}
+    \item Fourier transform is defined as:
+    \begin{equation}
+      X(f) = \int_{-\infty}^{\infty} x(t) e^{-j 2 \pi f t} dt
+    \end{equation}
+    \item The inverse Fourier transform is defined as:
+    \begin{equation}
+      x(t) = \int_{-\infty}^{\infty} X(f) e^{j 2 \pi f t} df
+    \end{equation}
+    \item The Fourier transform can be used to analyze the frequency content of a signal. It can be used to determine the amplitude and phase of each frequency component in the signal.
+    \item Fourier transform equation using radian frequency $\omega$:
+    \begin{equation}
+      X(\omega) = \int_{-\infty}^{\infty} x(t) e^{-j \omega t} dt
+    \end{equation}
+    \item The inverse Fourier transform using radian frequency $\omega$: 
+    \begin{equation}
+      x(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} X(\omega) e^{j \omega t} d\omega
+    \end{equation}
+    \item The Fourier transform can also be used to filter signals. By multiplying the Fourier transform of a signal by a filter function, we can remove or enhance certain frequency components in the signal.
+    \end{itemize}
+
+    \subsection{Discrete Fourier Transform (DFT)}
+
+  \begin{itemize}
+    \item \textbf{DFT} Formula:
+    \begin{equation}
+      X[k] = \sum_{n=0}^{N-1} x[n] e^{-j 2 \pi k \frac{n}{N}}
+    \end{equation}
+    \item \textbf{Inverse DFT} Formula:
+    \begin{equation}
+      x[n] = \frac{1}{N} \sum_{k=0}^{N-1} X[k] e^{j 2 \pi k \frac{n}{N}}
+    \end{equation}
+    where:
+    \begin{itemize}
+      \item $N$ is the number of samples
+      \item $k$ is the frequency index (discretised frequencies)
+      \item $n$ is the time index
+      \item $x[n]$ is the input signal
+      \item $X[k]$ is the DFT of the input signal
+    \end{itemize}
+    \item FFT (Fast Fourier Transform) is an efficient algorithm to compute the DFT. It reduces the computational complexity from $O(N^2)$ to $O(N \log N)$.
+  \end{itemize}
+
+  \subsubsection{Frequency Bins}
+  \begin{itemize}
+    \item Frequency resolution: Smallest frequency difference that can be resolved by the DFT. It is determined by the sampling frequency and the number of samples.
+    \item The DFT maps the input signal to a set of frequency bins. Each bin corresponds to a specific frequency range.
+    \includegraphics[width=0.95\linewidth]{dft_output.png}
+    \item The frequency resolution of the DFT is given by:
+    \begin{equation}
+      \Delta f = \frac{f_s}{N}
+    \end{equation}
+    where:
+    \begin{itemize}
+      \item $f_s$ is the sampling frequency
+      \item $N$ is the number of samples
+    \end{itemize}
+    \item The frequency bins are given by:
+    \begin{equation}
+      f_k = k \Delta f
+    \end{equation}
+    \item The DC component (k=0) corresponds to the average value of the signal. It is a constant in the sinusoid equation. The Nyquist frequency (k=N/2) corresponds to the highest frequency that can be represented by the DFT.
+    \item We can imagine the DC component as vertical offset of the signal from the x-axis.
+    \item \textbf{Visualisation}:
+    \includegraphics[width=0.95\linewidth]{dft_example.png}
+    \item Derivation of the frequency bins:
+    \includegraphics[width=0.55\linewidth, height=120px]{frequency_bin_derivation_1.png}
+    \includegraphics[width=0.95\linewidth]{frequency_bin_derivation_2.png}
+    \item \textbf{Note}: Sometimes, we pad the input signal with zeros to increase the number of samples. Padding zeros to the input decreases the frequency bin size, but does not increase the frequency resolution.
+    \item \textbf{Note}: N = $2^n$ for FFT, where n is an integer. This is because the FFT algorithm is based on the divide-and-conquer approach, which works best when the number of samples is a power of 2.
+  \end{itemize}
+
+  \subsubsection{Properties of DFT}
+  \begin{itemize}
+    \item \textbf{Intuition}: When you discretise one domain, you also discretise the other domain. The \textit{other domain becomes periodic}.
+    \vspace{0.25cm}
+    \item \textbf{Linearity}: $\mathcal{F} \{ax[n] + by[n]\} = a X[k] + b Y[k]$
+    \item \textbf{Time Shifting}: $\mathcal{F} \{x[n-n_0]\} = X[k] e^{-j 2 \pi k \frac{n_0}{N}}$
+    \item If you shift a signal $x[n]$ by $m$ samples in time, the Fourier transform $X[k]$ remains the same in magnitude, but is multiplied by a complex exponential.
+    \item This complex exponential introduces a linear phase shift in the frequency domain. This exponential has a magnitude of 1, so the magnitude spectrum stays unchanged.
+    \item \textbf{Frequency Shifting}: $\mathcal{F} \{x[n] e^{j 2 \pi m \frac{n}{N}}\} = X[k - m]$
+    \item If you multiply $x[n]$ by a complex exponential in the time domain, it causes a circular shift in the frequency domain. Shifting the frequency response by $m$ bins. Both magnitude and phase are affected.
+    \item \textbf{Time Reversal}: $\mathcal{F} \{x[-n]\} = X^*[k]$
+    \item \textbf{Conjugate Symmetry}: $X[k] = X^*[N-k]$
+    \item Here $X^*[k]$ is the complex conjugate of $X[k]$. (i.e If $X[k] = a + jb$, then $X^*[k] = a - jb$)
+    \item It is important to note that the $ |X[k]| = |X^*[k]|$
+    \vspace{0.25cm}
+    \item Conversion \textbf{from continuous to discrete}:
+    \includegraphics[width=0.95\linewidth]{continuous_to_discrete.png}
+    \item \textbf{Note}: $\Delta t = \frac{T}{N}$ \newline
+    \includegraphics[width=0.55\linewidth]{continuous_to_discrete_2.png}
+    \item DFT output is \textbf{periodic with period N} (repeats every N samples). $X[k] = X[k+N]$
+    \includegraphics[width=0.95\linewidth]{dft_output_periodicity.png}
+    \item Similarly, the input signal is periodic with period N. $x[n] = x[n+N]$
+    \begin{equation}
+      x[n] = \frac{1}{N} \sum_{k=-\infty}^{\infty} X[k] e^{j 2 \pi k \frac{n}{N}}
+    \end{equation}
+    \item \textbf{Summary:}
+    \includegraphics[width=0.95\linewidth]{dft_summary_1.png}
+    \vspace{0.15cm}
+    \includegraphics[width=0.95\linewidth]{dft_summary_2.png}
+    \vspace{0.15cm}
+    \includegraphics[width=0.95\linewidth]{dft_summary_3.png}
+  \end{itemize}
+  
+  \subsection{Useful Fourier Transform Results}
+  \begin{itemize}
+    \item Fourier transform of an \textbf{impulse} in the time domain will result in a constant function in the frequency domain. \newline[1, 0, 0, 0] $\rightarrow$ [1, 1, 1, 1]
+    \item Fourier transform of a \textbf{constant function} in the time domain will result in an impulse in the frequency domain. \newline[1, 1, 1, 1] $\rightarrow$ [4, 0, 0, 0]
+    \includegraphics[width=0.95\linewidth]{dft_cosine_pair.png}
+    \includegraphics[width=0.95\linewidth]{dft_sine_pair.png}
+    \includegraphics[width=0.95\linewidth]{dft_impulse_train.png}
+    \includegraphics[width=0.95\linewidth]{dft_rect_func.png}
+  \end{itemize}
+
+\end{multicols*}
+
+\end{document}
