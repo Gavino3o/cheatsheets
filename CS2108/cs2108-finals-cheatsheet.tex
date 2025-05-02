@@ -446,6 +446,100 @@
     \includegraphics[width=0.95\linewidth]{dft_rect_func.png}
   \end{itemize}
 
+  \section{\underline{2D Fourier Transform}}
+  \begin{itemize}
+    \item The 2D Fourier transform is used to analyse 2D signals, such as images. Units: \textbf{cycles per meter}.
+    \item Sampling frequency: $f_s$ = Number of points/pixels, $N$ per metre
+    \item Frequency bin size: $\Delta f = \frac{f_s}{N}$
+    \includegraphics[width=0.95\linewidth]{line_pair_sampling_freq.png}
+    \includegraphics[width=0.95\linewidth]{line_pair_freq_bin_size.png}
+    \item \textbf{Intuition:} Applying 1D Fourier transform to each row of the image, then applying 1D Fourier transform to each column of the result.
+    \item 2D Fourier transform (spatial domain to frequency domain):
+    \begin{equation}
+      G[k, l] = \sum_{u=0}^{M-1} \sum_{v=0}^{N-1} g[u, v] e^{-j 2 \pi \left(\frac{ku}{M} + \frac{lv}{N}\right)}
+    \end{equation}
+    \item 2D inverse Fourier transform (frequency domain to spatial domain):
+    \begin{equation}
+      g[u, v] = \frac{1}{MN} \sum_{k=0}^{M-1} \sum_{l=0}^{N-1} G[k,l] \cdot e^{j 2 \pi \left(\frac{ku}{M} + \frac{lv}{N}\right)}
+    \end{equation}
+    where:
+    \begin{itemize}
+      \item $g[u, v]$ is the input image
+      \item $G[k, l]$ is the 2D Fourier transform of the input image
+      \item $M$ and $N$ are the dimensions of the image (horizontal and vertical respectively)
+      \item $k$ and $l$ are the frequency indices
+      \item $u$ and $v$ are the spatial indices
+    \end{itemize}
+    \item For 2D DFT results with DC component at the top left corner, the top row represents horizontal frequencies, and the left column represents vertical frequencies. 
+    \item For 2D DFT results, the output is \textbf{periodic in both dimensions}. The output is a 2D array of complex numbers, where each element represents the amplitude and phase of a specific frequency component in the image.
+    \item \textbf{Frequency at peak} = (Coordinate at peak - Coordinate of DC component) $\times$ Frequency bin size
+    \end{itemize}
+
+    \section{\underline{Convolution}}
+    \begin{itemize}
+      \item Convolution is a mathematical operation that combines two functions to produce a third function. 
+      \item Convolution is used to filter signals and images. It is used to apply a filter to a signal or image to enhance or suppress certain features.
+    \end{itemize}
+
+    \subsection{1D Convolution}
+    \begin{itemize}
+      \item Process of sliding a window (kernel) over a signal, and computing the weighted sum of the signal values within the window.
+      \item The kernel defines the weights, and it is the \textbf{flipped} version of impulse response.
+      \includegraphics[width=0.95\linewidth]{convolution_impulse_example.png}
+      \item Think of the hitting pattern as the signal, and the impulse response as the kernel.
+    \end{itemize}
+
+    \subsubsection{Linear Convolution}
+    \includegraphics[width=0.95\linewidth]{linear_convolution_array.png}
+    \begin{itemize}
+      \item Linear convolution can be done in the frequency domain using the Fourier Transform.
+      \item \textbf{Linear shift invariance property}: The output of a linear time-invariant system is the convolution of the input signal with the impulse response of the system.
+      \item The convolution theorem states that the \textbf{Fourier transform of the convolution of two signals is equal to the product of their Fourier transforms}:
+      \begin{equation}
+        \mathcal{F} \{x[n] * h[n]\} = X[k] H[k]
+      \end{equation}
+      \item Derivation of the convolution theorem (discrete version):
+      \begin{equation}
+        \begin{aligned}
+          G[k] &= \mathcal{F}\{g[m]\} = \mathcal{F}\{x[m] * h[m]\} \\
+          &= \sum_{m=0}^{M-1} \left( \sum_{\tau=0}^{M-1} x[\tau] h[m - \tau] \right) e^{-j 2 \pi k \frac{m}{M}} \\
+          &= \sum_{\tau=0}^{M-1} x[\tau] \left( \sum_{m=0}^{M-1} h[m - \tau] e^{-j 2 \pi k \frac{m}{M}} \right) \\
+          &= \sum_{\tau=0}^{M-1} x[\tau] H[k] e^{-j 2 \pi k \frac{\tau}{M}} \\
+          &= H[k] \sum_{\tau=0}^{M-1} x[\tau] e^{-j 2 \pi k \frac{\tau}{M}} \\
+          &= H[k] X[k]            
+        \end{aligned}
+      \end{equation}
+      \item This uses the circular shift property of DFT, where:
+      \begin{equation}
+        \mathcal{F} \{h[n-m]\} = H[k] e^{-j 2 \pi k \frac{m}{N}}
+      \end{equation}
+      \item Note: \begin{tt}{ifft(fft(h(t)) .* fft(x(t)))} \end{tt}
+      \item \textbf{Length of the output signal} is $N + M - 1$, where $N$ is the length of the input signal and $M$ is the length of the kernel.
+    \end{itemize}
+
+    \subsubsection{Circular Convolution}
+    \includegraphics[width=0.95\linewidth]{circular_convolution_array.png}
+    \includegraphics[width=0.95\linewidth]{circular_convolution_example.png}
+    \begin{itemize}
+      \item Circular convolution is a special case of linear convolution, where the input signal and kernel are both periodic.
+      \item To achieve circular convolution, we need to ensure that the input signal and kernel are both periodic with the same period. This is done by \textbf{zero-padding} the input signal and kernel to the same length. 
+      \item Normally circular convolution is "unwanted" because it can cause aliasing and distortion in the output signal.
+      \item To prevent circular convolution, we can use zero-padding by adding zeros to the input signal and kernel before performing the convolution.
+      \item We pad $x[n]$ with $M-1$ zeros, and $h[n]$ with $N-1$ zeros. This ensures that the output signal has a length of $N + M - 1$.
+    \end{itemize}
+
+    \subsection{2D Convolution}
+    \begin{itemize}
+      \item 2D convolution is used to filter images. It is similar to 1D convolution, but it uses a 2D kernel (filter) that slides over the image.
+      \item The input image is treated as a 2D array with zeros padded around the edges.
+      \item The kernel is flipped in both dimensions before convolution. (left-right and up-down)
+      \item The kernel is applied to each pixel in the image, and the output pixel is computed as the weighted sum of the pixels in the kernel.
+      \item Start from the top left corner of the image, and slide the kernel over the image.
+      \includegraphics[width=0.95\linewidth]{2d_convolution_example.png}
+      \item To implement linear convolution using FFT, we will need to handle the periodicity assumption of the DFT. This is again done by \textbf{zero-padding the input image and kernel}.
+      \includegraphics[width=0.95\linewidth]{2d_convolution_zero_padding.png}
+      \item For better perforamnce, we can \textbf{pad the input image and kernel to the next power of 2}. This is because the FFT algorithm is based on the divide-and-conquer approach, which works best when the number of samples is a power of 2.
+    \end{itemize}
 \end{multicols*}
 
 \end{document}
