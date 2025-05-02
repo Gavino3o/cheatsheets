@@ -540,6 +540,166 @@
       \includegraphics[width=0.95\linewidth]{2d_convolution_zero_padding.png}
       \item For better perforamnce, we can \textbf{pad the input image and kernel to the next power of 2}. This is because the FFT algorithm is based on the divide-and-conquer approach, which works best when the number of samples is a power of 2.
     \end{itemize}
+
+    \section{\underline{Sampling Theorem}}
+    \begin{itemize}
+      \item Recall that the the Fourier transform of an impulse train is another impulse train.
+      \includegraphics[width=0.95\linewidth]{dft_impulse_train_fs.png}
+      \item \textbf{Multiplication in one domain corresponds to convolution in the other domain.}
+      \includegraphics[width=0.95\linewidth]{convolution_train_of_impulses.png}
+      \item \textbf{Convolution with a delta function shifts the signal in time.}
+      \begin{equation}
+        \delta(f - a) * X(f) = X(f - a)
+      \end{equation}
+      \item Sampling of a signal is represented as multiplcation of the signal (time domain) with an impulse train (time domain).
+      \item In the \textbf{frequency domain}, this becomes convolution with an impulse train.
+      \item This results in a replication of spectrum $X(f)$ at the integer multiples of the sampling frequency $f_s$.
+      \includegraphics[width=0.95\linewidth]{conjugate_symmetry.png}
+      \includegraphics[width=0.95\linewidth]{sampling_frequency_domain.png}
+      \item \textbf{Aliasing}:
+      \includegraphics[width=0.95\linewidth]{aliasing.png}
+      \item \textbf{Nyquist Rate}: The minimum sampling frequency required to avoid aliasing is twice the highest frequency $f_{max}$ present in the signal.
+      \begin{equation}
+        f_s > 2 f_{max}
+      \end{equation}
+      \item Given the maximum sampling frequency available $f_s$, we need to make sure the signal does not contain frequency components above $\frac{1}{2}f_s$.
+      \item This can be done by using a \textbf{low-pass filter} before sampling the signal. The low-pass filter will remove the high-frequency components from the signal.
+  
+    \end{itemize}
+    
+    \section{\underline{Data Compression}}
+    \begin{itemize}
+      \item Lossy: JPEG, MP3, MPEG
+      \item Lossless: PNG, LZW used in GIF, FLAC
+    \end{itemize}
+
+    \subsection{Lossy Compression}
+    \begin{itemize}
+      \item Sacrifice part of the signal lease critical to human perception.
+      \item Image: Missing crispness, color, and detail.
+      \item Audio: Missing high pitch sounds, and low volume sounds.
+      \item \textbf{Strategy:} Remove high frequency components.
+    \end{itemize}
+
+    \subsubsection{Discrete Cosine Transform (DCT)}
+    \begin{itemize}
+      \item Used in JPEG, MPEG, and MP3 compression.
+      \item Similar to Fourier transform, but uses cosine functions instead of sine and cosine functions.
+      \item DCT itself is not lossy, it is the filtering of the DCT coefficients that is lossy.
+      \item DCT output is real-valued, while DFT output is complex-valued.
+      \item \textbf{Recap:} Cosine is an even function, and sine is an odd function. Hence, Fourier transform of cosine is real, and Fourier transform of sine is imaginary.
+      \item \textbf{Even function} exhibits symmetry about the y-axis, $x(t) = x(-t)$ \\ \textbf{Odd function} exhibits symmetry about the origin (anti-symmetry) $x(t) = -x(-t)$.
+      \item Hence, even signals can be fully represented by cosine functions, and odd signals can be fully represented by sine functions.
+      \item Fourier transform of an \textbf{even signal is real} (cosine basis functions only), and Fourier transform of an \textbf{odd signal is imaginary} (sine basis functions only).
+      \item There are different types of DCT, but the most common one is \textbf{DCT-II}, which is used in JPEG compression.
+      \begin{equation}
+        \begin{aligned}
+          X[k] & = \sum_{n=0}^{N-1} x[n] \cos\left(\frac{\pi}{N} \left(n + \frac{1}{2}\right) k\right) \\
+          & = \sum_{n=0}^{N-1} x[n] \cos\left(\frac{\pi}{N} n k + \frac{\pi}{2N} k\right)
+        \end{aligned}
+      \end{equation}
+      \item \textbf{Intution behind DCT:} Make the signal behave like an even function. Such as flipping the signal about the y-axis, or reverse the signal and add it to the original signal.
+      \item We can "downgrade" the high frequency components by:
+      \begin{itemize}
+        \item \textbf{Zeroing out} the high frequency components in the DCT domain. This is done by setting the DCT coefficients above a certain threshold to zero.
+        \item \textbf{Quantization} of the DCT coefficients. This is done by dividing the DCT coefficients by a quantization matrix and rounding the result to the nearest integer. Coarser resolution for high frequency components.
+      \end{itemize}
+    \end{itemize}
+
+    \subsection{JPEG Compression}
+    \textbf{Steps:}
+    \begin{itemize}
+      \item \textbf{Convert RGB to YCbCr color space}. Y is the luminance (brightness) component, and Cb and Cr are the chrominance (color) components.
+      \item Downsample the chrominance components (Cb and Cr) by a factor of 2. This is done because the human eye is less sensitive to color than brightness.
+      \item \textbf{Divide the image into 8x8 blocks.}
+      \item Apply the \textbf{DCT to each block}. This transforms the image from the spatial domain to the frequency domain.
+      \includegraphics[width=0.95\linewidth]{jpeg_process_1.png}
+      \item \textbf{Quantize the DCT coefficients} using a quantization matrix. Higher frequency components are quantized more coarsely than lower frequency components.
+      \item Quantization means dividing the DCT coefficients by a quantization matrix and rounding the result to the nearest integer. This reduces the number of bits needed to represent the DCT coefficients.
+      \item Luminance channels are quantized with a different matrix than chrominance channels.
+      \item Apply \textbf{zig-zag scanning} to the quantized DCT coefficients. This reorders the coefficients in a way that groups the low frequency components together. (So that RLE and Huffman coding can have a higher compression ratio).
+      \includegraphics[width=0.55\linewidth, height=100px]{jpeg_zig_zag.png}
+      \item Apply \textbf{run-length encoding (RLE)} to the zig-zag scanned coefficients. This compresses the data by replacing consecutive zeros with a single zero and a count of how many zeros there are. (lossless compression)
+      \item Apply \textbf{Huffman coding} to the RLE data. (lossless compression)
+      \item Store the compressed data in a JPEG file format.
+    \end{itemize}
+
+    \subsubsection{Run Length Encoding (RLE)}
+    \begin{itemize}
+      \item RLE is a simple form of lossless data compression. It replaces consecutive repeated values with a single value and a count of how many times it is repeated.
+      \item For example, the sequence [1, 1, 1, 2, 2, 3] would be encoded as [(1, 3), (2, 2), (3, 1)].
+      \item RLE is most effective on data with long runs of repeated values. It is not effective on data with high variability.
+      \item Another RLE technique is to group consecutive zeros together using a (Run, Value) format:\\
+      \textbf{Run} = Number of zeros before a nonzero value.\\
+      \textbf{Value} = The next nonzero value.\\
+      A special End-of-Block (EOB) marker (e.g., (0,0)) is used to signal the end of nonzero values.
+    \end{itemize}
+
+    \subsubsection{Huffman Coding}
+    \begin{itemize}
+      \item Huffman coding is a \textbf{lossless} data compression algorithm. It replaces frequently occurring values with shorter codes and less frequently occurring values with longer codes.
+      \item The algorithm builds a \textbf{binary tree} based on the frequency of each value in the data. The most frequent values are closer to the root of the tree, and the least frequent values are further away.
+      \item The code is generated by traversing the tree. A left branch is represented by a 0, and a right branch is represented by a 1.
+      \item The resulting binary tree is used to generate \textbf{variable-length codes} for each value in the data. All of which are \textbf{prefix codes}, meaning no code is a prefix of another code.
+      \item \textbf{Algorithm:}
+      \begin{itemize}
+        \item Create a min-heap (priority queue) where each node is a character and its frequency.
+        \item While more than one node in the heap:
+        \begin{itemize}
+          \item Renive the two nodes with the lowest frequency.
+          \item Create a new internal node with these two as children
+          \item The new nodes frequency is the sum of the frequencies of its children.
+          \item Insert the new node back into the heap.
+        \end{itemize}
+        \item The remaining node is the root of the Huffman tree.
+      \end{itemize}
+      \item With Huffman coding, we need to \textbf{send the Huffman tree} along for decoding.
+      \includegraphics[width=0.95\linewidth]{huffman_coding.png}
+    \end{itemize}
+    
+    \subsection{Lempels-Ziv-Welch (LZW) Compression}
+    \begin{itemize}
+      \item LZW is a \textbf{lossless} data compression algorithm. It replaces repeated sequences of data with a single code.
+      \item Used in GIF and TIFF image formats, Unix file compression utility compress.
+      \item \textbf{Encodes 8 bit data using n bit codes}, where $n > 8$. 0-255 are the original 8 bit data, and 256-4095 are the new codes and data dependent.
+      \item The algorithm starts with a dictionary of all possible single-character sequences. As it processes the data, it adds new sequences to the dictionary.
+      \item When it encounters a sequence that is already in the dictionary, it replaces it with the corresponding code.
+      \item We don't need to send the dictionary along with the compressed data, because the decoder can build the same dictionary from the compressed data.
+      \item \textbf{Encoding Algorithm:}
+      \begin{itemize}
+        \item Initialize the dictionary with all possible single-character sequences.
+        \begin{itemize}
+          \item Read the longest sequence W found in the dictionary.
+          \item Output its corresponding code.
+          \item Read the next character K.
+          \item Add W + K to the dictionary with the next available code.
+          \item Repeat until the end of the data.
+        \end{itemize}
+      \end{itemize}
+      \item \textbf{Decoding Algorithm:}
+      \begin{itemize}
+        \item Initialize the dictionary with all possible single-character sequences.
+        \item Read the first code and output the corresponding sequence.
+        \item Set this sequence as the \texttt{previous sequence}.
+        \item \textbf{While} there are more codes:
+        \begin{itemize}
+          \item Read the next code.
+          \item \textbf{If} the code exists in the dictionary:
+          \begin{itemize}
+            \item Let \texttt{entry} be the corresponding sequence.
+          \end{itemize}
+          \item \textbf{Else} (edge case: code not in dictionary yet):
+          \begin{itemize}
+            \item Let \texttt{entry} = \texttt{previous sequence + first character of previous sequence}.
+          \end{itemize}
+          \item Output \texttt{entry}.
+          \item Add \texttt{previous sequence + first character of entry} to the dictionary.
+          \item Set \texttt{previous sequence = entry}.
+          \end{itemize}
+       \end{itemize}
+       \includegraphics[width=0.95\linewidth]{lzw_result_example.png}
+       \item Because we set it to $4096 = 2^{12}$ entries, we can use 12 bits to represent the codes. Although in this case, 9 bits would have sufficed as 270 codes were used.
+      \end{itemize}
 \end{multicols*}
 
 \end{document}
