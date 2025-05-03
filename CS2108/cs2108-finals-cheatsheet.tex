@@ -282,7 +282,8 @@
   \subsection{Fourier Series}
 
   \begin{itemize}
-    \item Fourier series is a way to represent a periodic signal as a sum of sine and cosine functions. It is used to analyze periodic signals in the frequency domain.
+    \item Fourier series is a way to represent a periodic signal as a sum of sine and cosine functions. It is used to analyze periodic signals in the frequency domain. 
+    \item \textbf{Sine and cosine functions make up the basis functions}. I.e for a sinusoidal signal with highest frequency $f_m$, we can represent it as a sum of $M$ sine and cosine functions with frequencies $f_0, f_1, \ldots, f_{M-1}$.
     \begin{equation}
       y(t) = \sum_{m=0}^{M-1} (a_m \sin(2 \pi f_m t) + b_m \cos(2 \pi f_m t))
     \end{equation}
@@ -543,6 +544,7 @@
 
     \section{\underline{Sampling Theorem}}
     \begin{itemize}
+      \item Fun fact: 44100 Hz is the standard sampling frequency for audio signals. This is because it is twice the highest frequency that can be heard by humans, which is 20 kHz.
       \item Recall that the the Fourier transform of an impulse train is another impulse train.
       \includegraphics[width=0.95\linewidth]{dft_impulse_train_fs.png}
       \item \textbf{Multiplication in one domain corresponds to convolution in the other domain.}
