@@ -138,14 +138,13 @@
   \begin{itemize}
     \item Sinusoids are periodic functions that can be represented as a sum of sine and cosine functions. The general form of a sinusoid is:
     \begin{equation}
-      y(t) = A \sin(\omega t + \phi) + B \cos(\omega t + \phi)
+      y(t) = A \sin(\omega t + \phi) \hspace{5px} \text{or} \hspace{5px} y(t) = B \cos(\omega t + \phi)
     \end{equation}
     where:
     \begin{itemize}
-      \item $A$ is the amplitude
+      \item $A$ and $B$ are the amplitudes
       \item $\omega$ is the angular frequency
       \item $\phi$ is the phase shift
-      \item $B$ is the vertical shift
     \end{itemize}
     \item The angular frequency $\omega$ is related to the frequency $f$ and the period $T$ by:
     \begin{equation}
@@ -153,7 +152,7 @@
     \end{equation}
     \item  Hence, the sinusoid can also be expressed in terms of frequency:
     \begin{equation}
-      y(t) = A \sin(2\pi f t + \phi) + B \cos(2\pi f t + \phi)
+      y(t) = A \sin(2\pi f t + \phi) \hspace{5px} \text{or} \hspace{5px} y(t) = B \cos(2\pi f t + \phi)
     \end{equation}
   \end{itemize}
 
@@ -197,10 +196,10 @@
           \theta_k & = \tan^{-1}\left(\frac{a_k}{b_k}\right)
         \end{aligned}
       \end{equation}
-      \item If $a_k$ = $b_k$, the sinusoid is a combination of sine and cosine functions with equal amplitude and phase shift. Phase shift is 45 degrees.
-      \item If $a_k$ = -$b_k$, the sinusoid is a combination of sine and cosine functions with equal amplitude and phase shift. Phase shift is 135 degrees.
-      \item If $a_k$ = 0, phase shift is 90 degrees
-      \item If $b_k$ = 0, phase shift is 0 degrees
+      \item If $a_k$ = $b_k$, the sinusoid is a combination of sine and cosine functions with equal amplitude and phase shift. Phase shift is 45 degrees. $c_k = \sqrt{2}a_k$
+      \item If $a_k$ = -$b_k$, the sinusoid is a combination of sine and cosine functions with equal amplitude and phase shift. Phase shift is -45 degrees. $c_k = \sqrt{2}a_k$
+      \item If $a_k$ = 0, phase shift is 0 degrees
+      \item If $b_k$ = 0, phase shift is 90 degrees
     \end{itemize}
   \end{itemize}
 
@@ -214,7 +213,7 @@
     \end{equation}
     \item The fundamental frequency is the lowest frequency of a sinusoid. It is the frequency at which the sinusoid oscillates.
     \item Sinusoids are periodic functions, meaning they repeat their values at regular intervals. 
-    \item If we add sinoiuds with different frequencies, the resulting function is not periodic unless the frequencies are rationally related.
+    \item If we add sinusoids with different frequencies, the resulting function is not periodic unless the frequencies are rationally related.
     \item Suppose we have a sinusoid with the equation:
      \begin{equation}
       y(t) = a_1 \sin(\omega_1 t + \phi_1) + a_2 \cos(\omega_2 t + \phi_2)
@@ -243,7 +242,7 @@
       f = \text{gcd}(f_1, f_2)
     \end{equation}
     \item Then fundamental period is: $T = \frac{1}{f}$
-    \item The above calculatiosn can be done with sinusoids of more than 2 frequencies as well.
+    \item The above calculations can be done with sinusoids of more than 2 frequencies as well.
 
   \end{itemize}
 
@@ -253,7 +252,7 @@
 
   \subsection{Recap}
   \begin{itemize}
-    \item \textbf{Orthogonal Basis Set} a set of functions that are orthogonal to each other. This means that the inner product of any two functions in the set is zero.
+    \item \textbf{Orthogonal Basis Set:} a set of functions that are orthogonal to each other. This means that the inner product of any two functions in the set is zero.
     \item Inner product of two functions $f(t)$ and $g(t)$ is defined as:
     \begin{equation}
       \langle f(t), g(t) \rangle = \int_{-\infty}^{\infty} f(t) g(t) dt
@@ -261,7 +260,7 @@
     \item Inner Product (continuous) = Dot Product (discrete)
     \item \textbf{Sine and cosine functions are orthogonal to each other}, no matter their frequencies. Inner/Dot product = \textbf{zero}.
     \includegraphics[width=0.95\linewidth]{sinecosineproduct.png} 
-    \item \textbf{Sine waves of different frequencies} are orthogonal to each other.Inner/Dot product = \textbf{zero}.
+    \item \textbf{Sine waves of different frequencies} are orthogonal to each other. Inner/Dot product = \textbf{zero}.
     \includegraphics[width=0.95\linewidth]{sinesineproduct.png} 
     \item Similarly, \textbf{Cosine waves of different frequencies} are orthogonal to each other. Inner/Dot product = \textbf{zero}.
     \includegraphics[width=0.95\linewidth]{cosinecosineproduct.png} 
@@ -628,7 +627,7 @@
 
     \subsubsection{Run Length Encoding (RLE)}
     \begin{itemize}
-      \item RLE is a simple form of lossless data compression. It replaces consecutive repeated values with a single value and a count of how many times it is repeated.
+      \item RLE is a simple form of \textbf{lossless} data compression. It replaces consecutive repeated values with a single value and a count of how many times it is repeated.
       \item For example, the sequence [1, 1, 1, 2, 2, 3] would be encoded as [(1, 3), (2, 2), (3, 1)].
       \item RLE is most effective on data with long runs of repeated values. It is not effective on data with high variability.
       \item Another RLE technique is to group consecutive zeros together using a (Run, Value) format:\\
@@ -663,7 +662,7 @@
     \begin{itemize}
       \item LZW is a \textbf{lossless} data compression algorithm. It replaces repeated sequences of data with a single code.
       \item Used in GIF and TIFF image formats, Unix file compression utility compress.
-      \item \textbf{Encodes 8 bit data using n bit codes}, where $n > 8$. 0-255 are the original 8 bit data, and 256-4095 are the new codes and data dependent.
+      \item \textbf{Encodes 8 bit data using n bit codes}, where $n > 8$. 0-255 are the original 8 bit data, and 256-4095 are the new codes and are data dependent.
       \item The algorithm starts with a dictionary of all possible single-character sequences. As it processes the data, it adds new sequences to the dictionary.
       \item When it encounters a sequence that is already in the dictionary, it replaces it with the corresponding code.
       \item We don't need to send the dictionary along with the compressed data, because the decoder can build the same dictionary from the compressed data.
@@ -705,7 +704,7 @@
 
       \section{\underline{Notes to self}}
       \begin{itemize}
-        \item When you perform FFT on a signal $y[n]$, the result Y[k] is complex valued. 
+        \item When you perform FFT on a signal $y[n]$, the result $Y[k]$ is complex valued. 
         \begin{equation}
           Y[k] = | Y[k] | e^{j \phi_k}
         \end{equation}
