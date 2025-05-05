@@ -431,9 +431,7 @@
     \end{equation}
     \item \textbf{Summary:}
     \includegraphics[width=0.95\linewidth]{dft_summary_1.png}
-    \vspace{0.15cm}
     \includegraphics[width=0.95\linewidth]{dft_summary_2.png}
-    \vspace{0.15cm}
     \includegraphics[width=0.95\linewidth]{dft_summary_3.png}
   \end{itemize}
   
@@ -442,7 +440,7 @@
     \item Fourier transform of an \textbf{impulse} in the time domain will result in a constant function in the frequency domain. \newline[1, 0, 0, 0] $\rightarrow$ [1, 1, 1, 1]
     \item Fourier transform of a \textbf{constant function} in the time domain will result in an impulse in the frequency domain. \newline[1, 1, 1, 1] $\rightarrow$ [4, 0, 0, 0]
     \includegraphics[width=0.95\linewidth]{dft_cosine_pair.png}
-    \includegraphics[width=0.95\linewidth]{dft_sine_pair.png}
+    \includegraphics[width=0.75\linewidth, height=100px]{dft_sine_pair.png}
     \includegraphics[width=0.95\linewidth]{dft_impulse_train.png}
     \includegraphics[width=0.95\linewidth]{dft_rect_func.png}
   \end{itemize}
@@ -452,7 +450,7 @@
     \item The 2D Fourier transform is used to analyse 2D signals, such as images. Units: \textbf{cycles per meter}.
     \item Sampling frequency: $f_s$ = Number of points/pixels, $N$ per metre
     \item Frequency bin size: $\Delta f = \frac{f_s}{N}$
-    \includegraphics[width=0.95\linewidth]{line_pair_sampling_freq.png}
+    \includegraphics[width=0.85\linewidth, height=100px]{line_pair_sampling_freq.png}
     \includegraphics[width=0.95\linewidth]{line_pair_freq_bin_size.png}
     \item \textbf{Intuition:} Applying 1D Fourier transform to each row of the image, then applying 1D Fourier transform to each column of the result.
     \item 2D Fourier transform (spatial domain to frequency domain):
@@ -499,6 +497,8 @@
       \begin{equation}
         \mathcal{F} \{x[n] * h[n]\} = X[k] H[k]
       \end{equation}
+      \item Derivation of the convolution theorem (continuous version):
+      \includegraphics[width=0.95\linewidth]{convolution_continuous_linear.png}
       \item Derivation of the convolution theorem (discrete version):
       \begin{equation}
         \begin{aligned}
@@ -546,7 +546,7 @@
     \begin{itemize}
       \item Fun fact: 44100 Hz is the standard sampling frequency for audio signals. This is because it is twice the highest frequency that can be heard by humans, which is 20 kHz.
       \item Recall that the the Fourier transform of an impulse train is another impulse train.
-      \includegraphics[width=0.95\linewidth]{dft_impulse_train_fs.png}
+      \includegraphics[width=0.95\linewidth, height=100px]{dft_impulse_train_fs.png}
       \item \textbf{Multiplication in one domain corresponds to convolution in the other domain.}
       \includegraphics[width=0.95\linewidth]{convolution_train_of_impulses.png}
       \item \textbf{Convolution with a delta function shifts the signal in time.}
@@ -718,7 +718,7 @@
         \item All sinusoid waves become pure cosines when phase is lost, because cosine is the default phase-zero sinusoid. 
         \item Sine wave: $\sin(2 \pi ft) = \cos(2 \pi ft - \pi/2)$
       \end{itemize}
-      
+
 \end{multicols*}
 
 \end{document}
