@@ -702,6 +702,23 @@
        \includegraphics[width=0.95\linewidth]{lzw_result_example.png}
        \item Because we set it to $4096 = 2^{12}$ entries, we can use 12 bits to represent the codes. Although in this case, 9 bits would have sufficed as 270 codes were used.
       \end{itemize}
+
+      \section{\underline{Notes to self}}
+      \begin{itemize}
+        \item When you perform FFT on a signal $y[n]$, the result Y[k] is complex valued. 
+        \begin{equation}
+          Y[k] = | Y[k] | e^{j \phi_k}
+        \end{equation}
+        where: 
+        \begin{itemize}
+          \item $| Y[k] |$ is the magnitude
+          \item $\phi_k$ is the phase of frequency bin $k$
+        \end{itemize}
+        \item When you take the \textbf{magnitude of the FFT} result, you are \textbf{zeroing out all phase information}. i.e $\phi_k = 0$.
+        \item All sinusoid waves become pure cosines when phase is lost, because cosine is the default phase-zero sinusoid. 
+        \item Sine wave: $\sin(2 \pi ft) = \cos(2 \pi ft - \pi/2)$
+      \end{itemize}
+      
 \end{multicols*}
 
 \end{document}
