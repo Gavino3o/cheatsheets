@@ -399,7 +399,7 @@
     \item Derivation of the frequency bins:
     \includegraphics[width=0.55\linewidth, height=120px]{frequency_bin_derivation_1.png}
     \includegraphics[width=0.95\linewidth]{frequency_bin_derivation_2.png}
-    \item \textbf{Note}: Sometimes, we pad the input signal with zeros to increase the number of samples. Padding zeros to the input decreases the frequency bin size, but does not increase the frequency resolution.
+    \item \textbf{Note}: Sometimes, we pad the input signal with zeros to increase the number of samples. Padding zeros to the input decreases the frequency bin size, increasing the frequency resolution. But it does not increase the actual frequency content of the signal.
     \item \textbf{Note}: N = $2^n$ for FFT, where n is an integer. This is because the FFT algorithm is based on the divide-and-conquer approach, which works best when the number of samples is a power of 2.
   \end{itemize}
 
@@ -409,7 +409,7 @@
     \vspace{0.25cm}
     \item \textbf{Linearity}: $\mathcal{F} \{ax[n] + by[n]\} = a X[k] + b Y[k]$
     \item \textbf{Time Shifting}: $\mathcal{F} \{x[n-n_0]\} = X[k] e^{-j 2 \pi k \frac{n_0}{N}}$
-    \item If you shift a signal $x[n]$ by $m$ samples in time, the Fourier transform $X[k]$ remains the same in magnitude, but is multiplied by a complex exponential.
+    \item If you shift a signal $x[n]$ by $n_0$ samples in time, the Fourier transform $X[k]$ remains the same in magnitude, but is multiplied by a complex exponential.
     \item This complex exponential introduces a linear phase shift in the frequency domain. This exponential has a magnitude of 1, so the magnitude spectrum stays unchanged.
     \item \textbf{Frequency Shifting}: $\mathcal{F} \{x[n] e^{j 2 \pi m \frac{n}{N}}\} = X[k - m]$
     \item If you multiply $x[n]$ by a complex exponential in the time domain, it causes a circular shift in the frequency domain. Shifting the frequency response by $m$ bins. Both magnitude and phase are affected.
@@ -538,7 +538,7 @@
       \includegraphics[width=0.95\linewidth]{2d_convolution_example.png}
       \item To implement linear convolution using FFT, we will need to handle the periodicity assumption of the DFT. This is again done by \textbf{zero-padding the input image and kernel}.
       \includegraphics[width=0.95\linewidth]{2d_convolution_zero_padding.png}
-      \item For better perforamnce, we can \textbf{pad the input image and kernel to the next power of 2}. This is because the FFT algorithm is based on the divide-and-conquer approach, which works best when the number of samples is a power of 2.
+      \item For better performance, we can \textbf{pad the input image and kernel to the next power of 2}. This is because the FFT algorithm is based on the divide-and-conquer approach, which works best when the number of samples is a power of 2.
     \end{itemize}
 
     \section{\underline{Sampling Theorem}}
@@ -576,8 +576,8 @@
 
     \subsection{Lossy Compression}
     \begin{itemize}
-      \item Sacrifice part of the signal lease critical to human perception.
-      \item Image: Missing crispness, color, and detail.
+      \item Sacrifice part of the signal least critical to human perception.
+      \item Image: Missing crispness, colour, and detail.
       \item Audio: Missing high pitch sounds, and low volume sounds.
       \item \textbf{Strategy:} Remove high frequency components.
     \end{itemize}
@@ -610,8 +610,8 @@
     \subsection{JPEG Compression}
     \textbf{Steps:}
     \begin{itemize}
-      \item \textbf{Convert RGB to YCbCr color space}. Y is the luminance (brightness) component, and Cb and Cr are the chrominance (color) components.
-      \item Downsample the chrominance components (Cb and Cr) by a factor of 2. This is done because the human eye is less sensitive to color than brightness.
+      \item \textbf{Convert RGB to YCbCr colour space}. Y is the luminance (brightness) component, and Cb and Cr are the chrominance (colour) components.
+      \item Downsample the chrominance components (Cb and Cr) by a factor of 2. This is done because the human eye is less sensitive to colour than brightness.
       \item \textbf{Divide the image into 8x8 blocks.}
       \item Apply the \textbf{DCT to each block}. This transforms the image from the spatial domain to the frequency domain.
       \includegraphics[width=0.95\linewidth]{jpeg_process_1.png}
@@ -647,7 +647,7 @@
         \item Create a min-heap (priority queue) where each node is a character and its frequency.
         \item While more than one node in the heap:
         \begin{itemize}
-          \item Renive the two nodes with the lowest frequency.
+          \item Retrieve the two nodes with the lowest frequency.
           \item Create a new internal node with these two as children
           \item The new nodes frequency is the sum of the frequencies of its children.
           \item Insert the new node back into the heap.
@@ -673,7 +673,7 @@
           \item Read the longest sequence W found in the dictionary.
           \item Output its corresponding code.
           \item Read the next character K.
-          \item Add W + K to the dictionary with the next available code.
+          \item Add W + K to the dictionary with the next available code number.
           \item Repeat until the end of the data.
         \end{itemize}
       \end{itemize}
