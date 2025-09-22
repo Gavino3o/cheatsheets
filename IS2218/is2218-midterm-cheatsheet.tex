@@ -1,0 +1,247 @@
+\documentclass[10pt, landscape]{article}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{calc}
+\usepackage{multicol}
+\usepackage[a4paper,margin=3mm,landscape]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{color,graphicx,overpic}
+\usepackage{hyperref}
+\usepackage{newtxtext} 
+\usepackage{enumitem}
+\usepackage[table]{xcolor}
+\usepackage{mathtools}
+\setlist{nosep}
+% for including images
+\graphicspath{ {./images/} }
+
+\pdfinfo{
+  /Title (is2218_midterm_cheatsheet.pdf)
+  /Creator (TeX)
+  /Producer (pdfTeX 1.40.0)
+  /Author (Gavin Chiam)
+  /Subject (IS2218)
+/Keywords (is2218, nus, cheatsheet, pdf)}
+
+% Turn off header and footer
+\pagestyle{empty}
+
+% redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+  {-1ex plus -.5ex minus -.2ex}%
+  {0.5ex plus .2ex}%x
+{\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+  {-1explus -.5ex minus -.2ex}%
+  {0.5ex plus .2ex}%
+{\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+  {-1ex plus -.5ex minus -.2ex}%
+  {1ex plus .2ex}%
+{\normalfont\small\bfseries}}%
+\makeatother
+
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand\rmdefault{\sfdefault}
+%  makes nested numbering (e.g. 1.1.1, 1.1.2, etc)
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
+\renewcommand\labelitemii{•}
+\renewcommand\labelitemiii{•}
+
+\definecolor{mathblue}{cmyk}{1,.72,0,.38}
+\everymath\expandafter{\the\everymath \color{mathblue}}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+%% adjust spacing for all itemize/enumerate
+\setlength{\leftmargini}{0.4cm}
+\setlength{\leftmarginii}{0.4cm}
+\setlength{\leftmarginiii}{0.2cm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm}
+\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm}
+\setlist[itemize,3]{leftmargin=4mm,labelindent=1mm,labelsep=1mm}
+
+% adding my commands
+\input{../commands/style-helpers.tex}
+\makeatletter
+\newcommand*{\xdashrightarrow}[2][]{%
+  \mathrel{%
+    \mathpalette{\da@xarrow{#1}{#2}{}\da@rightarrow{\,}{}}{}%
+  }%
+}
+\newcommand*{\da@rightarrow}{\mathchar"0\hexnumber@\symAMSa 4B }
+\newcommand*{\da@xarrow}[7]{%
+  % #1: below
+  % #2: above
+  % #3: arrow left
+  % #4: arrow right
+  % #5: space left 
+  % #6: space right
+  % #7: math style 
+  \sbox0{$\ifx#7\scriptstyle\scriptscriptstyle\else\scriptstyle\fi#5#1#6\m@th$}%
+  \sbox2{$\ifx#7\scriptstyle\scriptscriptstyle\else\scriptstyle\fi#5#2#6\m@th$}%
+  \sbox4{$#7\dabar@\m@th$}%
+  \dimen@=\wd0 %
+  \ifdim\wd2 >\dimen@
+    \dimen@=\wd2 %   
+  \fi
+  \count@=2 %
+  \def\da@bars{\dabar@\dabar@}%
+  \@whiledim\count@\wd4<\dimen@\do{%
+    \advance\count@\@ne
+    \expandafter\def\expandafter\da@bars\expandafter{%
+      \da@bars
+      \dabar@ 
+    }%
+  }%  
+  \mathrel{#3}%
+  \mathrel{%   
+    \mathop{\da@bars}\limits
+    \ifx\\#1\\%
+    \else
+      _{\copy0}%
+    \fi
+    \ifx\\#2\\%
+    \else
+      ^{\copy2}%
+    \fi
+  }%   
+  \mathrel{#4}%
+}
+\makeatother
+
+% -----------------------------------------------------------------------
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols*}{4}
+  % multicol parameters
+  \setlength{\columnseprule}{0.25pt}
+
+  \begin{center}
+    \fbox{%
+      \parbox{0.8\linewidth}{\centering \textcolor{black}{
+          {\Large\textbf{IS2218}}
+        \\ \normalsize{AY25/26 SEM 1}}
+        \\ {\footnotesize \textcolor{gray}{github/Gavino3o}}
+      }%
+    }
+  \end{center}
+
+  \section{Corporate Governance and Agency Problem}
+
+  \subsection{\underline{Investment vs Financing Decisions}}
+
+  \begin{itemize}
+    \item \textbf{Investment Decision}: How to allocate capital to long-term assets (tangible/intangible assets)
+    \item Also known as \textbf{Capital Budgeting Decision} or \textbf{Capital Expenditure (CAPEX) Decision}
+    \item Examples of investment decisions: launching a new product, expanding into a new market, acquiring another company, investing in research and development
+    \item \textbf{Tangible assets}: physical assets used in operations.
+    \item \textbf{Intangible assets}: non-physical assets that provide long-term value.
+    \item Examples of tangible assets : machinery, buildings, land
+    \item Examples of intangible assets: patents, trademarks, copyrights, goodwill
+    \item \textbf{Real assets}: physical assets used in operations (e.g. machinery, buildings, land)
+    \item \textbf{Financial assets}: financial instruments that represent a claim on future cash flows (e.g. stocks, bonds, derivatives)
+  \end{itemize}
+
+  \vspace{0.2cm}
+
+  \begin{itemize}
+    \item \textbf{Financing Decision}: How to raise capital to fund long-term investments
+    \item Also known as \textbf{Capital Structure Decision}
+    \item Mixture of debt and equity financing
+    \item Debt financing: borrowing money from external sources (e.g. banks, bondholders) with the obligation to repay with interest
+    \item Equity financing: issuing shares of stock to investors in exchange for ownership stake in the company
+  \end{itemize}
+
+  \vspace{0.2cm}
+
+  % \subsection{\underline{$Assets = Liabilities + Equity$}}
+
+  % \begin{itemize}
+  %   \item \textbf{Assets}: resources owned by the company that have economic value and can be used to generate future cash flows
+  %   \item Real Assets: physical assets used in operations (e.g. machinery, buildings, land)
+  %   \item Financial Assets: financial instruments that represent a claim on future cash flows (e.g. stocks, bonds, derivatives). These are also called \underline{securities}.
+  %   \item \textbf{Liabilities}: obligations owed by the company to external parties that require future cash outflows
+  %   \item Current Liabilities: obligations due within one year (e.g. accounts payable, short-term debt)
+  %   \item Long-term Liabilities: obligations due beyond one year (e.g. long-term debt, bonds payable)
+  %   \item \textbf{Equity}: residual interest in the assets of the company after deducting liabilities
+  %   \item Common Stock: ownership shares in the company that represent a claim on future profits and voting rights
+  %   \item Retained Earnings: accumulated profits that have been reinvested in the company rather than distributed to shareholders as dividends
+  % \end{itemize}
+  
+  \subsection{\underline{Corporation}}
+
+  \begin{itemize}
+    \item A business organised as a separate legal entity owned by shareholders
+    \item Shareholders elect a board of directors, who appoints managers to run the company and monitor their performance
+    \item Sepearation of ownership and control. 
+    \item (\textbf{Permanence}): Corporation continues to exist even if ownership changes
+    \item (\textbf{Limited Liability}): The owners of a corporation are not personally liable for its obligations. Shareholders are only liable for the amount they invested in the company.
+    \item \textbf{Types of Corporations}:
+      \begin{itemize}
+        \item \textbf{Public Corporation}: owned by a large number of shareholders and traded on public stock exchanges
+        \item \textbf{Private Corporation}: owned by a small group of shareholders and not traded on public stock exchanges
+      \end{itemize}
+    \item \textbf{Types of Business Organisations}:
+      \begin{itemize}
+        \item \textbf{Sole Proprietorship}: owned and operated by a single individual
+        \item \textbf{Partnership}: owned and operated by two or more individuals who share profits and losses
+        \item \textbf{Corporation}: separate legal entity owned by shareholders
+        \item \textbf{Limited Liability Company (LLC)}: hybrid structure that combines the benefits of a corporation and a partnership. No double taxation, limited liability, flexible management structure.
+        \item \textbf{Professional Corporation (PC)}: for licensed professionals (e.g. doctors, lawyers, accountants). Limited liability for business debts, but not for professional malpractice (can be sued).
+      \end{itemize}
+      \vspace{0.2cm}
+
+      \includegraphics[width=0.97\linewidth]{corporation_table.png} 
+  \end{itemize}
+
+  \subsubsection{\underline{Financial Managers}}
+  \begin{itemize}
+    \item \textbf{Chief Financial Officer (CFO)}: oversees the financial operations/policies of the company and corporate planning
+    \item \textbf{Treasurer}: manages the company's cash and investments, raises capital, and manages banking relationships
+    \item \textbf{Controller}: oversees the accounting and financial reporting functions of the company, ensures compliance with financial regulations and standards
+  \end{itemize}
+
+  \subsection{\underline{Agency Problem}}
+  \begin{itemize}
+    \item \textbf{Goals of a Corporation:}
+      \begin{itemize}
+        \item Shareholders desire wealth maximization. Maximizing the current market value of shareholder's investment in the company.
+        \item Why not profit maximization? Profit is a flow variable, while wealth is a stock variable. Profit does not account for the time value of money, risk, and cash flows. Earning manipulation to increase short-term profit may harm long-term wealth.
+        \item \textbf{Opportunity cost of capital}: minimum acceptable rate of return on capital investments by shareholders (set by investment alternatives in the financial markets)
+      \end{itemize}
+
+    \item \textbf{Agency Problem}: conflict of interest between shareholders (principals) and managers (agents). Managers are agents of shareholders and are tempted to act in their own interests rather than maximizing shareholder value.
+    \item Managers have constituencies called \textbf{stakeholders} (e.g. employees, customers, suppliers, creditors, government) whose interests may not align with shareholders.
+    \item \textbf{Agency Costs:} Value lost from agency problems or from efforts to mitigate agency problems.
+    \item \textbf{Solutions to Agency Problem:}
+      \begin{itemize}
+        \item \textbf{Executive Compensation}: align manager's interests with shareholders. E.g. stock options, bonuses tied to performance metrics (e.g. stock price, earnings per share)
+        \item \textbf{Corporate Governance}: Systems of laws, regulations, policies, institutions, and corporate practices that protect shareholders and other investors.
+        \item \textbf{Elements of Good Corporate Governance}:
+          \begin{itemize}
+            \item Legal requirements and regulations
+            \item Board of Directors: independent directors, committees (e.g. audit, compensation, nomination)
+            \item Activist shareholders: large shareholders who actively monitor and influence management
+            \item Takeovers: threat of takeover can discipline management (e.g. If you share price is undervalued, another company may acquire you and replace management)
+            \item Transparency and disclosure: accurate and timely financial reporting, disclosure of material information
+          \end{itemize}
+      \end{itemize}
+  \end{itemize}
+
+  \subsubsection{\underline{Ethics of Maximising Shareholder Wealth}}
+  \begin{itemize}
+    \item Short selling: selling borrowed shares in the hope of buying them back at a lower price to make a profit. (Can lead to market manipulation)
+    \item Corporate raiders: investors who acquire a large stake in a company to influence management and increase shareholder value.
+    \item Tax avoidance: legal strategies to minimize tax liability (e.g. offshore accounts, tax shelters)
+  \end{itemize}
+
+\end{multicols*}
+
+\end{document}
