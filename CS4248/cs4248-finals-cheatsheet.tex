@@ -1,0 +1,441 @@
+\documentclass[10pt, landscape]{article}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{calc}
+\usepackage{multicol}
+\usepackage[a4paper,margin=3mm,landscape]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{color,graphicx,overpic}
+\usepackage{hyperref}
+\usepackage{newtxtext} 
+\usepackage{enumitem}
+\usepackage[table]{xcolor}
+\usepackage{mathtools}
+\setlist{nosep}
+% for including images
+\graphicspath{ {./images/} }
+
+\pdfinfo{
+  /Title (CS3223.pdf)
+  /Creator (TeX)
+  /Producer (pdfTeX 1.40.0)
+  /Author (Jovyn Tan)
+  /Subject (CS3223)
+/Keywords (CS3223, nus,cheatsheet,pdf)}
+
+% Turn off header and footer
+\pagestyle{empty}
+
+% redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+  {-1ex plus -.5ex minus -.2ex}%
+  {0.5ex plus .2ex}%x
+{\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+  {-1explus -.5ex minus -.2ex}%
+  {0.5ex plus .2ex}%
+{\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+  {-1ex plus -.5ex minus -.2ex}%
+  {1ex plus .2ex}%
+{\normalfont\small\bfseries}}%
+\makeatother
+
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand\rmdefault{\sfdefault}
+%  makes nested numbering (e.g. 1.1.1, 1.1.2, etc)
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
+\renewcommand\labelitemii{•}
+\renewcommand\labelitemiii{•}
+
+\definecolor{mathblue}{cmyk}{1,.72,0,.38}
+\everymath\expandafter{\the\everymath \color{mathblue}}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+%% adjust spacing for all itemize/enumerate
+\setlength{\leftmargini}{0.4cm}
+\setlength{\leftmarginii}{0.4cm}
+\setlength{\leftmarginiii}{0.2cm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm}
+\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm}
+\setlist[itemize,3]{leftmargin=4mm,labelindent=1mm,labelsep=1mm}
+
+% adding my commands
+\input{../commands/style-helpers.tex}
+\makeatletter
+\newcommand*{\xdashrightarrow}[2][]{%
+  \mathrel{%
+    \mathpalette{\da@xarrow{#1}{#2}{}\da@rightarrow{\,}{}}{}%
+  }%
+}
+\newcommand*{\da@rightarrow}{\mathchar"0\hexnumber@\symAMSa 4B }
+\newcommand*{\da@xarrow}[7]{%
+  % #1: below
+  % #2: above
+  % #3: arrow left
+  % #4: arrow right
+  % #5: space left 
+  % #6: space right
+  % #7: math style 
+  \sbox0{$\ifx#7\scriptstyle\scriptscriptstyle\else\scriptstyle\fi#5#1#6\m@th$}%
+  \sbox2{$\ifx#7\scriptstyle\scriptscriptstyle\else\scriptstyle\fi#5#2#6\m@th$}%
+  \sbox4{$#7\dabar@\m@th$}%
+  \dimen@=\wd0 %
+  \ifdim\wd2 >\dimen@
+    \dimen@=\wd2 %   
+  \fi
+  \count@=2 %
+  \def\da@bars{\dabar@\dabar@}%
+  \@whiledim\count@\wd4<\dimen@\do{%
+    \advance\count@\@ne
+    \expandafter\def\expandafter\da@bars\expandafter{%
+      \da@bars
+      \dabar@ 
+    }%
+  }%  
+  \mathrel{#3}%
+  \mathrel{%   
+    \mathop{\da@bars}\limits
+    \ifx\\#1\\%
+    \else
+      _{\copy0}%
+    \fi
+    \ifx\\#2\\%
+    \else
+      ^{\copy2}%
+    \fi
+  }%   
+  \mathrel{#4}%
+}
+\makeatother
+
+% -----------------------------------------------------------------------
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols*}{4}
+  % multicol parameters
+  \setlength{\columnseprule}{0.25pt}
+
+  % \begin{center}
+  %   \fbox{%
+  %     \parbox{0.8\linewidth}{\centering \textcolor{black}{
+  %         {\Large\textbf{CS4248}}
+  %       \\ \normalsize{AY2556 SEM 1}}
+  %       \\ {\footnotesize \textcolor{gray}{github/Gavino3o}}
+  %     }%
+  %   }
+  % \end{center}
+
+  \section{Text-Preprocessing}
+  \subsection{Regular Expressions (Regex)}
+   
+  \subsubsection{Patterns}
+  \begin{itemize}
+    \item * : 0 or more
+    \item + : 1 or more
+    \item ? : 0 or 1
+    \item . : any character
+    \item \textasciicircum : start of string
+    \item \$ : end of string
+    \item \{n\} : exactly n times
+    \item \{n,\} : n or more times
+    \item \{n,m\} : between n and m times
+    \item \{,m\} : up to m times
+    \item `[abc]` : a or b or c
+    \item `[a-z]` : any character from a to z
+    \item `[\textasciicircum abc]` : any character except a or b or c
+    \item \textbackslash d : digit [0-9]
+    \item \textbackslash D : non-digit [\textasciicircum0-9]
+    \item \textbackslash w : word character [a-zA-Z0-9\_]
+    \item \textbackslash W : non-word character [\textasciicircum a-zA-Z0-9\_]
+    \item .* : any character (0 or more times)
+  \end{itemize}
+
+  \begin{itemize}
+    \item \textbf{Precedence order:}
+    \begin{enumerate}
+      \item Parentheses ()
+      \item Counters (*, +, ?, \{\}, etc)
+      \item Sequences/anchors (ab, \textasciicircum, \$)
+      \item Disjunction (|)
+    \end{enumerate}
+  \end{itemize}
+
+  \subsection{Tokenization}
+  \begin{itemize}
+    \item \textbf{Top-down tokenization} (rule-based). For languages that use space characters between words.
+    \item \textbf{Bottom-up tokenization} (data-driven approach, e.g. BPE). Subword tokenization. Better at handling out-of-vocab words and rare words.
+    \item Can't blindly remove punctuation symbols (e.g Ph.D, \$45.55, 01/04/2002, URLs)
+  \end{itemize}
+
+  \subsubsection{Penn Treebank Tokenization Standard}
+  \begin{itemize}
+    \item Seperate out clitics (doesn't $\rightarrow$ does n't)
+    \item Keep hypenated words together
+    \item Separate out punctuation symbols
+  \end{itemize}
+
+  \subsubsection{Byte-Pair Encoding}
+  \begin{enumerate}
+    \item \textbf{Token learner}. Input: Raw training corpus. Output: Vocab (set of tokens)
+    \begin{itemize}
+      \item Initialise vocab to set of all unique single characters: \{A, B, C, ..., a, b, c\}
+      \item Add special end-of-word symbol '\_' before space in training corpus
+      \item Note: Make all words character separated. Have a count of the words.
+      \item Choose 2 symbols that are most frequently adjacent in training corpus (say 'X', 'Y')
+      \item Add a new merged symbol 'XY' to the vocab
+      \item Replace every adjacent 'X', 'Y' in the corpus with 'XY'
+      \item Repeat until $k$-merges have been done
+    \end{itemize}
+    \item \textbf{Token segmenter}. Input: Raw test sentence and Vocab. Output: Tokenized sentence.
+    \begin{itemize}
+      \item Make all words character separated.
+      \item Greedily merge characters in the order we learned them.
+    \end{itemize}
+  \end{enumerate}
+
+  \subsection{Normalization}
+  \begin{itemize}
+    \item \textbf{Lemmatization}: Represent all words as their lemma, their shared root (dictionary headword form). (e.g. am, is, are $\rightarrow$ be; car, cars, car's, cars' $\rightarrow$ car)
+    \item \textbf{Morphemes}:
+    \begin{itemize}
+      \item Stems: The core meaning-bearing units
+      \item Affixes: parts that adhere to stems, often with grammatical function
+    \end{itemize}
+    \item \textbf{Porter Stemming Algorithm}: A series of rewrite rules run in a cascade. Reduces words to stems by chopping off affixes crudely. E.g (ATIONAL $\rightarrow$ ATE, ING $\rightarrow$ $\epsilon$ if stem contains vowel, SSES $\rightarrow$ SS)
+  \end{itemize}
+
+  \subsection{Min-Edit Distance}
+  \begin{itemize}
+    \item Source: Delete operation. Bottom up. Cost = 1
+    \item Target: Insert operation. Left to right. Cost = 1
+    \item Diagonal: Substitution operation. Diagnoal. Cost = 0 if same characters, 2 otherwise.
+  \end{itemize}
+
+  \section{N-Gram Language Models}
+  \begin{itemize}
+    \item Probability of a language sequence. Word Prediction.
+    \item Use the previous $n-1$ words to predict the next word. $ P(w_n | w_{1:n-1}) $
+    \item $P(w_{1:n}) = P(w_1) \times P(w_2|w_1) \times P(w_3|w_{1:2}) \times \dots \times P(w_n|w_{1:n-1})) = \prod_{k=1}^{n} P(w_k|w_{1:k-1})$ 
+    \item Estimating n-gram probability: 
+    \begin{itemize}
+      \item \textbf{Maximum Likelihood Estimate (MLE)}
+      \item $ P(w_n|w_{1:n-1} = \frac{C(w_{w1:n})}{C(w_{w1:n-1})})$ (n-gram)
+      \item $ P(w_2|w_{1} = \frac{C(w_1 w_2)}{C(w_1)}$ (bigram)
+      \item Data sparsity when estimating probability of longer n-grams
+    \end{itemize}
+    \item N-gram approaximation:
+    \begin{itemize}
+      \item Markov assumption: $P(w_k|w_{1:k-1}) \approx P(w_k | w_{k-(N-1): k-1})$
+      \item $w_k$ only depends on its previous $N-1$ words ($ N\leq k$)
+      \item Bigram Approximation: $P(w_{1:n}) \approx \prod_{k=1}^{n}P(w_k|w_{k-1})$
+      \item Use logprob instead as multiplying many probabilties results in numerical underflow
+    \end{itemize}
+  \end{itemize}
+
+  \subsection{Evaluating N-Gram Models}
+  \begin{itemize}
+    \item Extrinsic vs Intrinsic Evaluation
+  \end{itemize}
+
+  \subsubsection{Perplexity}
+  \begin{itemize}
+    \item $PP = m(w_1, \dots, w_n)^{-\frac{1}{n}} = \frac{1}{\sqrt[n]{m(w_1, \dots, w_n)}}$
+    \item The \textbf{lower} the perplexity the better
+    \item If perplexity = k, the model is uncertain as if it had to choose uniformly among k equally likely words at each step. Weighted average branching factor of a language.
+    \item Bigram LM: $PP = \frac{1}{\sqrt[n]{m(w_1, \dots, w_n)}} = \frac{1}{\sqrt[n]{\prod_{k=1}^{n}}P(w_k|w_{k-1})}$
+  \end{itemize}
+
+  \subsubsection{Smoothing}
+  \begin{itemize}
+    \item Lowering non-zero n-gram counts in order to assign some probability mass to zero n-grams
+    \item Smoothed bigram count:
+    $ P(w|w_0) = \frac{C(w_0w) + 1}{C(w_0) + V} = \frac{C^*(w_0w)}{C(w_0)} $
+    \item Discound $d = \frac{C^*(w_0w)}{C(w_0)}$
+    \item Add-k smoothing for bigram:
+    $ P(w|w_0) = \frac{C(w_0w) + k}{C(w_0) + kV} $ 
+  \end{itemize}
+
+  \subsubsection{Interpolation}
+  \begin{itemize}
+    \item Combining benefits of higher order n-grams with lower-order n-grams
+    \item Bigrams: $\hat{P}(w_0|w_{-1}) = \lambda_1 P(w_0 | w_{-1}) + \lambda_2 P(w_0)$
+    \item Trigrams: $\hat{P}(w_0|w_{-2} w_{-1}) = \lambda_1 P(w_0 | w_{-2}w_{-1}) + \lambda_2 P(w_0|w_{-1}) + \lambda_3P(w_0)$
+    \item Note: $\sum_i \lambda_i = 1$. Select $\lambda_i$ that maximises the probability of the development set.
+  \end{itemize}
+
+  \subsubsection{Entropy}
+  \begin{itemize}
+    \item $H(X) = - \sum_{x \in X} p(x) \log_2 p(x)$
+    \item Number of bits to encode information in the optimal coding scheme
+    \item Entropy of a sequence in language $L$:
+    $ H(w_1, w_2, \dots , w_n) = - \sum_{w_{1:n} \in L} p(w_{1:n}) \log_2 p(w_{1:n}) $
+    \item Entopy rate (per-word entropy):
+    $ \frac{1}{n} H(w_{1:n}) = -\frac{1}{n} \sum_{w_{1:n} \in L} p(w_{1:n}) \log_2 p(w_{1:n}) $
+    \item $H(L) = \lim_{n \rightarrow \infty} -\frac{1}{n} \sum_{w_{1:n} \in L} p(w_{1:n}) \log_2 p(w_{1:n}) $
+    \item By Shannon-McMillan-Breiman theorem: $ H(L) = \lim_{n \rightarrow \infty} -\frac{1}{n} \log_2 p(w_1, \dots, w_n)$ 
+    \item \textbf{Cross Entropy}: Used for comparing two language models, $m$ and $p$
+    $ H(p,m) = \lim_{n \rightarrow \infty} -\frac{1}{n} p(w_{1:n}) \log_2 m(w_{1:n})$ 
+    \item By Shannon-McMillan-Breiman theorem: 
+    $ H(p,m) = \lim_{n \rightarrow \infty} -\frac{1}{n} \log_2 m(w_{1:n})$ 
+    \item Property: $H(p) \leq H(p,m)$. Difference between them is a measure of how accurate model $m$ is.
+    \item More accurate the model, the \textbf{lower its cross-entropy}
+    \item \textbf{Perplexity (PP)} $ = 2^H = 2 ^{-\frac{1}{n} \log_2 m(w_{1:n})}$
+  \end{itemize}
+
+  \subsubsection{Paired Bootstrap Test}
+  \begin{itemize}
+    \item Create a test set $x_i$ of the same size as $x$ by sampling from $x$ with replacements
+    \item Calculate $\delta(x_i) = M(A,x_i)-M(B,x_i)$
+    \item $s = s+1$ if $\delta(x_i) \leq 0$
+    \item p-value = $\frac{s}{b}$. $b$ is num of samples
+    \item If p-value $<$ 0.01, then A is better than B at 0.01 level of significance
+  \end{itemize}
+
+  \section{Deep Learning in NLP}
+  \subsection{Linear Models}
+  \begin{itemize}
+    \item $y = f(x) = x \cdot W + b$
+    \item $ x \in \mathbb{R}^{d_{in}}; W \in \mathbb{R}^{d_{in} \times d_{out}}; y,b \in \mathbb{R}^{d_{out}}$
+    \item In the matrix representation, add a 1 to to the $x$ input and $b$ to the last row of $W$
+    \item Binary classification: Perceptron. $class(x) = \hat{y} = 1 (\text{if } f(x) \geq 0); 0 (\text{if } f(x) < 0) $
+    \item \textbf{Sigmoid function:} maps numbers to 0-1. $\sigma(x) = \frac{1}{1 + e^{-x}}$
+    \item \textbf{Logistic regression:}
+    \begin{itemize}
+      \item $P(\hat{y}=1|x) = \sigma(x \cdot w+b)$
+      \item $P(\hat{y}=0|x) = 1 - P(\hat{y}=1|x) =1 - \sigma(x \cdot w+b)$
+      \item $class(x) = \hat{y} = 1 (\text{if } P(\hat{y}=1|x) \geq 0); 0 (\text{otherwise}) $
+    \end{itemize}
+    \item \textbf{Mutli-class Classification:} $class(x) = \hat{y} = \text{argmax } \hat{y}_{[i]} $
+    \item \textbf{Softmax function:} maps output to probability distribution. $\text{softmax}(x) = \frac{e^{x_{[i]}}}{\sum_j e^{x_{[j]}}}$. Use in multinomial logistic regression.
+  \end{itemize}
+
+  \subsubsection{Training \& Loss Functions}
+  \begin{itemize}
+    \item $\hat{\theta} = \text{argmin}_{\theta} (\frac{1}{n} \sum_{i=1}^{n} L(f(x_i;\theta), y_i) + \lambda R(\theta))$
+    \item \textbf{Binary Cross-Entropy Loss:} $L_{\text{logistic}} (\hat{y}, y) = -y \log_2 \hat{y} - (1-y) \log_2 (1 - \hat{y})$
+    \item \textbf{Categorical Cross-Entropy Loss:} $L_{\text{c-e}} (\hat{y}, y) = - \sum_i y_{[i]} \log_2 (\hat{y}_{[i]})$
+    \item \textbf{Hard Classfication Problem}, one $t$ as single correct class: $L_{\text{c-e}} (\hat{y}, y) = - \log_2 (\hat{y}_{[t]})$
+    \item \textbf{Squared (quadratic) loss}: $L(\hat{y}, y) = \frac{1}{2}(\hat{y} - y)^2$
+    \item \textbf{Regularization:}
+    \begin{itemize}
+      \item $R_{L_2}(W) = ||W||^2_2 = \sum_{i,j}(W_{[i,j]})^2$
+      \item $R_{L_1}(W) = ||W||_1 = \sum_{i,j}|W_{[i,j]}|$
+    \end{itemize}
+    \item \textbf{Gradient Descent:}
+    \begin{itemize}
+      \item $L(\mathbf{w_1}) > L(\mathbf{w_2}) > \dots > min$
+      \item $\delta L (w_0, w_1, \dots, w_{m-1}) = ( \frac{\delta L}{\delta w_0}, \frac{\delta L}{\delta w_q}, \dots, \frac{\delta L}{\delta w_{m-1}})$
+      \item $L(\mathbf{w, v}) \approx L(\mathbf{w}) + \mathbf{v} \cdot \Delta L (\mathbf{w})$
+      \item $\mathbf{v} = -\alpha \Delta L(\mathbf{w}); \alpha > 0$
+      \item $L(\mathbf{w} - \alpha \Delta L(\mathbf{w})) \approx L(\mathbf{w}) - \alpha ||\Delta L(\mathbf{w})||^2$ 
+      \item Hence: $L(\mathbf{w}) > L(\mathbf{w} - \alpha \Delta L(\mathbf{w})) $
+      \item $w_{t+1} = w_t - \alpha_t \Delta L (\mathbf{w}_t)$
+    \end{itemize}
+  \end{itemize}
+
+  \subsection{Feed-Forward Neural Networks}
+  \begin{itemize}
+    \item \textbf{XOR Problem}. Can be solved by applying a nonlinear input transformation.
+    \item \textbf{Multilayer Perceptron (MLP)} with 1 hidden layer: $NN_{MLP1}(x) = g(\mathbf{xW^1 + b^1})\mathbf{W^2 + b^2}$
+    \item \textbf{Activation Functions:}
+    \begin{itemize}
+      \item Sigmoid. Nice property: $\sigma'(x) = \sigma(x) \cdot (1-\sigma(x))$
+      \item Hyperbolic Tangent. $\tanh (x) = \frac{e^{2x} - 1}{e^{2x}+1} = \frac{e^x - e^{-x}}{e^x + e^{-x}}$. Nice propery: $\frac{d}{dx} \tanh (x) = 1 - [\tanh(x)]^2$
+      \item Hard tanh = -1 if $x < -1$; 1 if $x > 1$; x otherwise
+      \item ReLU = $\text{max}(0,x)$
+    \end{itemize}
+    \item \textbf{Dropout Regularization}: Multiply the output of a hidden layer with random masking vectors (setting random neurons to 0). Prevent overfitting.
+  \end{itemize}
+
+  \subsubsection{Neural Network Training}
+  \begin{itemize}
+    \item \textbf{Multivariate Chain Rule}: $ \frac{\delta L}{\delta w_i} = \frac{\delta L}{\delta x_1} \frac{\delta x_1}{\delta w_i} + \frac{\delta L}{\delta x_2} \frac{\delta x_2}{\delta w_i} + \dots + \frac{\delta L}{\delta x_n} \frac{\delta x_n}{\delta w_i} $
+    \item Backpropagation. Recursive calculation.
+    \item Computational Graph: A directed acyclic graph. Nodes: mathematical operations or bound variables. Edges: flow of intermediary values between nodes
+  \end{itemize}
+
+  \subsection{Word Embeddings (Word2Vec)}    
+  \begin{itemize}
+    \item Sparse (One-hot) vs Dense vectors (Learned)
+    \item Two vectors for each word: \textbf{center, context}
+    \item Make the vector $\mathbf{w}$ of center word close to vectors $\mathbf{c}$ of words in its context. Binary prediction task
+    \item Training distinguishes $D$ and $\bar{D}$
+    \item Negative words sampled: $\frac{\#(w)^{0.75}}{\sum_{w'} \# (w')^0.75}$
+    \begin{enumerate}
+      \item Treat target word $\mathbf{w}$ and neighbouring context word $\mathbf{c}$ as positive examples
+      \item Randomly sample other words to get negative examples
+      \item Use \textbf{logistic regression} to train a classifier to distinguish +ve and -ve examples
+      \begin{itemize}
+        \item $P(D=1|w,c) = \frac{1}{1+e^{-w \cdot c}}$
+        \item $P(D=0|w,c) = 1 - P(D=1|w,c) = \frac{1}{1+e^{w \cdot c}}$
+        \item Minimise: $L(\theta, D, \bar{D}) = - \sum_{(w,c) \in D} \log P(D=1|w,c) - \sum_{(w,c) \in \bar{D}} \log P(D=0|w,c)$
+        \item CBOW: $\log P(D=1|w,c_{1:k}) = \log \frac{1}{1 + e^{-(w \cdot c_1, w \cdot c_2+ \dots + w \cdot c_k)}}$
+        \item Skipgram: $\log P(D=1|w,c_{w:k}) = \sum_{i=1}^{k} \log \frac{1}{1+e^{-w \cdot c_i}}$
+        \item Gradient Descent. Final embedding: $w_i + c_i \text{ or } w_i$
+      \end{itemize}
+      \item Used the learned weight vectors as embeddings.
+    \end{enumerate}
+    \item Cosine similarity: $\text{sim}_{cos}(u,v) = \frac{\mathbf{u \cdot v}}{\mathbf{||u||||v||}}$
+    \item Used for word analogy task via vector algebra
+  \end{itemize}
+
+  \subsection{Neural Language Models}
+  \begin{itemize}
+    \item $P(w_i|w_1,w_2,\dots ,w_{i-1}) = \frac{P(w_1,w_2,\dots ,w_i)}{P(w_1,w_2,\dots ,w_{i-1})}$
+    \item $P(w_{1:i}) = P(w_1) \times P(w_2|w_1) \times \dots \times P(w_i|w_{1:i-1})$
+    \item \textbf{Downsides of n-gram LMs}: requires smoothing; number of n-grams grow multiplicatively; lack of generalization
+    \item \textbf{Input}: a sequnce of $k$ words 
+    \item \textbf{Output}: probability distribution over next word
+    \item $\hat{y} = P(w_i|w_{i:k}) = LM(w_{1:k}) = \text{softmax}((g(\mathbf{xW^1+b^1}))\mathbf{W^2+b2})$
+    \item Parameters: $\mathbf{E_{[w]}, W^1, b^1, W^2, b^2}$.\newline Note: $E \in \mathbb{R}^{|V|\times d_w}; x=[v(w_1);v(w_2);\dots;v(w_k)]$
+    \item Training samples: sequence of $k$ words paired with $k+1^{\text{th}}$ word as target label for classification
+    \item Loss function: Categorical cross-entropy loss
+  \end{itemize}
+
+  \subsubsection{RNN}
+  \begin{itemize}
+    \item Model non-Markovian dependencies. Deep NN.
+    \item $\text{RNN}^*(x_{1:n};s_0) = y_{1:n}$
+    \item $s_i = R(s_{i-1}, x_i)$; \space \space $y_i = O(s_i)$
+    \item $x_i \in \mathbb{R}^{d_{in}}, y_i \in \mathbb{R}^{d_{out}}, s_i \in \mathbb{R}^{f(d_{out})}$
+    \item sequence labelling, sequence classification, language modeling, encoder-decoder
+    \item \textbf{Sentence Level Classification}: $\hat{y} = \text{softmax}(MLP(RNN(x_{1:n})))$. Cross-entropy loss. Using pre-trained word embeddings.
+    \item \textbf{Sequence Labelling}: Produce an output $\mathbf{\hat{t}_i}$ after each input $x_i$ is read. Loss: $L(\hat{t}_{1:n}, t_{1:n}) = \sum_{i=1}^{n} L_{\text{local}}(\hat{t}_{i}, t_{i})$
+    \item \textbf{Language Modelling:} output at a timestep acts as input to the next time step, $y_i = x_{i+1}$. Loss = $L = - \sum_t \log_2 (\hat{y}_t)$
+    \item Conditioned Generation: Concatenate embedded input vector with a condition vector, $\mathbf{c}$ $s_j = R(\mathbf{s}_{j-1}, [\hat{\mathbf{t}}_j; \mathbf{c}])$
+    \item \textbf{Encoder-Decoder:} Sequence to sequence
+    \begin{itemize}
+      \item Encoder: $RNN_{enc}^* (x_1,\dots,x_n) = c_1,\dots,c_n$
+      \item Decoder: Conditioned generator RNN.
+      \item $\bar{a}^j_{[i]} = \begin{cases} s_{j-1}\cdot c_i \text{  dot product}\\ s_{j-1}Wc_i \text{  bilinear}\\ \tanh([s_{j-1};c_i]U +b)\cdot v \text{  MLP} \end{cases}$
+      \item $a^j = \text{softmax}(\bar{a}_{[1]}^j, \dots, \bar{a}_{[n]}^j)$
+      \item $\mathbf{c^j} = \sum_{i=1}^n a_{[i]}^j \cdot c_i \leftarrow \text{attend}$
+      \item $s_j = R_{\text{dec}}(s_{j-1}, [\hat{t}_j;c^j])$
+      \item $y_j = O_{\text{dec}}(s_j)$
+    \end{itemize}
+  \end{itemize}
+
+  \subsubsection{Transformers}
+  \begin{itemize}
+    \item Exploit parralel Preprocessing
+    \item Transformer blocks are stacked on top of one another. Hence, input and output dimensions are the same.
+    \item \textbf{input $\rightarrow$ Self-Att Layer $\rightarrow$ Layer Normalise $\rightarrow$ Feed-Forward $\rightarrow$ Layer Normalise $\rightarrow$ output}. Residual connection before each layer normalise.
+    \item Decoder-only, Encoder-only, Encoder-decoder
+  \end{itemize}
+
+      \textbf{\underline{Decoder-Only Transformer}}
+  \begin{itemize}
+    \item Self Attention
+  \end{itemize}
+
+\end{multicols*}
+
+\end{document}
