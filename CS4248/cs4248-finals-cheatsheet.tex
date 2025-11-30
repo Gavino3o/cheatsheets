@@ -133,9 +133,7 @@
   %   }
   % \end{center}
 
-  \section{Text-Preprocessing}
   \subsection{Regular Expressions (Regex)}
-   
   \subsubsection{Patterns}
   \begin{itemize}
     \item * : 0 or more
@@ -299,7 +297,6 @@
     \item If p-value $<$ 0.01, then A is better than B at 0.01 level of significance
   \end{itemize}
 
-  \section{Deep Learning in NLP}
   \subsection{Linear Models}
   \begin{itemize}
     \item $y = f(x) = x \cdot W + b$
@@ -425,16 +422,237 @@
 
   \subsubsection{Transformers}
   \begin{itemize}
-    \item Exploit parralel Preprocessing
+    \item Exploit parralel processing
     \item Transformer blocks are stacked on top of one another. Hence, input and output dimensions are the same.
     \item \textbf{input $\rightarrow$ Self-Att Layer $\rightarrow$ Layer Normalise $\rightarrow$ Feed-Forward $\rightarrow$ Layer Normalise $\rightarrow$ output}. Residual connection before each layer normalise.
     \item Decoder-only, Encoder-only, Encoder-decoder
   \end{itemize}
 
-      \textbf{\underline{Decoder-Only Transformer}}
+  \subsubsection{Decoder-Only Transformer}
   \begin{itemize}
-    \item Self Attention
+    \item Language Modelling, Text Generation (GPT, Llama)
+    \item \textbf{Positional Embedding} vectors are added to token embeddings.
+    \item Static function to map position integers to real-valued vectors (combination of sine and cosine function)
+    \item \textbf{Language Modelling Head}: Take last output vector $h_N^L$ and outputs a distribution over vocab, $V$. $\mathbf{u} = \mathbf{h}^L_N \mathbf{E}^T$. $\mathbf{y} = \text{softmax}(\mathbf{u})$
+    \item Training via teacher forcing, $L = \frac{1}{N} \sum_{t=1}^{N} L_{CE}$
+    \item \textbf{Generatation sampling}: Greedy, Random, Temperature (divide $\mathbf{u}$ by $\tau \in (0,1]$), Top-k (renormalise highest k), Top-p (percent)
   \end{itemize}
+
+  \textbf{\underline{Single Head Self Attention}}
+  \begin{itemize}
+    \item (left-to-right) Self-attention layer. Only past tokens
+    \item Idea: a vector can have 3 different roles: Query, Key, Value
+    \item $\mathbf{q_i = x_i W^Q}$; $\mathbf{k_i = x_i W^K}$;  $\mathbf{v_i = x_i W^V}$
+    \item $x_i \in \mathbb{R}^d$; $\mathbf{W^Q, W^K} \in \mathbb{R}^{d \times d_k}$; $\mathbf{W^V} \in \mathbb{R}^{d \times d_v}$
+    \item $\text{sim}(x_i, x_j) = \frac{q_i \cdot k_j}{\sqrt{d_k}}$. Numerical stability
+    \item $\alpha_{ij} = \frac{e^{\text{sim}(x_i, x_j)}}{\sum_{k=1}^{i} e^{\text{sim}(x_i, x_k)}}$, $\forall j \leq i$ (softmax)
+    \item $\mathbf{y}_i = \sum_{j=1}^{i} \alpha_{ij}\mathbf{v_j} = \text{SelfAttn}(\mathbf{x_i})$
+    \item Future masking in $QK^T$ to turn top right triangle half of the matrix to negative infinity.
+    \item Layer Normalisation: normalise values in a vector to have mean = 0 and variance = 1.
+    $\mu = \frac{1}{d} \sum_{x=1}^d x_i$ and $\sigma = \sqrt{\frac{1}{d} \sum_{i=1}^d (x_i - \mu)^2}$
+    \item $\text{LayerNorm}(\mathbf{x}) = \gamma \frac{\mathbf{x- \mu}}{\sigma} + \beta$. $\gamma$ and $\beta$: learnable params
+  \end{itemize}
+
+  \textbf{\underline{Multi-Head Self Attention}}
+  \begin{itemize}
+    \item Different transfomer heads to model different "representation subspace" or different relationships
+    \item A head has its own $\mathbf{W_i^Q, W_i^K, W_i^V}$  and contributes $\mathbf{Y^i}$
+    \item Final Output: $Y = (\mathbf{Y_1 \oplus Y_2 \oplus \dots \oplus Y_h})\mathbf{W^O}$
+    \item $\mathbf{Y_i} \in \mathbb{R}^{N \times d_v}$; $\mathbf{W^O} \in \mathbb{R}^{hd_v \times d}$
+  \end{itemize}
+
+  \subsubsection{Encoder-Only Transformer}
+  \begin{itemize}
+    \item BERT(Bidirectional Encoder Representation Transformers)
+    \item No masking of $\mathbf{QK}^T$
+    \item \textbf{Pretrain}: With unlabeled text for Masked LM and Next Sentence Prediction
+    \item \textbf{Finetune}: One additional output layer for target NLP task. Finetune pretrained parameters with smaller labelled data 
+  \end{itemize}
+
+  \textbf{\underline{Pretraining}}:
+  \begin{itemize}
+    \item \textbf{Masked LM}. Mask 15\% of all input tokens (80\% [MASK], 10\% random tokens, 10\% unchanged). CE Loss.
+    \item $\mathbf{u}_i = \mathbf{h}^L_i \mathbf{E}^T$; $\mathbf{y}_i = \text{softmax}(\mathbf{u}_i)$. Similarity scoring.
+    \item $L_{MLM} = - \frac{1}{|M|} \sum_{i \in M} \log P (x_i | \mathbf{h}_i^L)$
+    \item \textbf{Next Sentence Prediction}. Two sentences A, B. Two-class prediction based on [CLS]: isNext, notNext. CE Loss
+    \item \textbf{Contextual Embeddings}: $h_i^L$ is actually contextual embedding of $x_i$ in the context of input sentence.
+  \end{itemize}
+  \textbf{\underline{Fine-Tuning}}:
+  \begin{itemize}
+    \item \textbf{Sentence-level task} (Output vector [CLS] token) vs \textbf{Token-level task} (Output vector for ith token)
+    \item Sentence-level: Sentiment Classfication. Natural Language Inference (premise, hypothesis: entail/contradict/neutral)
+    \item Token-level: POS tagging, Named entity recognition (NER) [PER, ORG, LOC, GPE]
+    \item \textbf{NER tagging schemes:} IO, BIO, BIOES. (e.g B-PER). NER Head takes output vector, softmax, argmax.
+    \item \textbf{Extractive Question Answering}. Input: passage, question. Output: Extracted segment of text (span) in the passage as answer.
+    \item Utilises \textbf{span labelling}. Add a linear layer to BERT with two vectors $\mathbf{s}$ and $\mathbf{e}$.
+    \item $P_s(i) = \frac{e^{\mathbf{s} \cdot \mathbf{p}_i^{'}}}{\sum_{j-1}^m e^{\mathbf{s} \cdot \mathbf{p}_j^{'}}}$; $P_e(i) = \frac{e^{\mathbf{e} \cdot \mathbf{p}_i^{'}}}{\sum_{j-1}^m e^{\mathbf{e} \cdot \mathbf{p}_j^{'}}}$
+    \item Loss Function: $L = - \log P_s(a_s^*) - \log P_e(a_e^{*})$
+    \item Score of candidate span: $\mathbf{s \cdot p_i^{'} + e \cdot p_j^{'}}$. Highest scoring span where $i \leq j$. [CLS] as no ans. Overlapping windows.
+  \end{itemize}
+
+  % \subsubsection{Large Language Models}
+  % \begin{itemize}
+  %   \item Pretrain and Finetune paradigm
+  %   \item Zero-shot learning. \textbf{Formulate task as next token prediction}.
+  %   \item Winograd Schema Challenge (coreference resolution).
+  %   \item Few-shot learning. In-context learning (Prepend training examples/demonstrations). \textbf{No gradient updates}. Performance increases as number of in-context examples increases. Largest performance gain from first example. 
+  %   \item Performance increases as model size increases
+  %   \item SuperGLUE benchmarkL BooQ, CB, COPA, MultiRC, ReCoRD, RTE, WiC, WSC
+  %   \item \textbf{BERT}: (Pre-train, finetune update params). \textbf{LLM}: (Pre-train, prompt no update params)
+  %   \item Given appropriate prompts $\rightarrow$ LLM can do summarisation, translation, sentiment, fine-grained-sentiment.
+  %   \item \textbf{Chain-of-Thought Prompting}: "Let's think step by step"
+  %   \item \textbf{System Prompt}: Silently prepended to any user text. "You are..."
+  %   \item \textbf{MMLU}: Massive Multitask Language Understanding (knowledge reasoning evaluation)
+  % \end{itemize}
+
+  \subsubsection{Post-Training (Supervised Fine-Tuning)}
+  \begin{itemize}
+    \item Model Alignment: Instruction fine-tuning. Preference-based learning.
+    % \item \textbf{Instruction Finetuning}. All different type of tasks. Instruction-Response pairs.
+    % \item Augment existing labelled training data from NLP tasks. CE Loss (Next Token Pred).
+    % \item \textbf{Preference Learning}. Pairwise preference.
+    % \item Knowledge distillation: Teacher model ranking answer options of student model.
+    \item \textbf{Bradley-Terry Model: Preference Reward Function}
+    \begin{itemize}
+      \item \( \delta = z_i - z_j = r(x,o_i) - r(x, o_j)\)
+      \item $ L_{CE} = \mathbb{E}_{(x,o_w, o_l) ~ D} [- \log \sigma(r(x, o_w) - r(x, o_l))] $
+      \item $ P(o_i \succ o_j|x) = \sigma(z_i - z_j) = \sigma(\delta) = \frac{1}{1+ e^{-\delta}}$
+      \item $\delta = \log \frac{P(o_i \succ oj|x)}{P(o_j \succ o_i | x)}$
+      \item Replace LM head with linear layer to output scalar score
+    \end{itemize}
+    \item Reward function used in RLHF to learn an aligned LLM
+    \item \textbf{Direct Preference Optimization}: Train a policy (LLM) $\pi_{\theta}$: maximises rewards for responses from the policy, but penalises models that diverge from SFT model $\pi_{ref}$
+    \item \( \pi^* = \text{argmax}\{ \mathbb{E}_{x~D,o!\pi_{\theta}(o|x)}[r(x,o)] - \beta \mathbb{D}_{KL}[\pi_{\theta} (o|x)||\pi_{ref}(o|x)]\} \). $\beta > 0$: penalty Temperature
+    \item KL Divergence: $\mathbb{D}_{KL}[P||Q] = \sum_x P(x) \log \frac{P(x)}{Q(x)}$
+    \item Yields: $r(x,o) = \beta \log \frac{\pi_{\theta(o|x)}}{\pi_{ref}(o|x)} + \beta \log Z(x)$
+    \item $L_{DPO}(\pi_{\theta}) = \mathbb{E}_{(x, o_w, o_l)~D} [- \log \sigma (\beta \log \frac{\pi_{\theta}(o_w|x)}{\pi_{ref}(o_w|x)} - \beta \log \frac{\pi_{\theta}(o_l|x)}{\pi_{ref}(o_l|x)}) ]$
+    \item Simpler (no need for reward model), stable, efficient
+  \end{itemize}
+
+  \subsubsection{Encoder-Decoder Transformers (MT, GEC)}
+  \underline{\textbf{Cross-Attention}}
+  \begin{itemize}
+    \item Decoder has extra cross-attention layer with weights: $\mathbf{W^Q, W^K, W^V}$
+    \item $Q$: based on output of previous layer of decoder, $\mathbf{X_{dec}}$
+    \item $K, V$ based on final output of the \textbf{top} layer of encoder, $\mathbf{X_{enc}}$
+    \item $Q = X_{dec}W^Q, K=X_{enc}W^K, V=X_{enc}W^V$
+    \item Training: Teacher forcing. $L = \frac{1}{N} \sum_{i=1}^N (- \log P(y_{i+1}))$
+    \item Encoder output does not contribute to loss function
+    \item Decoding: Search for most probable (translation) output $T^* = \text{argmax}_{t_1,\dots,t_N} \prod_{i=1}^{N} \log P(t_i | t_1, \dots, t_{i-1}, s)$
+    Stop generating when $t_N = EOS$ or $N>N_{max}$ 
+    \item Greedy, Beam-Search (keep most probable $k$ tokens at each time step, $k$ complete paths) 
+    \item Minimum Bayes Risk (Translation most similar to candidate translations) $T^* = \text{argmax}_{T \in {\tau}} \sum_{C \in \tau} sim(T,C)$
+  \end{itemize}
+
+  \underline{\textbf{chrF}}
+  \begin{itemize}
+    \item Measure number of character n-gram overlap
+    \item \textbf{HYP}: Machine Translation (\textit{P}). \textbf{REF}: Human Translation (\textit{R})
+    \item $F_{\beta} = \frac{(1+\beta^2 \times P \times R)}{(\beta^2 \times P) + R}$
+    \item R is weighted $\beta$ times as much as P
+    \item Find unigrams, ... matches between HYP and REF
+    \item Unigram P, Bigram P, Unigram R, Bigram R
+    \item \textbf{chrP} and \textbf{chrR}: \% k-grams 
+  \end{itemize}
+
+  \underline{\textbf{BLEU}}
+  \begin{itemize}
+    \item Match candidate translation with multiple references in combination to get a modified unigram (word) precision.
+    \item $p_n = \frac{\sum_{C \in \text{Candidates}} \sum_{\text{ngram} \in C} count_{\text{clip}}(ngram)}{\sum_{C' \in \text{Candidates}} \sum_{\text{ngram'} \in C'} count_{\text{clip}}(ngram')}$
+    \item $BP = 1$ if $c > r$; $BP = e^{(1-r/c)}$ if $c \leq r$ 
+    \item $BLEU = BP \times e^{ \frac{1}{N} \sum_{n=1}^{N} \log p_n}$
+  \end{itemize}
+
+  \underline{\textbf{BERTScore}}
+  \begin{itemize}
+    \item Embed tokens contextually using BERT 
+    \item Compute cosine similarity between every token in $C$ and every token in $R$
+    \item Perform greedy matching and caclulate F-score.
+    \item $Pr = \frac{1}{|C|} \sum_{c \in C} \max_{r \in R} (\mathbf{v_r \cdot v_c})$
+    \item $Rc = \frac{1}{|R|} \sum_{r \in R} \max_{c \in C} (\mathbf{v_r \cdot v_c})$
+  \end{itemize}
+
+  \subsubsection{IR and RAG}
+  $p(x_{1:n}) = \prod_{i=1}^{n} p(x_i | R(q); \text{prompt};[Q:];q;[A:];x_{,i})$
+  \underline{\textbf{tf-idf weighting}}
+  \begin{itemize}
+    \item $\text{count}(t,d)$: number of times term $t$ appear in document $d$
+    \item $tf_{t,d} = 1 + \log_{10} \text{count}(t,d) $ if $\text{count}(t,d) > 0$ \newline $tf_{t,d} = 0$ otherwise.
+    \item $df_t$: number of documents that term $t$ appears in
+    \item $N$: total number of document 
+    \item $idf_t = \log_{10} \frac{N}{df_t}$
+    \item $tf\text{-}idf(t,d) = tf_{t,d} \times idf_t$
+    \item d: Sparse vector. $[tf\text{-}idf(t_1,d) \dots tf\text{-}idf(t_{|V|},d)]$
+    \item score$(q,d) = \cos(\mathbf{q,d}) = \frac{\mathbf{q \cdot d}}{\mathbf{|q||d|}}$
+    \item Inverted index: term{df} $\rightarrow$ docID[count] $\rightarrow$ docID[count] $\rightarrow$ 
+  \end{itemize}
+
+  \underline{\textbf{IR Evaluation}}
+  \begin{itemize}
+    \item T: set of retrieved documents (in rank order)
+    \item U: set of relevant documents
+    \item R: subset of retrieved documents that are relevant
+    \item Precision $=\frac{|R|}{|T|}$. Recall $= \frac{|R|}{|U|}$
+    \item Interpolated precision: $p_{int}(r) = \text{max}_{r' \geq r} p(r')$ for $ r \in \{0, 0.1, \dots, 1.0\} $
+    \item Average precision AP = $\frac{1}{|R|} \sum_{d \in R} p_r(d)$ (relevant $d$ only)
+    \item $p_r(d)$: precision at the rank $d$ was found
+  \end{itemize}
+
+  \underline{\textbf{IR with Dense Vectors}}
+  \begin{itemize}
+    \item One encoder and two encoder approach
+    \item $z = \text{BERT}([CLS];q;[SEP];d)[CLS]$
+    \item $z_q = \text{BERT}_Q([CLS];q)[CLS]$ $z_q = \text{BERT}_D([CLS];d)[CLS]$
+    \item $score(q,d) = \sigma(\mathbf{u \cdot z})$ or $score(q,d) = \mathbf{z_q \cdot z}_d$
+  \end{itemize}
+
+  \subsubsection{POS Tagging}
+   $\hat{\tau} = \underset{t_{1:T}}{\text{argmax}} \{ \prod_{i=1}^{T} P(t_i|t_{i-1}) \cdot P(w_i|t_i) \cdot P(</s>|t_T)\}$
+  \begin{itemize}
+    \item $P(t_i|t_{i-1}) = \frac{C(t_{i-1}, t_i)}{C(t_{i-1})}$ $P(w_i|t_{i-1}) = \frac{C(t_{i}, w_i)}{C(t_{i})}$
+    \item Direct Evaluation: $O(T \cdot N^T)$
+    \item Viterbi Algorithm: $O(T \cdot N^2)$
+    \item $v_t(j) = \underset{1 \leq i \leq N}{\text{max}} v_{t-1}(i)\cdot a_{ij} \cdot b_j(o_t)$
+    \item $a_{ij} \rightarrow P(t_j|t_i)$; $b_j(o_t) \rightarrow P(w_t | t_t)$
+    \item $P(w_i|t_i) = P(\text{unknownword}|t_i) \cdot P(\text{capital}| t_i) \cdot P(\text{ending/hyph}|t_i)$
+  \end{itemize}
+
+  \subsubsection{Context Free Grammar}
+  \begin{itemize}
+    \item Notation: $[_{\text{verb}}$ prefer$]$
+    \item Strong equivalence: $L(G1) = L(G2)$ and has same phrase structure
+    \item Weak equivalence: Generate same set of strings but do not assign same phrase structure to each string
+    \item \textbf{Chomsky Normal Form (CNF)}:
+    \begin{itemize}
+      \item The grammar is $\epsilon$-Free
+      \item Each production of the grammar is either: $A \rightarrow B \space C$ or $A \rightarrow \alpha$ (i.e either 2 non-terminal symbols or 1 terminal symbol on RHS)  
+    \end{itemize}
+      \item CFG can be converted into weakly equivalent CFG in CNF.
+      \item Unit production: $A \rightarrow B$ where RHS consists of a single non-terminal symbol $B$
+      \begin{enumerate}
+        \item Construct set $P'$. Include all non-unit productions.
+        \item For non-terminal symbols $A$ and $B$, if $A \rightarrow A1 \rightarrow \dots \rightarrow B$, then for each non-unit production $B \rightarrow \alpha$. Add $A \rightarrow \alpha$ to $P'$
+        \item Consider each production $P'$ of the form $A \rightarrow X_1X_2 \dots X_m$ where $m \geq 2$. If $X_i$ is a terminal symbol $a$, introduce a new non-terminal symbol $C$ and a production $C \rightarrow a$. Replace $X_i$ with C.
+        \item For each production of the form $A \rightarrow B1 \space B2 \space B3$ replace production by $A \rightarrow B1 \space D1$ and $D1 \rightarrow B2 \space B3$. Right heavy tree.
+      \end{enumerate}
+    \item \textbf{Cocke-Kasami-Younger (CKY) Algorithm:}
+    \begin{enumerate}
+      \item \textbf{Table}: cols are words, top right half, idx between words.
+      \item \textbf{Order}: Left column to right, bottom to up.
+      \item \textbf{Cell ranges}: [0, 1], [0, 2], [0, 3]; [1,2] [1,3]; [2,3]
+      \item From the CFG rules, fill bottom cell with non-terminal symbols that has $\text{word}_{\text{target}}$ on the RHS (base case)
+      \item Go through each [i,k] + [k,j] combination, see if any non-terminal symbols imply combination of L and R symbols (RHS) write it down in the cell (\textbf{OR})
+      \item Consider only trees with $\textbf{S}$ at the root
+    \end{enumerate}
+    \item Scoring Parse Trees: BERT, Span difference, FFN
+    \item $s_{\text{best}}(i,j) = \underset{l}{\text{max}}[(s,j,l)]$ if $j-1 = 1$
+    \item $s_{\text{best}}(i,j) = \underset{l}{\text{max}}[(s,j,l)]+ \underset{i<k<j}{\text{max}}[s_{\text{best}}(i,k) + s_{\text{best}}(k,j)] $ if $j-1 > 1$
+    \item labelled recall R = $\frac{\text{num correct constituents of parser parse }}{\text{constituents in treebank parse}}$
+    \item labelled precision P = $\frac{\text{num correct constituents of parser parse}}{\text{constituents in parser parse}}$
+    \item labeled $F_1 = \frac{2RP}{R+P}$
+    \item Correct: Constituent in treebank parse spans same words with same non-terminal symbol
+  \end{itemize}
+
 
 \end{multicols*}
 
