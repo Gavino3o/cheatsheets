@@ -133,27 +133,13 @@
   %   }
   % \end{center}
 
-  \subsection{Regular Expressions (Regex)}
-  \subsubsection{Patterns}
+  \subsubsection{Regular Expressions (Regex)}
   \begin{itemize}
-    \item * : 0 or more
-    \item + : 1 or more
-    \item ? : 0 or 1
-    \item . : any character
-    \item \textasciicircum : start of string
-    \item \$ : end of string
-    \item \{n\} : exactly n times
-    \item \{n,\} : n or more times
-    \item \{n,m\} : between n and m times
-    \item \{,m\} : up to m times
-    \item `[abc]` : a or b or c
-    \item `[a-z]` : any character from a to z
-    \item `[\textasciicircum abc]` : any character except a or b or c
-    \item \textbackslash d : digit [0-9]
-    \item \textbackslash D : non-digit [\textasciicircum0-9]
-    \item \textbackslash w : word character [a-zA-Z0-9\_]
-    \item \textbackslash W : non-word character [\textasciicircum a-zA-Z0-9\_]
-    \item .* : any character (0 or more times)
+    \item \textbf{Quantifiers:} $*$ (0+), $+$ (1+), $?$(0/1), $\{n\}$ (exact), $\{n,\}$ (n+), $\{n,m\}$ (n-m), $\{,m\}$ (up to m)
+    \item \textbf{Anchors:} \textasciicircum (start), \$ (end)
+    \item \textbf{Wildcard:} . (any char), .* (any string)
+    \item \textbf{Char classes:} [abc] (a/b/c), [a-z] (range), [\textasciicircum abc] (not a/b/c)
+    \item \textbf{Predefined:} \textbackslash d (digit), \textbackslash D (non-digit), \textbackslash w (word), \textbackslash W (non-word)
   \end{itemize}
 
   \begin{itemize}
@@ -166,58 +152,56 @@
     \end{enumerate}
   \end{itemize}
 
-  \subsection{Tokenization}
-  \begin{itemize}
-    \item \textbf{Top-down tokenization} (rule-based). For languages that use space characters between words.
-    \item \textbf{Bottom-up tokenization} (data-driven approach, e.g. BPE). Subword tokenization. Better at handling out-of-vocab words and rare words.
-    \item Can't blindly remove punctuation symbols (e.g Ph.D, \$45.55, 01/04/2002, URLs)
-  \end{itemize}
+  % \subsection{Tokenization}
+  % \begin{itemize}
+  %   \item \textbf{Top-down tokenization} (rule-based). For languages that use space characters between words.
+  %   \item \textbf{Bottom-up tokenization} (data-driven approach, e.g. BPE). Subword tokenization. Better at handling out-of-vocab words and rare words.
+  %   \item Can't blindly remove punctuation symbols (e.g Ph.D, \$45.55, 01/04/2002, URLs)
+  % \end{itemize}
 
   \subsubsection{Penn Treebank Tokenization Standard}
   \begin{itemize}
     \item Seperate out clitics (doesn't $\rightarrow$ does n't)
     \item Keep hypenated words together
     \item Separate out punctuation symbols
+    \item \textbf{BPE}: Token Learner and Segmenter
   \end{itemize}
 
-  \subsubsection{Byte-Pair Encoding}
-  \begin{enumerate}
-    \item \textbf{Token learner}. Input: Raw training corpus. Output: Vocab (set of tokens)
-    \begin{itemize}
-      \item Initialise vocab to set of all unique single characters: \{A, B, C, ..., a, b, c\}
-      \item Add special end-of-word symbol '\_' before space in training corpus
-      \item Note: Make all words character separated. Have a count of the words.
-      \item Choose 2 symbols that are most frequently adjacent in training corpus (say 'X', 'Y')
-      \item Add a new merged symbol 'XY' to the vocab
-      \item Replace every adjacent 'X', 'Y' in the corpus with 'XY'
-      \item Repeat until $k$-merges have been done
-    \end{itemize}
-    \item \textbf{Token segmenter}. Input: Raw test sentence and Vocab. Output: Tokenized sentence.
-    \begin{itemize}
-      \item Make all words character separated.
-      \item Greedily merge characters in the order we learned them.
-    \end{itemize}
-  \end{enumerate}
+  % \subsubsection{Byte-Pair Encoding}
+  % \begin{enumerate}
+  %   \item \textbf{Token learner}. Input: Raw training corpus. Output: Vocab (set of tokens)
+  %   \begin{itemize}
+  %     \item Initialise vocab to set of all unique single characters: \{A, B, C, ..., a, b, c\}
+  %     \item Add special end-of-word symbol '\_' before space in training corpus
+  %     \item Note: Make all words character separated. Have a count of the words.
+  %     \item Choose 2 symbols that are most frequently adjacent in training corpus (say 'X', 'Y')
+  %     \item Add a new merged symbol 'XY' to the vocab
+  %     \item Replace every adjacent 'X', 'Y' in the corpus with 'XY'
+  %     \item Repeat until $k$-merges have been done
+  %   \end{itemize}
+  %   \item \textbf{Token segmenter}. Input: Raw test sentence and Vocab. Output: Tokenized sentence.
+  %   \begin{itemize}
+  %     \item Make all words character separated.
+  %     \item Greedily merge characters in the order we learned them.
+  %   \end{itemize}
+  % \end{enumerate}
 
-  \subsection{Normalization}
+  \subsubsection{Normalization}
   \begin{itemize}
-    \item \textbf{Lemmatization}: Represent all words as their lemma, their shared root (dictionary headword form). (e.g. am, is, are $\rightarrow$ be; car, cars, car's, cars' $\rightarrow$ car)
-    \item \textbf{Morphemes}:
-    \begin{itemize}
-      \item Stems: The core meaning-bearing units
-      \item Affixes: parts that adhere to stems, often with grammatical function
-    \end{itemize}
-    \item \textbf{Porter Stemming Algorithm}: A series of rewrite rules run in a cascade. Reduces words to stems by chopping off affixes crudely. E.g (ATIONAL $\rightarrow$ ATE, ING $\rightarrow$ $\epsilon$ if stem contains vowel, SSES $\rightarrow$ SS)
+    \item \textbf{Lemmatization}: Represent all words as their lemma, their shared root (dictionary headword form). 
+    % (e.g. am, is, are $\rightarrow$ be; car, cars, car's, cars' $\rightarrow$ car)
+    \item \textbf{Morphemes}: Stems and Affixes
+    \item \textbf{Porter Stemming Algorithm}: A series of rewrite rules run in a cascade. Reduces words to stems by chopping off affixes crudely. E.g (ATIONAL $\rightarrow$ ATE)
   \end{itemize}
 
-  \subsection{Min-Edit Distance}
-  \begin{itemize}
-    \item Source: Delete operation. Bottom up. Cost = 1
-    \item Target: Insert operation. Left to right. Cost = 1
-    \item Diagonal: Substitution operation. Diagnoal. Cost = 0 if same characters, 2 otherwise.
-  \end{itemize}
+  % \subsection{Min-Edit Distance}
+  % \begin{itemize}
+  %   \item Source: Delete operation. Bottom up. Cost = 1
+  %   \item Target: Insert operation. Left to right. Cost = 1
+  %   \item Diagonal: Substitution operation. Diagnoal. Cost = 0 if same characters, 2 otherwise.
+  % \end{itemize}
 
-  \section{N-Gram Language Models}
+  \subsection{N-Gram Language Models}
   \begin{itemize}
     \item Probability of a language sequence. Word Prediction.
     \item Use the previous $n-1$ words to predict the next word. $ P(w_n | w_{1:n-1}) $
@@ -272,7 +256,7 @@
   \subsubsection{Entropy}
   \begin{itemize}
     \item $H(X) = - \sum_{x \in X} p(x) \log_2 p(x)$
-    \item Number of bits to encode information in the optimal coding scheme
+    \item Number of bits to encode info in the optimal coding scheme
     \item Entropy of a sequence in language $L$:
     $ H(w_1, w_2, \dots , w_n) = - \sum_{w_{1:n} \in L} p(w_{1:n}) \log_2 p(w_{1:n}) $
     \item Entopy rate (per-word entropy):
@@ -294,10 +278,10 @@
     \item Calculate $\delta(x_i) = M(A,x_i)-M(B,x_i)$
     \item $s = s+1$ if $\delta(x_i) \leq 0$
     \item p-value = $\frac{s}{b}$. $b$ is num of samples
-    \item If p-value $<$ 0.01, then A is better than B at 0.01 level of significance
+    \item If p-value $<$ 0.01, then A $\succ$ B at 0.01 level of significance
   \end{itemize}
 
-  \subsection{Linear Models}
+  \subsubsection{Linear Models}
   \begin{itemize}
     \item $y = f(x) = x \cdot W + b$
     \item $ x \in \mathbb{R}^{d_{in}}; W \in \mathbb{R}^{d_{in} \times d_{out}}; y,b \in \mathbb{R}^{d_{out}}$
@@ -572,7 +556,7 @@
     \item $Rc = \frac{1}{|R|} \sum_{r \in R} \max_{c \in C} (\mathbf{v_r \cdot v_c})$
   \end{itemize}
 
-  \subsubsection{IR and RAG}
+  \subsubsection{IR and Retrival Augmented Generation (RAG)}
   $p(x_{1:n}) = \prod_{i=1}^{n} p(x_i | R(q); \text{prompt};[Q:];q;[A:];x_{,i})$
   \underline{\textbf{tf-idf weighting}}
   \begin{itemize}
@@ -635,6 +619,7 @@
         \item Consider each production $P'$ of the form $A \rightarrow X_1X_2 \dots X_m$ where $m \geq 2$. If $X_i$ is a terminal symbol $a$, introduce a new non-terminal symbol $C$ and a production $C \rightarrow a$. Replace $X_i$ with C.
         \item For each production of the form $A \rightarrow B1 \space B2 \space B3$ replace production by $A \rightarrow B1 \space D1$ and $D1 \rightarrow B2 \space B3$. Right heavy tree.
       \end{enumerate}
+      \item Attachment, NP bracketing, Coordination ambiguity
     \item \textbf{Cocke-Kasami-Younger (CKY) Algorithm:}
     \begin{enumerate}
       \item \textbf{Table}: cols are words, top right half, idx between words.
@@ -645,8 +630,8 @@
       \item Consider only trees with $\textbf{S}$ at the root
     \end{enumerate}
     \item Scoring Parse Trees: BERT, Span difference, FFN
-    \item $s_{\text{best}}(i,j) = \underset{l}{\text{max}}[(s,j,l)]$ if $j-1 = 1$
-    \item $s_{\text{best}}(i,j) = \underset{l}{\text{max}}[(s,j,l)]+ \underset{i<k<j}{\text{max}}[s_{\text{best}}(i,k) + s_{\text{best}}(k,j)] $ if $j-1 > 1$
+    \item $s_{\text{best}}(i,j) = \underset{l}{\text{max}}[(s,j,l)]$ if $j-i = 1$
+    \item $s_{\text{best}}(i,j) = \underset{l}{\text{max}}[(s,j,l)]+ \underset{i<k<j}{\text{max}}[s_{\text{best}}(i,k) + s_{\text{best}}(k,j)] $ if $j-i > 1$
     \item labelled recall R = $\frac{\text{num correct constituents of parser parse }}{\text{constituents in treebank parse}}$
     \item labelled precision P = $\frac{\text{num correct constituents of parser parse}}{\text{constituents in parser parse}}$
     \item labeled $F_1 = \frac{2RP}{R+P}$
