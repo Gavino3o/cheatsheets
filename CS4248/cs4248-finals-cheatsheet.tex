@@ -159,7 +159,7 @@
   %   \item Can't blindly remove punctuation symbols (e.g Ph.D, \$45.55, 01/04/2002, URLs)
   % \end{itemize}
 
-  \subsubsection{Penn Treebank Tokenization Standard}
+  \subsubsection{Penn Treebank Tokenization Standard \& BPE}
   \begin{itemize}
     \item Seperate out clitics (doesn't $\rightarrow$ does n't)
     \item Keep hypenated words together
@@ -201,19 +201,21 @@
   %   \item Diagonal: Substitution operation. Diagnoal. Cost = 0 if same characters, 2 otherwise.
   % \end{itemize}
 
-  \subsection{N-Gram Language Models}
+  \subsection{N-Gram Language Models (Lookup Table)}
   \begin{itemize}
     \item Probability of a language sequence. Word Prediction.
-    \item Use the previous $n-1$ words to predict the next word. $ P(w_n | w_{1:n-1}) $
-    \item $P(w_{1:n}) = P(w_1) \times P(w_2|w_1) \times P(w_3|w_{1:2}) \times \dots \times P(w_n|w_{1:n-1})) = \prod_{k=1}^{n} P(w_k|w_{1:k-1})$ 
+    \item Predict next word with previous $n-1$ word. $ P(w_n | w_{1:n-1}) $. 
+    \item Size = \# context $\times$ \# params per context = $|V|^k (|V| - 1)$
+    \item Param increase = $|V|^k (|V|-1)^2$
+    \item $P(w_{1:n}) = P(w_1) \times P(w_2|w_1) \times P(w_3|w_{1:2}) \times \dots \times P(w_n|w_{1:n-1}) = \prod_{k=1}^{n} P(w_k|w_{1:k-1})$ 
     \item Estimating n-gram probability: 
     \begin{itemize}
       \item \textbf{Maximum Likelihood Estimate (MLE)}
-      \item $ P(w_n|w_{1:n-1} = \frac{C(w_{w1:n})}{C(w_{w1:n-1})})$ (n-gram)
-      \item $ P(w_2|w_{1} = \frac{C(w_1 w_2)}{C(w_1)}$ (bigram)
-      \item Data sparsity when estimating probability of longer n-grams
+      \item $ P(w_n|w_{1:n-1}) = \frac{C(w_{w1:n})}{C(w_{w1:n-1})}$ (n-gram)
+      \item $ P(w_2|w_{1}) = \frac{C(w_1 w_2)}{C(w_1)}$ (bigram)
+      \item Data sparsity for probability of longer n-grams
     \end{itemize}
-    \item N-gram approaximation:
+    \item \textbf{N-gram approximation}:
     \begin{itemize}
       \item Markov assumption: $P(w_k|w_{1:k-1}) \approx P(w_k | w_{k-(N-1): k-1})$
       \item $w_k$ only depends on its previous $N-1$ words ($ N\leq k$)
@@ -222,14 +224,11 @@
     \end{itemize}
   \end{itemize}
 
-  \subsection{Evaluating N-Gram Models}
-  \begin{itemize}
-    \item Extrinsic vs Intrinsic Evaluation
-  \end{itemize}
-
+  \subsection{Evaluating N-Gram Models (Ext vs Int)}
   \subsubsection{Perplexity}
   \begin{itemize}
     \item $PP = m(w_1, \dots, w_n)^{-\frac{1}{n}} = \frac{1}{\sqrt[n]{m(w_1, \dots, w_n)}}$
+    \item $PP = \prod_{x} (\frac{1}{P(x)})^{P(x)}$
     \item The \textbf{lower} the perplexity the better
     \item If perplexity = k, the model is uncertain as if it had to choose uniformly among k equally likely words at each step. Weighted average branching factor of a language.
     \item Bigram LM: $PP = \frac{1}{\sqrt[n]{m(w_1, \dots, w_n)}} = \frac{1}{\sqrt[n]{\prod_{k=1}^{n}}P(w_k|w_{k-1})}$
@@ -518,7 +517,7 @@
   \begin{itemize}
     \item Decoder has extra cross-attention layer with weights: $\mathbf{W^Q, W^K, W^V}$
     \item $Q$: based on output of previous layer of decoder, $\mathbf{X_{dec}}$
-    \item $K, V$ based on final output of the \textbf{top} layer of encoder, $\mathbf{X_{enc}}$
+    \item $K, V$ based on final output of \textbf{top} layer of encoder, $\mathbf{X_{enc}}$
     \item $Q = X_{dec}W^Q, K=X_{enc}W^K, V=X_{enc}W^V$
     \item Training: Teacher forcing. $L = \frac{1}{N} \sum_{i=1}^N (- \log P(y_{i+1}))$
     \item Encoder output does not contribute to loss function
@@ -536,13 +535,14 @@
     \item R is weighted $\beta$ times as much as P
     \item Find unigrams, ... matches between HYP and REF
     \item Unigram P, Bigram P, Unigram R, Bigram R
-    \item \textbf{chrP} and \textbf{chrR}: \% k-grams 
+    \item \textbf{chrP} and \textbf{chrR}: \% k-grams. (Bigram divide by 2)
   \end{itemize}
 
   \underline{\textbf{BLEU}}
   \begin{itemize}
     \item Match candidate translation with multiple references in combination to get a modified unigram (word) precision.
-    \item $p_n = \frac{\sum_{C \in \text{Candidates}} \sum_{\text{ngram} \in C} count_{\text{clip}}(ngram)}{\sum_{C' \in \text{Candidates}} \sum_{\text{ngram'} \in C'} count_{\text{clip}}(ngram')}$
+    \item $p_n = \frac{\text{Total } \textbf{Clipped } \text{N-Gram Matches (Candidate)}}{\text{Total N-Grams (Candidate)}}$
+    \item $r$ = closest length (prefer shorter)
     \item $BP = 1$ if $c > r$; $BP = e^{(1-r/c)}$ if $c \leq r$ 
     \item $BLEU = BP \times e^{ \frac{1}{N} \sum_{n=1}^{N} \log p_n}$
   \end{itemize}
@@ -551,12 +551,12 @@
   \begin{itemize}
     \item Embed tokens contextually using BERT 
     \item Compute cosine similarity between every token in $C$ and every token in $R$
-    \item Perform greedy matching and caclulate F-score.
+    \item Perform greedy matching and calculate F-score.
     \item $Pr = \frac{1}{|C|} \sum_{c \in C} \max_{r \in R} (\mathbf{v_r \cdot v_c})$
     \item $Rc = \frac{1}{|R|} \sum_{r \in R} \max_{c \in C} (\mathbf{v_r \cdot v_c})$
   \end{itemize}
 
-  \subsubsection{IR and Retrival Augmented Generation (RAG)}
+  \subsubsection{IR and Retrieval Augmented Generation (RAG)}
   $p(x_{1:n}) = \prod_{i=1}^{n} p(x_i | R(q); \text{prompt};[Q:];q;[A:];x_{,i})$
   \underline{\textbf{tf-idf weighting}}
   \begin{itemize}
@@ -569,6 +569,7 @@
     \item d: Sparse vector. $[tf\text{-}idf(t_1,d) \dots tf\text{-}idf(t_{|V|},d)]$
     \item score$(q,d) = \cos(\mathbf{q,d}) = \frac{\mathbf{q \cdot d}}{\mathbf{|q||d|}}$
     \item Inverted index: term{df} $\rightarrow$ docID[count] $\rightarrow$ docID[count] $\rightarrow$ 
+    \item \textbf{Col}: df, idf, q, $d_1$, $d_2$. \textbf{Row}: words
   \end{itemize}
 
   \underline{\textbf{IR Evaluation}}
@@ -595,7 +596,7 @@
   \begin{itemize}
     \item $P(t_i|t_{i-1}) = \frac{C(t_{i-1}, t_i)}{C(t_{i-1})}$ $P(w_i|t_{i-1}) = \frac{C(t_{i}, w_i)}{C(t_{i})}$
     \item Direct Evaluation: $O(T \cdot N^T)$
-    \item Viterbi Algorithm: $O(T \cdot N^2)$
+    \item \textbf{Viterbi Algorithm}: $O(T \cdot N^2)$
     \item $v_t(j) = \underset{1 \leq i \leq N}{\text{max}} v_{t-1}(i)\cdot a_{ij} \cdot b_j(o_t)$
     \item $a_{ij} \rightarrow P(t_j|t_i)$; $b_j(o_t) \rightarrow P(w_t | t_t)$
     \item $P(w_i|t_i) = P(\text{unknownword}|t_i) \cdot P(\text{capital}| t_i) \cdot P(\text{ending/hyph}|t_i)$
@@ -616,8 +617,8 @@
       \begin{enumerate}
         \item Construct set $P'$. Include all non-unit productions.
         \item For non-terminal symbols $A$ and $B$, if $A \rightarrow A1 \rightarrow \dots \rightarrow B$, then for each non-unit production $B \rightarrow \alpha$. Add $A \rightarrow \alpha$ to $P'$
-        \item Consider each production $P'$ of the form $A \rightarrow X_1X_2 \dots X_m$ where $m \geq 2$. If $X_i$ is a terminal symbol $a$, introduce a new non-terminal symbol $C$ and a production $C \rightarrow a$. Replace $X_i$ with C.
-        \item For each production of the form $A \rightarrow B1 \space B2 \space B3$ replace production by $A \rightarrow B1 \space D1$ and $D1 \rightarrow B2 \space B3$. Right heavy tree.
+        \item Consider each production in $P'$ of the form $A \rightarrow X_1X_2 \dots X_m$ where $m \geq 2$. If $X_i$ is a terminal symbol $a$, introduce a new non-terminal symbol $C$ and a production $C \rightarrow a$. Replace $X_i$ with C.
+        \item For each production in $P'$ of the form $A \rightarrow B1 \space B2 \space B3$ replace production by $A \rightarrow B1 \space D1$ and $D1 \rightarrow B2 \space B3$. Right heavy tree.
       \end{enumerate}
       \item Attachment, NP bracketing, Coordination ambiguity
     \item \textbf{Cocke-Kasami-Younger (CKY) Algorithm:}
@@ -632,10 +633,10 @@
     \item Scoring Parse Trees: BERT, Span difference, FFN
     \item $s_{\text{best}}(i,j) = \underset{l}{\text{max}}[(s,j,l)]$ if $j-i = 1$
     \item $s_{\text{best}}(i,j) = \underset{l}{\text{max}}[(s,j,l)]+ \underset{i<k<j}{\text{max}}[s_{\text{best}}(i,k) + s_{\text{best}}(k,j)] $ if $j-i > 1$
-    \item labelled recall R = $\frac{\text{num correct constituents of parser parse }}{\text{constituents in treebank parse}}$
-    \item labelled precision P = $\frac{\text{num correct constituents of parser parse}}{\text{constituents in parser parse}}$
+    \item labeled recall R = $\frac{\text{num correct constituents of parser parse }}{\text{constituents in treebank parse}}$
+    \item labeled precision P = $\frac{\text{num correct constituents of parser parse}}{\text{constituents in parser parse}}$
     \item labeled $F_1 = \frac{2RP}{R+P}$
-    \item Correct: Constituent in treebank parse spans same words with same non-terminal symbol
+    \item \textbf{Correct}: Constituent in treebank parse spans same words with same non-terminal symbol
   \end{itemize}
 
 
