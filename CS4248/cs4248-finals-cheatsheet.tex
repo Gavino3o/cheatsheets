@@ -32,7 +32,7 @@
   {0.5ex plus .2ex}%x
 {\normalfont\large\bfseries}}
 \renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
-  {-1explus -.5ex minus -.2ex}%
+  {-1ex plus -.5ex minus -.2ex}%
   {0.5ex plus .2ex}%
 {\normalfont\normalsize\bfseries}}
 \renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
@@ -161,8 +161,8 @@
 
   \subsubsection{Penn Treebank Tokenization Standard \& BPE}
   \begin{itemize}
-    \item Seperate out clitics (doesn't $\rightarrow$ does n't)
-    \item Keep hypenated words together
+    \item Separate out clitics (doesn't $\rightarrow$ does n't)
+    \item Keep hyphenated words together
     \item Separate out punctuation symbols
     \item \textbf{BPE}: Token Learner and Segmenter
   \end{itemize}
@@ -211,7 +211,7 @@
     \item Estimating n-gram probability: 
     \begin{itemize}
       \item \textbf{Maximum Likelihood Estimate (MLE)}
-      \item $ P(w_n|w_{1:n-1}) = \frac{C(w_{w1:n})}{C(w_{w1:n-1})}$ (n-gram)
+      \item $ P(w_n|w_{1:n-1}) = \frac{C(w_{1:n})}{C(w_{1:n-1})}$ (n-gram)
       \item $ P(w_2|w_{1}) = \frac{C(w_1 w_2)}{C(w_1)}$ (bigram)
       \item Data sparsity for probability of longer n-grams
     \end{itemize}
@@ -220,7 +220,7 @@
       \item Markov assumption: $P(w_k|w_{1:k-1}) \approx P(w_k | w_{k-(N-1): k-1})$
       \item $w_k$ only depends on its previous $N-1$ words ($ N\leq k$)
       \item Bigram Approximation: $P(w_{1:n}) \approx \prod_{k=1}^{n}P(w_k|w_{k-1})$
-      \item Use logprob instead as multiplying many probabilties results in numerical underflow
+      \item Use logprob instead as multiplying many probabilities results in numerical underflow
     \end{itemize}
   \end{itemize}
 
@@ -239,7 +239,7 @@
     \item Lowering non-zero n-gram counts in order to assign some probability mass to zero n-grams
     \item Smoothed bigram count:
     $ P(w|w_0) = \frac{C(w_0w) + 1}{C(w_0) + V} = \frac{C^*(w_0w)}{C(w_0)} $
-    \item Discound $d = \frac{C^*(w_0w)}{C(w_0)}$
+    \item Discount $d = \frac{C^*(w_0w)}{C(w_0)}$
     \item Add-k smoothing for bigram:
     $ P(w|w_0) = \frac{C(w_0w) + k}{C(w_0) + kV} $ 
   \end{itemize}
@@ -276,7 +276,7 @@
     \item Create a test set $x_i$ of the same size as $x$ by sampling from $x$ with replacements
     \item Calculate $\delta(x_i) = M(A,x_i)-M(B,x_i)$
     \item $s = s+1$ if $\delta(x_i) \leq 0$
-    \item p-value = $\frac{s}{b}$. $b$ is num of samples
+    \item p-value = $\frac{s}{b}$. $b$ is number of samples
     \item If p-value $<$ 0.01, then A $\succ$ B at 0.01 level of significance
   \end{itemize}
 
@@ -284,7 +284,7 @@
   \begin{itemize}
     \item $y = f(x) = x \cdot W + b$
     \item $ x \in \mathbb{R}^{d_{in}}; W \in \mathbb{R}^{d_{in} \times d_{out}}; y,b \in \mathbb{R}^{d_{out}}$
-    \item In the matrix representation, add a 1 to to the $x$ input and $b$ to the last row of $W$
+    \item In the matrix representation, add a 1 to the $x$ input and $b$ to the last row of $W$
     \item Binary classification: Perceptron. $class(x) = \hat{y} = 1 (\text{if } f(x) \geq 0); 0 (\text{if } f(x) < 0) $
     \item \textbf{Sigmoid function:} maps numbers to 0-1. $\sigma(x) = \frac{1}{1 + e^{-x}}$
     \item \textbf{Logistic regression:}
@@ -293,7 +293,7 @@
       \item $P(\hat{y}=0|x) = 1 - P(\hat{y}=1|x) =1 - \sigma(x \cdot w+b)$
       \item $class(x) = \hat{y} = 1 (\text{if } P(\hat{y}=1|x) \geq 0); 0 (\text{otherwise}) $
     \end{itemize}
-    \item \textbf{Mutli-class Classification:} $class(x) = \hat{y} = \text{argmax } \hat{y}_{[i]} $
+    \item \textbf{Multi-class Classification:} $class(x) = \hat{y} = \text{argmax } \hat{y}_{[i]} $
     \item \textbf{Softmax function:} maps output to probability distribution. $\text{softmax}(x) = \frac{e^{x_{[i]}}}{\sum_j e^{x_{[j]}}}$. Use in multinomial logistic regression.
   \end{itemize}
 
@@ -302,7 +302,7 @@
     \item $\hat{\theta} = \text{argmin}_{\theta} (\frac{1}{n} \sum_{i=1}^{n} L(f(x_i;\theta), y_i) + \lambda R(\theta))$
     \item \textbf{Binary Cross-Entropy Loss:} $L_{\text{logistic}} (\hat{y}, y) = -y \log_2 \hat{y} - (1-y) \log_2 (1 - \hat{y})$
     \item \textbf{Categorical Cross-Entropy Loss:} $L_{\text{c-e}} (\hat{y}, y) = - \sum_i y_{[i]} \log_2 (\hat{y}_{[i]})$
-    \item \textbf{Hard Classfication Problem}, one $t$ as single correct class: $L_{\text{c-e}} (\hat{y}, y) = - \log_2 (\hat{y}_{[t]})$
+    \item \textbf{Hard Classification Problem}, one $t$ as single correct class: $L_{\text{c-e}} (\hat{y}, y) = - \log_2 (\hat{y}_{[t]})$
     \item \textbf{Squared (quadratic) loss}: $L(\hat{y}, y) = \frac{1}{2}(\hat{y} - y)^2$
     \item \textbf{Regularization:}
     \begin{itemize}
@@ -328,7 +328,7 @@
     \item \textbf{Activation Functions:}
     \begin{itemize}
       \item Sigmoid. Nice property: $\sigma'(x) = \sigma(x) \cdot (1-\sigma(x))$
-      \item Hyperbolic Tangent. $\tanh (x) = \frac{e^{2x} - 1}{e^{2x}+1} = \frac{e^x - e^{-x}}{e^x + e^{-x}}$. Nice propery: $\frac{d}{dx} \tanh (x) = 1 - [\tanh(x)]^2$
+      \item Hyperbolic Tangent. $\tanh (x) = \frac{e^{2x} - 1}{e^{2x}+1} = \frac{e^x - e^{-x}}{e^x + e^{-x}}$. Nice property: $\frac{d}{dx} \tanh (x) = 1 - [\tanh(x)]^2$
       \item Hard tanh = -1 if $x < -1$; 1 if $x > 1$; x otherwise
       \item ReLU = $\text{max}(0,x)$
     \end{itemize}
@@ -372,9 +372,9 @@
     \item $P(w_i|w_1,w_2,\dots ,w_{i-1}) = \frac{P(w_1,w_2,\dots ,w_i)}{P(w_1,w_2,\dots ,w_{i-1})}$
     \item $P(w_{1:i}) = P(w_1) \times P(w_2|w_1) \times \dots \times P(w_i|w_{1:i-1})$
     \item \textbf{Downsides of n-gram LMs}: requires smoothing; number of n-grams grow multiplicatively; lack of generalization
-    \item \textbf{Input}: a sequnce of $k$ words 
+    \item \textbf{Input}: a sequence of $k$ words 
     \item \textbf{Output}: probability distribution over next word
-    \item $\hat{y} = P(w_i|w_{i:k}) = LM(w_{1:k}) = \text{softmax}((g(\mathbf{xW^1+b^1}))\mathbf{W^2+b2})$
+    \item $\hat{y} = P(w_i|w_{i:k}) = LM(w_{1:k}) = \text{softmax}((g(\mathbf{xW^1+b^1}))\mathbf{W^2+b^2})$
     \item Parameters: $\mathbf{E_{[w]}, W^1, b^1, W^2, b^2}$.\newline Note: $E \in \mathbb{R}^{|V|\times d_w}; x=[v(w_1);v(w_2);\dots;v(w_k)]$
     \item Training samples: sequence of $k$ words paired with $k+1^{\text{th}}$ word as target label for classification
     \item Loss function: Categorical cross-entropy loss
@@ -405,7 +405,7 @@
 
   \subsubsection{Transformers}
   \begin{itemize}
-    \item Exploit parralel processing
+    \item Exploit parallel processing
     \item Transformer blocks are stacked on top of one another. Hence, input and output dimensions are the same.
     \item \textbf{input $\rightarrow$ Self-Att Layer $\rightarrow$ Layer Normalise $\rightarrow$ Feed-Forward $\rightarrow$ Layer Normalise $\rightarrow$ output}. Residual connection before each layer normalise.
     \item Decoder-only, Encoder-only, Encoder-decoder
@@ -418,7 +418,7 @@
     \item Static function to map position integers to real-valued vectors (combination of sine and cosine function)
     \item \textbf{Language Modelling Head}: Take last output vector $h_N^L$ and outputs a distribution over vocab, $V$. $\mathbf{u} = \mathbf{h}^L_N \mathbf{E}^T$. $\mathbf{y} = \text{softmax}(\mathbf{u})$
     \item Training via teacher forcing, $L = \frac{1}{N} \sum_{t=1}^{N} L_{CE}$
-    \item \textbf{Generatation sampling}: Greedy, Random, Temperature (divide $\mathbf{u}$ by $\tau \in (0,1]$), Top-k (renormalise highest k), Top-p (percent)
+    \item \textbf{Generation sampling}: Greedy, Random, Temperature (divide $\mathbf{u}$ by $\tau \in (0,1]$), Top-k (renormalise highest k), Top-p (percent)
   \end{itemize}
 
   \textbf{\underline{Single Head Self Attention}}
@@ -438,7 +438,7 @@
 
   \textbf{\underline{Multi-Head Self Attention}}
   \begin{itemize}
-    \item Different transfomer heads to model different "representation subspace" or different relationships
+    \item Different transformer heads to model different "representation subspace" or different relationships
     \item A head has its own $\mathbf{W_i^Q, W_i^K, W_i^V}$  and contributes $\mathbf{Y^i}$
     \item Final Output: $Y = (\mathbf{Y_1 \oplus Y_2 \oplus \dots \oplus Y_h})\mathbf{W^O}$
     \item $\mathbf{Y_i} \in \mathbb{R}^{N \times d_v}$; $\mathbf{W^O} \in \mathbb{R}^{hd_v \times d}$
@@ -446,7 +446,7 @@
 
   \subsubsection{Encoder-Only Transformer}
   \begin{itemize}
-    \item BERT(Bidirectional Encoder Representation Transformers)
+    \item BERT (Bidirectional Encoder Repr from Transformers)
     \item No masking of $\mathbf{QK}^T$
     \item \textbf{Pretrain}: With unlabeled text for Masked LM and Next Sentence Prediction
     \item \textbf{Finetune}: One additional output layer for target NLP task. Finetune pretrained parameters with smaller labelled data 
@@ -463,12 +463,12 @@
   \textbf{\underline{Fine-Tuning}}:
   \begin{itemize}
     \item \textbf{Sentence-level task} (Output vector [CLS] token) vs \textbf{Token-level task} (Output vector for ith token)
-    \item Sentence-level: Sentiment Classfication. Natural Language Inference (premise, hypothesis: entail/contradict/neutral)
+    \item Sentence-level: Sentiment Classification. Natural Language Inference (premise, hypothesis: entail/contradict/neutral)
     \item Token-level: POS tagging, Named entity recognition (NER) [PER, ORG, LOC, GPE]
     \item \textbf{NER tagging schemes:} IO, BIO, BIOES. (e.g B-PER). NER Head takes output vector, softmax, argmax.
     \item \textbf{Extractive Question Answering}. Input: passage, question. Output: Extracted segment of text (span) in the passage as answer.
     \item Utilises \textbf{span labelling}. Add a linear layer to BERT with two vectors $\mathbf{s}$ and $\mathbf{e}$.
-    \item $P_s(i) = \frac{e^{\mathbf{s} \cdot \mathbf{p}_i^{'}}}{\sum_{j-1}^m e^{\mathbf{s} \cdot \mathbf{p}_j^{'}}}$; $P_e(i) = \frac{e^{\mathbf{e} \cdot \mathbf{p}_i^{'}}}{\sum_{j-1}^m e^{\mathbf{e} \cdot \mathbf{p}_j^{'}}}$
+    \item $P_s(i) = \frac{e^{\mathbf{s} \cdot \mathbf{p}_i^{'}}}{\sum_{j=1}^m e^{\mathbf{s} \cdot \mathbf{p}_j^{'}}}$; $P_e(i) = \frac{e^{\mathbf{e} \cdot \mathbf{p}_i^{'}}}{\sum_{j=1}^m e^{\mathbf{e} \cdot \mathbf{p}_j^{'}}}$
     \item Loss Function: $L = - \log P_s(a_s^*) - \log P_e(a_e^{*})$
     \item Score of candidate span: $\mathbf{s \cdot p_i^{'} + e \cdot p_j^{'}}$. Highest scoring span where $i \leq j$. [CLS] as no ans. Overlapping windows.
   \end{itemize}
@@ -500,7 +500,7 @@
       \item \( \delta = z_i - z_j = r(x,o_i) - r(x, o_j)\)
       \item $ L_{CE} = \mathbb{E}_{(x,o_w, o_l) ~ D} [- \log \sigma(r(x, o_w) - r(x, o_l))] $
       \item $ P(o_i \succ o_j|x) = \sigma(z_i - z_j) = \sigma(\delta) = \frac{1}{1+ e^{-\delta}}$
-      \item $\delta = \log \frac{P(o_i \succ oj|x)}{P(o_j \succ o_i | x)}$
+      \item $\delta = \log \frac{P(o_i \succ o_j|x)}{P(o_j \succ o_i | x)}$
       \item Replace LM head with linear layer to output scalar score
     \end{itemize}
     \item Reward function used in RLHF to learn an aligned LLM
@@ -531,7 +531,7 @@
   \begin{itemize}
     \item Measure number of character n-gram overlap
     \item \textbf{HYP}: Machine Translation (\textit{P}). \textbf{REF}: Human Translation (\textit{R})
-    \item $F_{\beta} = \frac{(1+\beta^2 \times P \times R)}{(\beta^2 \times P) + R}$
+    \item $F_{\beta} = \frac{(1+\beta^2) \times P \times R}{(\beta^2 \times P) + R}$
     \item R is weighted $\beta$ times as much as P
     \item Find unigrams, ... matches between HYP and REF
     \item Unigram P, Bigram P, Unigram R, Bigram R
@@ -560,10 +560,10 @@
   $p(x_{1:n}) = \prod_{i=1}^{n} p(x_i | R(q); \text{prompt};[Q:];q;[A:];x_{,i})$
   \underline{\textbf{tf-idf weighting}}
   \begin{itemize}
-    \item $\text{count}(t,d)$: number of times term $t$ appear in document $d$
+    \item $\text{count}(t,d)$: number of times term $t$ appears in document $d$
     \item $tf_{t,d} = 1 + \log_{10} \text{count}(t,d) $ if $\text{count}(t,d) > 0$ \newline $tf_{t,d} = 0$ otherwise.
     \item $df_t$: number of documents that term $t$ appears in
-    \item $N$: total number of document 
+    \item $N$: total number of documents 
     \item $idf_t = \log_{10} \frac{N}{df_t}$
     \item $tf\text{-}idf(t,d) = tf_{t,d} \times idf_t$
     \item d: Sparse vector. $[tf\text{-}idf(t_1,d) \dots tf\text{-}idf(t_{|V|},d)]$
@@ -624,7 +624,7 @@
     \item \textbf{Cocke-Kasami-Younger (CKY) Algorithm:}
     \begin{enumerate}
       \item \textbf{Table}: cols are words, top right half, idx between words.
-      \item \textbf{Order}: Left column to right, bottom to up.
+      \item \textbf{Order}: Left column to right, bottom to top.
       \item \textbf{Cell ranges}: [0, 1], [0, 2], [0, 3]; [1,2] [1,3]; [2,3]
       \item From the CFG rules, fill bottom cell with non-terminal symbols that has $\text{word}_{\text{target}}$ on the RHS (base case)
       \item Go through each [i,k] + [k,j] combination, see if any non-terminal symbols imply combination of L and R symbols (RHS) write it down in the cell (\textbf{OR})
@@ -633,8 +633,8 @@
     \item Scoring Parse Trees: BERT, Span difference, FFN
     \item $s_{\text{best}}(i,j) = \underset{l}{\text{max}}[(s,j,l)]$ if $j-i = 1$
     \item $s_{\text{best}}(i,j) = \underset{l}{\text{max}}[(s,j,l)]+ \underset{i<k<j}{\text{max}}[s_{\text{best}}(i,k) + s_{\text{best}}(k,j)] $ if $j-i > 1$
-    \item labeled recall R = $\frac{\text{num correct constituents of parser parse }}{\text{constituents in treebank parse}}$
-    \item labeled precision P = $\frac{\text{num correct constituents of parser parse}}{\text{constituents in parser parse}}$
+    \item labeled recall R = $\frac{\text{number of correct constituents of parser parse }}{\text{constituents in treebank parse}}$
+    \item labeled precision P = $\frac{\text{number of correct constituents of parser parse}}{\text{constituents in parser parse}}$
     \item labeled $F_1 = \frac{2RP}{R+P}$
     \item \textbf{Correct}: Constituent in treebank parse spans same words with same non-terminal symbol
   \end{itemize}
