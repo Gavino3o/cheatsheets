@@ -95,7 +95,7 @@
     \item Relationship sets: diamonds, with name in verb form. Connected to entity sets with lines.
     \item \textbf{No duplicates} for entity and relationship sets
     \item Relationships can have attributes. However, \textbf{relationships are not distinguished by their attributes}, but by the entities they connect. \textbf{No black circle!} (e.g cannot have customer downloading same game multiple times on different devices)
-    \item\textbf{n-ary relationships:} relationship sets that connect more than 2 entity sets. All entities must be participating, not one can be missing.
+    \item\textbf{n-ary relationships:} relationship sets that connect more than 2 entity sets. All entities must be participating; no entity can be missing.
     \includegraphics[width=0.97\linewidth]{er2.png} 
     \item \textbf{Attribute Promotion}: Converting an attribute of a relationship set into an entity set. This is done when the attribute has multiple values for the same relationship (e.g. a customer can download the same game on multiple devices, so we promote the "device" attribute into an entity set).
     \item \textbf{Aggregate}: A relationship set can be treated as an entity set when it participates in another relationship set. This is done by enclosing the relationship set in a rectangle, and connecting it to the new relationship set with a line.
@@ -105,16 +105,16 @@
     \item \textbf{Partial Identification}: When an entity cannot be identified by its own attributes alone, but can be identified by a combination of its own attributes and the identifying attributes of another entity set. Connect the partial identifier (attribute) to the participation of dominant entity.
     \item Can have multiple dominant entity sets. Also can have other (non-partial) key.
     \includegraphics[width=0.97\linewidth]{er4.png} 
-    \item \textbf{Participation Contraints}: Between entity and relationship set. Restricted by (minimum, maximum) cardinality.
+    \item \textbf{Participation Constraints}: Between entity and relationship set. Restricted by (minimum, maximum) cardinality.
     \textbf{Default: (0, n)}
-    \includegraphics[width=0.97\linewidth]{participation_contraint.png}
+    \includegraphics[width=0.97\linewidth]{participation_constraint.png}
     \item Weak entities can only be defined for a (1, 1) constraint. 
     \item \includegraphics[width=0.7\linewidth, height = 150px]{er5.png} 
     \item Translating ER to Relational Schema:
     \begin{itemize}
       \item \textbf{Rule 1}: Map ER attributes to attributes of relations with meaningful types. (VARCHAR, INTEGER, etc)
-      \item \textbf{Rule 2}: Map each entity set to a relation. Canidate keys are mapped to primary keys and UNIQUE NOT NULL.
-      \item Composite keys can be specificied using table constraints. (PRIMARY KEY (attr1, attr2))
+      \item \textbf{Rule 2}: Map each entity set to a relation. Candidate keys are mapped to primary keys and UNIQUE NOT NULL.
+      \item Composite keys can be specified using table constraints. (PRIMARY KEY (attr1, attr2))
       \item \textbf{Rule 3}: Map each relationship set to a relation. The relation will have the primary keys of the participating entity sets as foreign keys, and any attributes of the relationship set as attributes of the relation. The primary key of the relation will be the combination of the primary keys of the participating entity sets. (PRIMARY KEY (entity1id, entity2id))
       \item Treat aggregates as a relationship set. But its keys can be \textbf{referenced} by other relationship sets.
       \item \textbf{Exception 1}: (0, 1) One-to-many relationship sets can be enforced by removing the keys of the "many" side from the primary key. 
@@ -126,9 +126,9 @@
   \section{Data Warehousing}
 
   \begin{itemize}
-    \item \textbf{OLTP:} Online Transaction Processing. Focuses on handling a large number of transactions, with a small amount of data per transaction, data up-do-date and consistent, concurrency. (e.g. banking, e-commerce)
+    \item \textbf{OLTP:} Online Transaction Processing. Focuses on handling a large number of transactions, with a small amount of data per transaction, data up-to-date and consistent, concurrency. (e.g. banking, e-commerce)
     \item \textbf{OLAP:} Online Analytical Processing. Focuses on handling a small number of transactions, with a large amount of data per transaction, static snapshots, query require lots of resources. (e.g. data warehousing, business intelligence)
-    \item Kimballs's Principle for Data Warehousing: Consistency, Accessbility, Security, Adaptability, Acceptance, Decision Support.
+    \item Kimball's principles for Data Warehousing: Consistency, Accessibility, Security, Adaptability, Acceptance, Decision Support.
     \item \textbf{Dimension Modelling}: A technique for designing data warehouses. It consists of a fact table and dimension tables. The fact table contains the measures (e.g. sales amount, quantity) and foreign keys to the dimension tables. The dimension tables contain the attributes of the dimensions (e.g. product name, customer name).
     \item Each column becomes a dimension.
     \includegraphics[width=0.77\linewidth, height = 100px]{dim_modelling.png} 
@@ -171,7 +171,7 @@
   \section{Database Tuning}
   \begin{itemize}
     \item PostgreSQL Architecture: SQL Parser and Rewriter $\rightarrow$ Query Planner and Optimizer $\rightarrow$ Executor $\rightarrow$ Memory and Storage Management.
-    \item Planner/Optimizer: Generates query plans using catalouge and statistics, choose plan with least estimated cost.
+    \item Planner/Optimizer: Generates query plans using catalogue and statistics, choose plan with least estimated cost.
     \item Cost is estimated based on the number of rows processed, the number of disk I/O operations, and the CPU time required for the operations.
     \item Execution Plan: DAG/Tree of operations. 
     \item Types: Sequential Scan, Index Scan, Bitmap Index Scan, Bitmap Heap Scan, Nested Loop Join, Hash Join, Merge Join, Aggregate Operation etc.
@@ -205,7 +205,7 @@
     \item \textbf{Index Only Scan}: Uses an index to retrieve the values of the indexed columns, without accessing the table. Used when index is a covering index.
     \item \textbf{Index Scan}: Uses an index to retrieve the values of the indexed columns, and then accesses the table to retrieve the values of the non-indexed columns. Used when there is an index on the columns used in the WHERE clause, but the index is not a covering index.
     \item \textbf{Bitmap Heap Scan}: Uses a bitmap index scan to retrieve the row locations of the matching rows, and then accesses the table to retrieve the values of the columns. Used when there is an index on the columns used in the WHERE clause, but the index is not a covering index, and the query planner estimates that it will be faster than using an index scan (e.g. when a large portion of the table is being scanned).
-    \item \textbf{Bitmap Index Scan}: Uses a bitmap index to retrieve the row locations of the matching rows. Can be used for conjuctions or disjunctions of predicates on indexed columns.
+    \item \textbf{Bitmap Index Scan}: Uses a bitmap index to retrieve the row locations of the matching rows. Can be used for conjunctions or disjunctions of predicates on indexed columns.
   \end{itemize}
 
   \section{PostgreSQL Cheatsheet}
