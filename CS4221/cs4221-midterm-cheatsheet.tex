@@ -210,8 +210,19 @@
 
   \section{PostgreSQL Cheatsheet}
   \begin{itemize}
+    \item \textbf{Syntax overview}: SQL is case-insensitive; statements end with `;`. Keywords: SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, GRANT, REVOKE.
+    \item \textbf{Common options}: `EXPLAIN`/`EXPLAIN ANALYZE`, `SET` to change runtime parameters, `BEGIN`/`COMMIT`/`ROLLBACK` for transactions, `VACUUM`, `ANALYZE`, `CREATE INDEX CONCURRENTLY`.
+    \item \textbf{Comparison qualifiers}: `$>$ ALL`, `$<$ ALL`, `$>=$ ANY`, `SOME` synonyms; compare against every/any value from subquery. `IS NULL`/`IS NOT NULL` for null tests.
+    \item \textbf{Pattern matching}: `LIKE` (case‑sensitive), `ILIKE` (case‑insensitive); `\%` = any string, `\_` = single char. Use POSIX regex `~`/`~*`/`!~`/`!~*`.
+    \item \textbf{Existence}: `EXISTS (subq)` returns true if subquery yields rows; `NOT EXISTS` negates. Often correlated with outer query.
+    \item \textbf{Membership}: `expr IN (a,b,...)` or `IN (subquery)`; `NOT IN` negates but beware NULLs (use `NOT EXISTS` if null-safe).
+    \item \textbf{For‑all logic}: express `for every` via double `NOT EXISTS` (or use `ALL`/`$>=$ ALL` where applicable). e.g.
+      `WHERE NOT EXISTS (SELECT 1 FROM t1 x WHERE NOT EXISTS (SELECT 1 FROM t2 y WHERE y.key=x.key AND ...))`.
+      Alternates: anti-join pattern `LEFT JOIN … WHERE b.id IS NULL`.
+    \item \textbf{Set operations}: UNION (remove duplicates), UNION ALL, INTERSECT, EXCEPT. All arms must have same column count and compatible types; order and column names come from first query.
     \item \textbf{COALESCE}: Returns the first non-null value in the list. (e.g. COALESCE(column1, column2, 'default')) (e.g. AVG(COALESCE(l.rd\_date-l.bd\_date, CURRENT\_DATE - bd\_date), 2) AS average)
     \item For MAX queries with potentially multiple rows with the same maximum value, we can use a subquery to find the maximum value, and then join it back to the original table to retrieve all rows with that maximum value. (e.g. SELECT name FROM Employees WHERE age = (SELECT MAX(age) FROM Employees))
+    \includegraphics[width=0.85\linewidth, height = 100px]{sql_create_table.png} 
   \end{itemize}
 
 
