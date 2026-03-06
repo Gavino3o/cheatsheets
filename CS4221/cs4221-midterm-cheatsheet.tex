@@ -96,20 +96,20 @@
     \item \textbf{No duplicates} for entity and relationship sets
     \item Relationships can have attributes. However, \textbf{relationships are not distinguished by their attributes}, but by the entities they connect. \textbf{No black circle!} (e.g cannot have customer downloading same game multiple times on different devices)
     \item\textbf{n-ary relationships:} relationship sets that connect more than 2 entity sets. All entities must be participating; no entity can be missing.
-    \includegraphics[width=0.97\linewidth]{er2.png} 
+    \includegraphics[width=0.85\linewidth, height = 100px]{er2.png} 
     \item \textbf{Attribute Promotion}: Converting an attribute of a relationship set into an entity set. This is done when the attribute has multiple values for the same relationship (e.g. a customer can download the same game on multiple devices, so we promote the "device" attribute into an entity set).
     \item \textbf{Aggregate}: A relationship set can be treated as an entity set when it participates in another relationship set. This is done by enclosing the relationship set in a rectangle, and connecting it to the new relationship set with a line.
-    \includegraphics[width=0.97\linewidth]{er3.png} 
+    \includegraphics[width=0.85\linewidth, height = 100px]{er3.png} 
     \item \textbf{Identifying Attributes}: One or more UNIQUE NOT NULL attributes that can be used to identify an entity. Black Circle.
     \item Entity set can have multiple candidate keys, but only one primary key. 
     \item \textbf{Partial Identification}: When an entity cannot be identified by its own attributes alone, but can be identified by a combination of its own attributes and the identifying attributes of another entity set. Connect the partial identifier (attribute) to the participation of dominant entity.
     \item Can have multiple dominant entity sets. Also can have other (non-partial) key.
-    \includegraphics[width=0.97\linewidth]{er4.png} 
+    \includegraphics[width=0.85\linewidth, height = 100px]{er4.png} 
     \item \textbf{Participation Constraints}: Between entity and relationship set. Restricted by (minimum, maximum) cardinality.
     \textbf{Default: (0, n)}
     \includegraphics[width=0.97\linewidth]{participation_constraint.png}
     \item Weak entities can only be defined for a (1, 1) constraint. 
-    \item \includegraphics[width=0.7\linewidth, height = 150px]{er5.png} 
+    \includegraphics[width=0.85\linewidth, height = 135px]{er5.png} 
     \item Translating ER to Relational Schema:
     \begin{itemize}
       \item \textbf{Rule 1}: Map ER attributes to attributes of relations with meaningful types. (VARCHAR, INTEGER, etc)
