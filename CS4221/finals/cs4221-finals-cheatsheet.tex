@@ -86,6 +86,91 @@
     }
   \end{center}
 
+  \section{SQL Tuning}
+
+  % Add here after completing later sections
+
+  \section{Functional Dependencies}
+
+  \begin{itemize}
+    \item Functinoal dependencies are denoted by $\sigma$
+    \item Given: $X \rightarrow Y$.\\If two tuples of $r$ (a table with relation schema $R$) agress on their X-values, then they agree on their Y-values.
+    \item Note: SQL query cannot be used in \texttt{CHECK} constraints
+    \item Functional dependencies may be enforced when LHS has \texttt{PRIMARY KEY} or \texttt{UNIQUE} constraints.
+    \item \textbf{Trivial} FD: $X \rightarrow Y$ where $Y \subseteq X$
+    \item \textbf{Non-trivial} FD: $X \rightarrow Y$ where $Y \subsetneq X$
+    \item \textbf{Completely non-trivial} FD: $X \rightarrow Y$ where $Y \neq \emptyset$ and $Y \cap X = \emptyset$
+    \item Course convention allows: $\emptyset \rightarrow \emptyset, \emptyset \rightarrow Y, X \rightarrow \emptyset$
+    \item \textbf{Superkey}: $X$ is a superkey if $X \rightarrow R$ (i.e. $X$ functionally determines all attributes in $R$)
+    \item \textbf{Candidate key}: $X$ is a candidate key if $X$ is a superkey and there is no proper subset of $X$ that is a superkey. I.e $X \rightarrow R$ and $\nexists Y \subsetneq X$ such that $Y \rightarrow R$, $X$ is minimal.
+    \item \textbf{Logical Entailment}: $F \models f$ if every relation that satisfies $F$ also satisfies $f$. E.g., if $F = \{X \rightarrow Y, Y \rightarrow Z\}$, then $F \models X \rightarrow Z$.
+  \end{itemize}
+
+  \subsection{Armstrong's Axioms}
+  \begin{itemize}
+    \item \textbf{Reflexivity}: If $Y \subseteq X$, then $X \rightarrow Y$ (i.e. trivial FDs are always valid)
+    \item \textbf{Augmentation}: If $X \rightarrow Y$, then $XZ \rightarrow YZ$ for any $Z$ (You can add the same attributes to both sides of an FD and it still holds)
+    \item \textbf{Transitivity}: If $X \rightarrow Y$ and $Y \rightarrow Z$, then $X \rightarrow Z$ (i.e. You can short circuit the arrows)
+    \item \textbf{Union Rule}: If $X \rightarrow Y$ and $X \rightarrow Z$, then $X \rightarrow YZ$
+    \item \textbf{Decomposition Rule}: If $X \rightarrow YZ$, then $X \rightarrow Y$ and $X \rightarrow Z$
+    \item \textbf{Pseudotransitivity}: If $X \rightarrow Y$ and $YW \rightarrow Z$, then $XW \rightarrow Z$
+    \item \textbf{Sound}: If an FD can be derived from Armstrong's Axioms, then it is logically entailed by the set of FDs.
+    \item \textbf{Complete}: If an FD is logically entailed by a set of FDs, then it can be derived from Armstrong's Axioms.
+  \end{itemize}
+
+  \subsection{Closure of FDs and Attributes}
+  \begin{itemize}
+    \item The closure of a set of functional dependencies $\sum$ (denoted $\sum^+$) is the set of all FDs that can be logically entailed by $\sum$.
+    \item $\sum^+ = \{ X \rightarrow Y | \sum \models X \rightarrow Y \}$
+    \item \textbf{Attribute Closure}: The closure of a set of attributes $X$ under a set of FDs $\sum$ (denoted $X^+$) is the set of all attributes that are functionally determined by $X$ under $\sum$.
+    \item $X^+ = \{ A | \exists (X \rightarrow \{A\}) \in \sum^+ \}$
+    \item Algorithm to compute \textbf{Attribute Closure}:
+    \begin{enumerate}
+        \item Initialize $X^+ = X$
+        \item For each FD $Y \rightarrow Z$ in $\sum$, if $Y \subseteq X^+$, then add $Z$ to $X^+$
+        \item Repeat step 2 until no more attributes can be added to $X^+$
+    \end{enumerate}
+    \item \textbf{Equivalence of FD sets}: Two sets of FDs $\sum$ and $\sum'$ are equivalent if $\sum^+ = \sum'^+$ (i.e. they have the same closure).
+    \item To check for equivalence, check if they cover each other:
+    \begin{enumerate}
+        \item For each FD in $\sum_A$, use FDs in $\sum_B$ to compute the attribute closure of the LHS of the FD. 
+        \item If the closure contains the RHS, then the FD is implied by $\sum_B$. 
+        \item If all FDs in $\sum_A$ are implied by $\sum_B$, then $\sum_A$ is implied by $\sum_B$. 
+        \item Repeat the same process to check if $\sum_B$ is implied by $\sum_A$. If both are implied, then $\sum_A$ and $\sum_B$ are equivalent.
+    \end{enumerate}
+  \end{itemize}
+
+  \subsection{Minimal Cover}
+  \begin{itemize}
+    \item A set of FDs $\sum$ is a minimal if:
+    \begin{enumerate}
+        \item The \textbf{RHS} of every FD in $\sum$ is a single attribute (i.e. FDs are in canonical form)
+        \item The \textbf{LHS} of every FD in $\sum$ is minimal (i.e. there are no extraneous attributes in the LHS)
+        \item There are \textbf{no redundant} FDs in $\sum$ (i.e. there is no FD in $\sum$ that can be removed without changing the closure of $\sum$)
+    \end{enumerate}
+    \item Algorithm to compute minimal cover:
+    \begin{enumerate}
+        \item Decompose FDs so that the RHS of every FD is a single attribute (i.e. put FDs in canonical form)
+        \item For each FD, check if there are extraneous attributes in the LHS. If there are, remove them. To check if an attribute $A$ in the LHS of an FD $X \rightarrow Y$ is extraneous, compute the attribute closure of $X - A$ under the set of FDs (including $X \rightarrow Y$). If the closure contains $Y$, then $A$ is extraneous and can be removed from the LHS.
+        \item For each FD, check if it is redundant. To check if an FD $X \rightarrow Y$ is redundant, compute the closure of $X$ under the set of FDs without $X \rightarrow Y$. If the closure contains $Y$, then $X \rightarrow Y$ is redundant and can be removed from the set of FDs.
+    \end{enumerate}
+    \item Minimal cover is not unique. There can be multiple minimal covers for a given set of FDs.
+    \item \textbf{Compact:} There is no FD with the same LHS.
+    \item \textbf{Canonical Cover}: Compact and minimal cover. 
+  \end{itemize}
+  
+  \subsection{The Chase Algorithm}
+  \begin{itemize}
+    \item Test whether a give FD $f$ is logically entailed by a set of FDs $\sum$.
+    \item Construct a tableau with two rows and $n$ columns, where $n$ is the number of attributes in the relation schema. 
+    \item The first row is filled with $\alpha$ and the second row filled with distinct elements.
+    \item For the FD $f: X \rightarrow Y$, replace the elements in the second row with $\alpha$ for all attributes in $X$.
+    \item Apply the FDs in $\sum$ to the tableau by changing distinct elements into $\alpha$ until no more changes can be made. Note: LHS column $\alpha$.
+  \end{itemize}
+
+  \section{Normalization}
+
+  \section{}
 
 \end{multicols*}
 
