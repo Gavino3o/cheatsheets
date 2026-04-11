@@ -159,7 +159,7 @@
     \item \textbf{Canonical Cover}: Compact and minimal cover. 
   \end{itemize}
   
-  \subsection{The Chase Algorithm}
+  \subsubsection{The Chase Algorithm}
   \begin{itemize}
     \item Test whether a give FD $f$ is logically entailed by a set of FDs $\sum$.
     \item Construct a tableau with two rows and $n$ columns, where $n$ is the number of attributes in the relation schema. 
@@ -169,8 +169,81 @@
   \end{itemize}
 
   \section{Normalization}
+  \begin{itemize}
+    \item \textbf{Prime Attribute}: An attribute that is part of a candidate key.
+    \item \textbf{1NF}: A relation is in 1NF if all attributes are atomic (i.e. indivisible). There are no repeating groups or arrays in the relation.
+    \item \textbf{2NF}: A relation is in 2NF if it is in 1NF and there are no partial dependencies (i.e. no non-prime attribute is functionally dependent on a proper subset of any candidate key). $X \rightarrow \{A\}$ is trivial or $A$ is a prime attribute.
+    \item \textbf{3NF}: A relation is in 3NF if it is in 2NF and there are no transitive dependencies ($X \rightarrow \{A\}$ is trivial or $A$ is a prime attribute or $X$ is a superkey).
+    \item \textbf{BCNF}: A relation is in BCNF if for every non-trivial FD $X \rightarrow Y$, $X$ is a superkey. Note: BCNF is a stronger condition than 3NF.
+    \item \textbf{4NF}: A relation is in 4NF if for every non-trivial multivalued dependency $X \twoheadrightarrow Y$, $X$ is a superkey. Note: 4NF is a stronger condition than BCNF.
+    
+  \end{itemize}
 
-  \section{}
+  \subsection{Decomposition}
+  \begin{itemize}
+    \item \textbf{Losslessness}: Reconstructablity. A decomposition is lossless-join decomposition if the \textbf{natural join} of all the framents is equivalent to the original relation. (i.e. no spurious tuples are generated when we join the fragments)
+    \item \textbf{Dependency Preservation}: A decomposition is dependency preserving if the \textbf{union of the projections of the FDs} onto the fragments is equivalent to the original set of FDs (i.e. we can enforce all the FDs by enforcing them on the fragments).
+    \item \textbf{Lemma 1, Binary Decomposition}: A decomposition of R into $R_1$ and $R_2$ is lossless if $R_1 \cap R_2 \rightarrow R_1$ or $R_1 \cap R_2 \rightarrow R_2$ (i.e. the common attributes of the two fragments functionally determine one of the fragments).
+    \item \textbf{Lemma 2, General Decomposition}: A decomposition of R into $R_1, R_2, ..., R_n$ is lossless if there exists at least one sequence of binary lossless-join decomposition that generates the decomposition.
+  \end{itemize}
+
+  \subsubsection{Chase Algorithm}
+  \begin{itemize}
+    \item To check if a decomposition is lossless.
+    \item \textbf{Input}: A relation schema $R$, a set of FDs $\sum$, and a decomposition of $R$ into $R_1, R_2, ..., R_n$.
+    \begin{enumerate}
+        \item Create a table $r$ wwith schema R with $n$ tuples, where $n$ is the number of fragments in the decomposition. 
+        \item For each attribute $A$ in $R_i$, set the $A$ values in the $i^{th}$ tuple as $\alpha$, treat the rest as distinct symbols.
+        \item For each FD $X \rightarrow Y$ in $\sum$, if the $X$ values in a tuple are the same, then set the $Y$ values in that tuple to be the same. Same $\alpha$ only.
+        \item Chase to find a row of all $\alpha$'s.
+    \end{enumerate}
+  \end{itemize}
+
+  \subsubsection{Projected Set of FDs}
+  \begin{itemize}
+    \item Way to compute the projeted set of FDs on a fragment $R_i$ given the original set of FDs $\sum$.
+    \begin{enumerate}
+        \item Given attribute $C$ is missing
+        \item If $C$ appears in the \textbf{RHS} of an FD, remove that FD.
+        \item If $C$ appears in the LHS of an FD, remove $C$ from the LHS of that FD.
+        \item Care for transitivity: If $C$ is in the LHS of an FD and there is another FD where $C$ is in the RHS, we need to check if the transitive dependency can be preserved. If it cannot be preserved, we need to add a new FD with the transitive dependency.
+        \item 
+    \end{enumerate}
+  \end{itemize}
+
+  \subsubsection{Decomposition Algorithm}
+  \begin{itemize}  
+    \item \textbf{BCNF Decomposition Algorithm}
+    \begin{enumerate}
+        \item \textbf{Initialise:} Start with the set of relations $D = \{R\}$.
+        \item \textbf{Check:} While there is a relation $R_i \in D$ not in BCNF:
+        \begin{itemize}
+            \item Find a violation $X \to Y$ (where $X \to Y \in \Sigma^+$, $Y \not\subseteq X$, and $X$ is not a superkey for $R_i$).
+            \item Compute the attribute closure $X^+$ with respect to $\Sigma$.
+            \item \textbf{Split} $R_i$ into two new relations:
+            \begin{enumerate}
+                \item $R_{i_1} = X^+$
+                \item $R_{i_2} = (R_i - X^+) \cup X$
+            \end{enumerate}
+            \item Replace $R_i$ in $D$ with $R_{i_1}$ and $R_{i_2}$.
+        \end{itemize}
+        \item \textbf{Result:} $D$ is a lossless-join decomposition of $R$ into BCNF.
+    \end{enumerate}
+    \item \textbf{Note:} The BCNF decomposition algorithm does not guarantee dependency preservation.\\
+    \item \textbf{3NF Synthesis Algorithm}
+    \begin{enumerate}
+        \item \textbf{Candidate keys:} Identify candidate keys of $R$ using attribute closure.
+        \item \textbf{Canonical Cover:} Compute the minimal cover $\Sigma^-$ of $\Sigma$, and compact them.
+        \item \textbf{Group:} For each $X \to Y \in \Sigma^-$, create a relation $R_i = X \cup Y$.
+        \item \textbf{Merge:} If two relations $R_1, R_2$ have keys $X, Z$ such that $X \to Z$ and $Z \to X$, merge them.
+        \item \textbf{Key Check:} If no $R_i$ contains a candidate key of $R$, add a new relation $R_{key}$ consisting of any candidate key of $R$.
+        \item \textbf{Purge:} Remove any relation $R_i$ that is a subset of another relation $R_j$.
+    \end{enumerate}
+     \item \textbf{Note:} The 3NF synthesis algorithm guarantees both \textit{lossless-join and dependency preservation}. May find BCNF.
+     \item $R = \{ A, B, D, E\}$ with $\sum = \{ BE \rightarrow AD, D \rightarrow E \}$. Use another table to enforce $D \rightarrow E$ via foreign key.
+\end{itemize}
+
+
 
 \end{multicols*}
 
