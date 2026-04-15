@@ -86,14 +86,65 @@
     }
   \end{center}
 
-  \section{SQL Tuning}
+   \section{Database Tuning}
+  \begin{itemize}
+    \item PostgreSQL Architecture: SQL Parser and Rewriter $\rightarrow$ Query Planner and Optimizer $\rightarrow$ Executor $\rightarrow$ Memory and Storage Management.
+    \item Planner/Optimizer: Generates query plans using catalogue and statistics, choose plan with least estimated cost.
+    \item Cost is estimated based on the number of rows processed, the number of disk I/O operations, and the CPU time required for the operations.
+    \item Execution Plan: DAG/Tree of operations. 
+    \item \textbf{Types}: Sequential Scan, Index Scan, Bitmap Index Scan, Bitmap Heap Scan, Nested Loop Join, Hash Join, Merge Join, Aggregate Operation etc.
+    \item Total query time: query planning time + execution time, network latency, client overhead.
+    \item \textbf{EXPLAIN (ANALYZE, VERBOSE)} command: shows the execution plan, execution time, row count for each step. (e.g. \texttt{EXPLAIN ANALYZE SELECT * FROM Employees WHERE age $>$ 30})
+    \item Only supports: \texttt{SELECT, INSERT, UPDATE, DELETE, EXECUTE, CREATE TABLE, DECLARE}.
+    \item In the query plan: (cost=startup cost..total cost rows=estimated rows width=estimated row width (in bytes)). Startup cost is the cost before the first row is returned, total cost is cost of executing the node (including its children).
+    \item \textbf{pg\_tables}: Catalog table that contains information about tables in the database. (e.g. \texttt{SELECT * FROM pg\_tables})
+    \item \textbf{pg\_indexes}: Catalog table that contains information about indexes in the database. (e.g. \texttt{SELECT * FROM pg\_indexes})
+    \item \textbf{pg\_stats/pg\_statistics}: Catalog table that contains statistics about the distribution of values in the columns of the tables. Populated by the \texttt{ANALYZE} command (e.g. \texttt{SELECT * FROM pg\_stats})
+    \item \textbf{pg\_attributes}: Catalog table that contains information about the attributes (columns) of the tables. (e.g. \texttt{SELECT * FROM pg\_attributes})
+    \item \textbf{Total time of a node} = product of actual time * loops
+    \item \textbf{VACUUM}: Reclaims storage occupied by dead tuples. Also updates statistics for the query planner. (e.g. \texttt{VACUUM ANALYZE Employees})
+    \item \textbf{Index Types}: B-tree (default, supports equality and range queries), Hash (supports equality queries), GIN (supports full-text search), GiST (supports spatial data), BRIN (supports large tables with natural ordering).
+    \item \textbf{Indexes} generally slow down write operations (INSERT, UPDATE, DELETE) because the index also needs to be updated. However, they can significantly speed up read operations (SELECT) by allowing the query planner to quickly locate the relevant rows.
+    \item \textbf{PostgreSQL} automatically creates \textbf{B-tree unique indexes for primary key and unique constraints}. However, it does not automatically create indexes for foreign keys.
+    \item \textbf{SYNTAX}: \texttt{CREATE INDEX index\_name ON table\_name (column\_name...)};
+    \item We can create unique indexes. CREATE UNIQUE INDEX...
+    \item We can use WHERE to create partial indexes.
+    \item \textbf{Clustering}: Reorganizes the physical storage of the table to match the order of an index. This can improve the performance of queries that use the index. (e.g. \texttt{CLUSTER Employees USING idx\_age})
+    \item \textbf{A table can only be clustered on one index at a time.} Clustering needs to be \textbf{reapplied} after any write operation that modifies the clustered index.
+    \item \textbf{Multi-column Indexes}: The order of the columns in the index matters. Index is used if condition involves \textbf{prefix} of the multi-column index (e.g. \texttt{CREATE INDEX idx\_age\_name ON Employees (age, name)})
+   \end{itemize}
 
-  % Add here after completing later sections
+  \subsubsection*{Data Retrieval Operations}
+  \begin{itemize}
+    \item \textbf{Sequential Scan}: Reads the entire table sequentially. Used when there is no index, or when the query planner estimates that it will be faster than using an index (e.g. when a large portion of the table is being scanned).
+    \item \textbf{Sort}: Sorts the rows based on the specified columns. Used for ORDER BY, GROUP BY, DISTINCT, etc. (Quick Sort, Merge Sort, etc)
+    \item \textbf{Grouping/Aggregation}: Groups the rows based on the specified columns and applies aggregate functions (e.g. SUM, COUNT, AVG) to each group. Used for GROUP BY, aggregate functions without GROUP BY, etc.
+    \item \textbf{Unique}: Removes duplicate rows from the result set. Used for DISTINCT, etc. \textbf{Note:} Don't use DISTINCT for candidate key columns.
+    \item \textbf{Index Only Scan}: Uses an index to retrieve the values of the indexed columns, without accessing the table. Used when index is a covering index.
+    \item \textbf{Index Scan}: Uses an index to retrieve the values of the indexed columns, and then accesses the table to retrieve the values of the non-indexed columns. Used when there is an index on the columns used in the WHERE clause, but the index is not a covering index.
+    \item \textbf{Bitmap Heap Scan}: Uses a bitmap index scan to retrieve the row locations of the matching rows, and then accesses the table to retrieve the values of the columns. Used when there is an index on the columns used in the WHERE clause, but the index is not a covering index, and the query planner estimates that it will be faster than using an index scan (e.g. when a large portion of the table is being scanned).
+    \item \textbf{Bitmap Index Scan}: Uses a bitmap index to retrieve the row locations of the matching rows. Can be used for conjunctions or disjunctions of predicates on indexed columns.
+  \end{itemize}
+
+  \subsubsection*{Join Operations}
+  \begin{itemize}
+    \item \textbf{Materialization}: Materializes the result of the join into a temporary table. Used when the join is expensive and the result will be reused multiple times.
+    \item \textbf{Nested Loop Join}: For each row in the outer table, scan the inner table to find matching rows. Used when one of the tables is small, or when there are indexes on the join columns. The smaller table is usually the outer table.
+    \item \textbf{Hash Join}: Builds a hash table on the smaller table (the build input), and then probes the hash table with the rows from the larger table (the probe input) to find matching rows. Used when there are no indexes on the join columns, and the tables are large.
+    \item \textbf{Merge Join}: Sorts both tables on the join columns, and then merges the sorted tables to find matching rows. Used when there are no indexes on the join columns, and the tables are large, and the join columns are already sorted (e.g. due to clustering).
+    \item \textbf{Semi Join}: Returns rows from the outer table that have a match in the inner table, but does not return any columns from the inner table. Used for \texttt{EXISTS, IN} subqueries.
+    \item \textbf{Anti Join}: Returns rows from the outer table that do not have a match in the inner table. Used for \texttt{NOT EXISTS, LEFT JOIN + IS NULL} subqueries.
+    \item Note: \texttt{NOT IN, $<>$ ALL} in PostgreSQL is often done with sequential scan
+    \item \textbf{HASH RIGHT/LEFT JOIN}: A variant of hash join that can be used when the smaller table is on the right/left side of the join.
+    \item \textbf{Materialized Views}: A materialized view is a precomputed result of a query that is stored as a table. It can be used to speed up queries that are expensive to compute. However, it needs to be refreshed when the underlying data changes.
+    \item 
+  \end{itemize}
+
 
   \section{Functional Dependencies}
 
   \begin{itemize}
-    \item Functinoal dependencies are denoted by $\sigma$
+    \item Functional dependencies are denoted by $\sigma$
     \item Given: $X \rightarrow Y$.\\If two tuples of $r$ (a table with relation schema $R$) agress on their X-values, then they agree on their Y-values.
     \item Note: SQL query cannot be used in \texttt{CHECK} constraints
     \item Functional dependencies may be enforced when LHS has \texttt{PRIMARY KEY} or \texttt{UNIQUE} constraints.
@@ -124,7 +175,7 @@
     \item $\sum^+ = \{ X \rightarrow Y | \sum \models X \rightarrow Y \}$
     \item \textbf{Attribute Closure}: The closure of a set of attributes $X$ under a set of FDs $\sum$ (denoted $X^+$) is the set of all attributes that are functionally determined by $X$ under $\sum$.
     \item $X^+ = \{ A | \exists (X \rightarrow \{A\}) \in \sum^+ \}$
-    \item Algorithm to compute \textbf{Attribute Closure}:
+    \item \textbf{Algorithm (1) to compute Attribute Closure}:
     \begin{enumerate}
         \item Initialize $X^+ = X$
         \item For each FD $Y \rightarrow Z$ in $\sum$, if $Y \subseteq X^+$, then add $Z$ to $X^+$
@@ -148,7 +199,7 @@
         \item The \textbf{LHS} of every FD in $\sum$ is minimal (i.e. there are no extraneous attributes in the LHS)
         \item There are \textbf{no redundant} FDs in $\sum$ (i.e. there is no FD in $\sum$ that can be removed without changing the closure of $\sum$)
     \end{enumerate}
-    \item Algorithm to compute minimal cover:
+    \item \textbf{Algorithm (2) to compute minimal cover}:
     \begin{enumerate}
         \item Decompose FDs so that the RHS of every FD is a single attribute (i.e. put FDs in canonical form)
         \item For each FD, check if there are extraneous attributes in the LHS. If there are, remove them. To check if an attribute $A$ in the LHS of an FD $X \rightarrow Y$ is extraneous, compute the attribute closure of $X - A$ under the set of FDs (including $X \rightarrow Y$). If the closure contains $Y$, then $A$ is extraneous and can be removed from the LHS.
@@ -192,7 +243,7 @@
     \item To check if a decomposition is lossless.
     \item \textbf{Input}: A relation schema $R$, a set of FDs $\sum$, and a decomposition of $R$ into $R_1, R_2, ..., R_n$.
     \begin{enumerate}
-        \item Create a table $r$ wwith schema R with $n$ tuples, where $n$ is the number of fragments in the decomposition. 
+        \item Create a table $r$ with schema R with $n$ tuples, where $n$ is the number of fragments in the decomposition. 
         \item For each attribute $A$ in $R_i$, set the $A$ values in the $i^{th}$ tuple as $\alpha$, treat the rest as distinct symbols.
         \item For each FD $X \rightarrow Y$ in $\sum$, if the $X$ values in a tuple are the same, then set the $Y$ values in that tuple to be the same. Same $\alpha$ only.
         \item Chase to find a row of all $\alpha$'s.
@@ -207,7 +258,6 @@
         \item If $C$ appears in the \textbf{RHS} of an FD, remove that FD.
         \item If $C$ appears in the LHS of an FD, remove $C$ from the LHS of that FD.
         \item Care for transitivity: If $C$ is in the LHS of an FD and there is another FD where $C$ is in the RHS, we need to check if the transitive dependency can be preserved. If it cannot be preserved, we need to add a new FD with the transitive dependency.
-        \item 
     \end{enumerate}
   \end{itemize}
 
