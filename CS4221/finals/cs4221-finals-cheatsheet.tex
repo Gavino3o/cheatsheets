@@ -159,8 +159,10 @@
 
   \subsection{Armstrong's Axioms}
   \begin{itemize}
-    \item \textbf{Reflexivity}: If $Y \subseteq X$, then $X \rightarrow Y$ (i.e. trivial FDs are always valid)
-    \item \textbf{Augmentation}: If $X \rightarrow Y$, then $XZ \rightarrow YZ$ for any $Z$ (You can add the same attributes to both sides of an FD and it still holds)
+    \item \textbf{Reflexivity}: If $Y \subseteq X$, then $X \rightarrow Y$ (i.e. trivial FDs are always valid)\\
+    Ex: $AB \rightarrow A$ because $A \subseteq AB$
+    \item \textbf{Augmentation}: If $X \rightarrow Y$, then $XZ \rightarrow YZ$ for any $Z$ (You can add the same attributes to both sides of an FD and it still holds)\\
+    Ex: If $A \rightarrow B$, then $AC \rightarrow BC$ for any $C$.
     \item \textbf{Transitivity}: If $X \rightarrow Y$ and $Y \rightarrow Z$, then $X \rightarrow Z$ (i.e. You can short circuit the arrows)
     \item \textbf{Union Rule}: If $X \rightarrow Y$ and $X \rightarrow Z$, then $X \rightarrow YZ$
     \item \textbf{Decomposition Rule}: If $X \rightarrow YZ$, then $X \rightarrow Y$ and $X \rightarrow Z$
@@ -291,9 +293,8 @@
     \end{enumerate}
      \item \textbf{Note:} The 3NF synthesis algorithm guarantees both \textit{lossless-join and dependency preservation}. May find BCNF.
      \item $R = \{ A, B, D, E\}$ with $\sum = \{ BE \rightarrow AD, D \rightarrow E \}$. Use another table to enforce $D \rightarrow E$ via foreign key.
+     \item If you merge all FDs $X_1 \rightarrow Y_1$ and $X_2 \rightarrow Y_2$ such that $X_1 \rightarrow X_2$ and $X_2 \rightarrow X_1$ into one relation, then the resulting relation is in BCNF. This is because the common key of the merged relation is a superkey, and there are no other FDs that violate BCNF.
 \end{itemize}
-
-
 
 \end{multicols*}
 
